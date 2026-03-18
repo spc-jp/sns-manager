@@ -42,7 +42,7 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-.view { display: none; padding: 24px 32px; max-width: 100%; }
+.view { display: none; padding: 20px 28px; width: 100%; }
 .view.active { display: block; }
 
 /* TODAY */
@@ -126,115 +126,80 @@ header {
 .empty-state p { font-size: 14px; line-height: 1.9; }
 .empty-link { color: var(--cyan); cursor: pointer; text-decoration: underline; }
 
-/* CALENDAR */
-/* ── CALENDAR ── */
-.cal-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
-.cal-nav h2 { font-size: 22px; font-weight: 700; }
-.nav-btn { width: 38px; height: 38px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
-.cal-grid-hd { margin-bottom: 7px; }
-.cal-hd { text-align: center; font-size: 14px; font-weight: 700; padding: 8px 0; letter-spacing: 0.06em; }
-.cal-hd.hd-mon, .cal-hd.hd-tue, .cal-hd.hd-wed, .cal-hd.hd-thu, .cal-hd.hd-fri { color: var(--muted); }
+/* PC カレンダー：全幅縦並び */
+.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
+.cal-grid-hd { margin-bottom: 8px; }
+.cal-hd { text-align: center; font-size: 15px; font-weight: 700; padding: 10px 0; letter-spacing: 0.04em; }
+.cal-hd.hd-mon,.cal-hd.hd-tue,.cal-hd.hd-wed,.cal-hd.hd-thu,.cal-hd.hd-fri { color: var(--muted); }
 .cal-hd.hd-sat { color: #60a5fa; }
 .cal-hd.hd-sun { color: #f87171; }
 
 .cal-cell {
-  min-height: 140px;
+  min-height: 160px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 10px 8px;
+  padding: 12px 12px 8px;
   cursor: pointer;
   transition: border-color 0.18s, background 0.18s;
 }
 .cal-cell:hover { border-color: var(--cyan); background: rgba(0,200,184,0.04); }
-.cal-cell.is-today  { border-color: var(--cyan); background: rgba(0,200,184,0.1); }
-.cal-cell.is-selected { border-color: var(--blue); background: rgba(0,144,224,0.1); }
-.cal-cell.other-m { opacity: 0.28; pointer-events: none; }
+.cal-cell.is-today { border-color: var(--cyan); border-width: 2px; background: rgba(0,200,184,0.1); }
+.cal-cell.is-selected { border-color: var(--blue); border-width: 2px; background: rgba(0,144,224,0.1); }
+.cal-cell.other-m { opacity: 0.25; pointer-events: none; }
 
-.cal-cell.is-sat { background: rgba(96,165,250,0.06); border-color: rgba(96,165,250,0.25); }
+.cal-cell.is-sat { background: rgba(96,165,250,0.07); border-color: rgba(96,165,250,0.3); }
 .cal-cell.is-sat:hover { border-color: #60a5fa; }
 .cal-cell.is-sat .cal-day { color: #60a5fa; }
 
-.cal-cell.is-sun, .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.25); }
-.cal-cell.is-sun:hover, .cal-cell.is-hol:hover { border-color: #f87171; }
-.cal-cell.is-sun .cal-day, .cal-cell.is-hol .cal-day { color: #f87171; }
+.cal-cell.is-sun { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.3); }
+.cal-cell.is-sun:hover { border-color: #f87171; }
+.cal-cell.is-sun .cal-day { color: #f87171; }
+
+.cal-cell.is-hol { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.3); }
+.cal-cell.is-hol .cal-day { color: #f87171; }
 
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
 
-.cal-day { font-size: 18px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
-.hol-name { font-size: 10px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
+.hol-name { font-size: 11px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.cal-dot { font-size: 11px; padding: 3px 6px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; }
-.cal-dot.draft { background: rgba(245,158,11,0.18); color: #f59e0b; }
-.cal-dot.scheduled { background: rgba(0,200,184,0.18); color: var(--cyan); }
+.cal-dot { font-size: 11px; padding: 3px 7px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; }
+.cal-dot.draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.cal-dot.scheduled { background: rgba(0,200,184,0.2); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
 
-/* PC カレンダー：上段カレンダー全幅、下段に詳細パネル */
-.cal-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.cal-main { width: 100%; }
-.cal-side { width: 100%; }
 .day-detail {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 20px;
-  min-height: 80px;
+  padding: 20px 24px;
 }
-.dd-placeholder {
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-  padding: 20px;
-  line-height: 2;
-}
-
-/* 今日の投稿: PC 2カラム */
-.today-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 16px;
-}
-.today-grid .today-card { margin-bottom: 0; }
-
-/* ネタ作成: PC 広め */
-#view-create > div { max-width: 640px; }
-
-/* ネタ一覧: PC 2カラム */
-.stock-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 14px;
-}
-.stock-grid .stock-card { margin-bottom: 0; }
-
-@media (max-width: 900px) {
-  .cal-layout { grid-template-columns: 1fr; }
-  .cal-side { position: static; }
-  .today-grid, .stock-grid { grid-template-columns: 1fr; }
-}
-.dd-cards-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-}
+.dd-placeholder { color: var(--muted); font-size: 13px; text-align: center; padding: 20px; line-height: 2; }
+.dd-cards-wrap { display: flex; flex-wrap: wrap; gap: 14px; }
 .dd-title { font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
-.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; transition: border-color 0.2s; flex: 1 1 340px; min-width: 280px; }
+.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; transition: border-color 0.2s; flex: 1 1 360px; }
 .dd-card:hover { border-color: rgba(0,200,184,0.4); }
-.dd-left { min-width: 56px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
 .dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
 .dd-actions { display: flex; flex-direction: column; gap: 5px; }
 .smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
 .smbtn:hover { border-color: var(--cyan); color: var(--cyan); }
 .smbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+/* 今日の投稿 */
+.today-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
+.today-grid .today-card { margin-bottom: 0; }
+
+/* ネタ作成 */
+#view-create > * { max-width: 660px; }
+
+/* ネタ一覧 */
+.stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 14px; }
+.stock-grid .stock-card { margin-bottom: 0; }
 
 /* CREATE FORM */
 .form-sec { margin-bottom: 16px; }
@@ -330,23 +295,17 @@ select option { background: var(--card); }
 
 <!-- カレンダー -->
 <div id="view-calendar" class="view">
-  <div class="cal-layout">
-    <div class="cal-main">
-      <div class="cal-nav">
-        <button class="nav-btn" onclick="chMonth(-1)">‹</button>
-        <h2 id="calTitle"></h2>
-        <button class="nav-btn" onclick="chMonth(1)">›</button>
-      </div>
-      <div class="cal-grid-hd">
-        <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
-        <div class="cal-hd hd-thu">木</div><div class="cal-hd hd-fri">金</div><div class="cal-hd hd-sat">土</div><div class="cal-hd hd-sun">日</div>
-      </div>
-      <div class="cal-grid" id="calGrid"></div>
-    </div>
-    <div class="cal-side">
-      <div id="dayDetail"><div class="dd-placeholder">📅 日付をクリックすると<br>その日の投稿が表示されます</div></div>
-    </div>
+  <div class="cal-nav">
+    <button class="nav-btn" onclick="chMonth(-1)">‹</button>
+    <h2 id="calTitle"></h2>
+    <button class="nav-btn" onclick="chMonth(1)">›</button>
   </div>
+  <div class="cal-grid-hd">
+    <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
+    <div class="cal-hd hd-thu">木</div><div class="cal-hd hd-fri">金</div><div class="cal-hd hd-sat">土</div><div class="cal-hd hd-sun">日</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div id="dayDetail" style="margin-top:20px;"><div class="dd-placeholder">📅 日付をクリックするとその日の投稿が表示されます</div></div>
 </div>
 
 <!-- ネタ作成 -->
