@@ -755,6 +755,8 @@ function renderCalendar() {
     const isSel = ds === selDate;
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
+    
+    // ★ カレンダー上の予定ドットを生成（クリックイベントとタイトル追加）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
@@ -774,7 +776,6 @@ function renderCalendar() {
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
 
-    // ★ セルにIDを付与（アニメーションスクロール用）
     html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')">
       <div class="cal-day">${day}${holTag}</div>
       ${dots}
@@ -940,7 +941,7 @@ function savePost() {
     clearForm(true); // フォームをクリアして初期状態に戻す
     showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
     
-    // ★ カレンダー遷移とハイライト処理
+    // カレンダー遷移とハイライト処理
     if (dVal) {
       const dStr = dVal.slice(0, 10); // "YYYY-MM-DD"形式
       if (dStr) {
@@ -979,7 +980,6 @@ function savePost() {
 function clearForm(isAfterSave = false) {
   document.getElementById('fText').value = '';
   
-  // ★ 初期値として「今日・現在の時間」を確実にセットする
   const now = new Date();
   const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   const hs = pad(now.getHours());
@@ -1000,7 +1000,7 @@ function clearForm(isAfterSave = false) {
   document.getElementById('fSourceTitle').value = '';
   document.getElementById('fSourceUrl').value = '';
   
-  selP = ['X']; // ★ デフォルトで「X」を選択状態にする
+  selP = ['X']; // デフォルトで「X」を選択状態にする
   updatePbtns(); 
   updateCC(); 
   updateSourceBox();
