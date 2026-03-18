@@ -94,11 +94,18 @@ header {
   font-size: 13px !important;
 }
 
-/* ★ note, BASE のバッジ（ピンク枠） */
-.pbadge-note, .pbadge-BASE {
-  background: rgba(244, 114, 182, 0.1) !important;
-  border: 1px solid #f472b6 !important;
-  color: #db2777 !important;
+/* ★ note のバッジ（緑系） */
+.pbadge-note {
+  background: rgba(22, 163, 74, 0.1) !important;
+  border: 1px solid #16a34a !important;
+  color: #15803d !important;
+}
+
+/* ★ BASE のバッジ（黄色系） */
+.pbadge-BASE {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border: 1px solid #d97706 !important;
+  color: #b45309 !important;
 }
 
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
@@ -216,7 +223,21 @@ header {
   padding-left: 2px !important;
 }
 
-/* ★ カレンダー：note, BASE は「ピンク枠・ピンク背景」 */
+/* ★ カレンダー：noteのみ（緑系） */
+.cal-dot.note-src {
+  background: rgba(22, 163, 74, 0.1) !important;
+  border: 1px solid #16a34a !important;
+  color: #15803d !important;
+}
+
+/* ★ カレンダー：BASEのみ（黄色系） */
+.cal-dot.base-src {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border: 1px solid #d97706 !important;
+  color: #b45309 !important;
+}
+
+/* ★ カレンダー：note・BASE両方（ピンク系） */
 .cal-dot.pink-src {
   background: rgba(244, 114, 182, 0.1) !important;
   border: 1px solid #f472b6 !important;
@@ -286,11 +307,19 @@ select option { background: #fff; color: var(--white); }
   font-weight: 700 !important;
 }
 
-/* ★ フォームボタン：note, BASE はピンク枠で同じデザインに */
-.pbtn.on-note, .pbtn.on-BASE {
-  border-color: #f472b6 !important;
-  color: #db2777 !important;
-  background: rgba(244, 114, 182, 0.1) !important;
+/* ★ フォームボタン：note は緑系 */
+.pbtn.on-note {
+  border-color: #16a34a !important;
+  color: #15803d !important;
+  background: rgba(22, 163, 74, 0.1) !important;
+  font-weight: 700 !important;
+}
+
+/* ★ フォームボタン：BASE は黄色系 */
+.pbtn.on-BASE {
+  border-color: #d97706 !important;
+  color: #b45309 !important;
+  background: rgba(245, 158, 11, 0.15) !important;
   font-weight: 700 !important;
 }
 
@@ -303,8 +332,12 @@ select option { background: #fff; color: var(--white); }
 .source-box.show { display: block; }
 .source-box-title { font-size: 12px; font-weight: 700; color: var(--cyan); margin-bottom: 10px; letter-spacing: 0.05em; }
 
-/* ★ リスト内に表示されるリンク表示部分もピンクに統一 */
-.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: rgba(244, 114, 182, 0.05); border-radius: 6px; border-left: 3px solid #f472b6; }
+/* ★ リスト内に表示されるリンク表示部分 */
+.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; border-radius: 6px; }
+/* それぞれの色分け */
+.card-source.note-only { background: rgba(22, 163, 74, 0.05); border-left: 3px solid #16a34a; }
+.card-source.base-only { background: rgba(245, 158, 11, 0.05); border-left: 3px solid #d97706; }
+.card-source.both-src { background: rgba(244, 114, 182, 0.05); border-left: 3px solid #f472b6; }
 .card-source a { color: var(--cyan); word-break: break-all; }
 
 /* ネタ作成のボタンエリア */
@@ -888,13 +921,17 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
-    // ★ カレンダー上のドット表示（X, Threads, FBは青文字、note/BASEはピンク枠に統一）
+    // ★ カレンダー上のドット表示（色の組み合わせ判定）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
-      const isPink = isNote || isBase;
-      const dotCls = isPink ? 'pink-src' : 'sns-src';
-      const icon = isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
+      
+      let dotCls = 'sns-src';
+      if (isNote && isBase) dotCls = 'pink-src'; // 両方ならピンク
+      else if (isBase) dotCls = 'base-src';      // BASEなら黄色
+      else if (isNote) dotCls = 'note-src';      // noteなら緑
+      
+      const icon = (isNote && isBase) ? '📝🛒' : isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
       return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
@@ -946,6 +983,20 @@ function renderDayDetail(ds) {
     : dp.map(p => {
         const bs = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${pl==='X'?'𝕏':pl.slice(0,2)}</span>`).join('');
         const tstr = p.date ? p.date.slice(11,16) : '';
+        
+        // ★ 詳細のソース表示部分の色分け判定
+        let srcHtmlStr = '';
+        if (p.sourceTitle || p.sourceUrl) {
+          const hasNote = p.platforms.includes('note');
+          const hasBase = p.platforms.includes('BASE');
+          let bg, border, icon;
+          if (hasNote && hasBase) { bg = 'rgba(244, 114, 182, 0.05)'; border = '#f472b6'; icon = '📝🛒'; }
+          else if (hasBase) { bg = 'rgba(245, 158, 11, 0.05)'; border = '#d97706'; icon = '🛒'; }
+          else { bg = 'rgba(22, 163, 74, 0.05)'; border = '#16a34a'; icon = '📝'; }
+          
+          srcHtmlStr = `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:${bg};border-radius:5px;border-left:3px solid ${border}">${icon} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>`;
+        }
+
         return `<div class="dd-card">
           <div class="dd-left">
             <div style="display:flex;gap:3px;flex-wrap:wrap;">${bs}</div>
@@ -953,7 +1004,7 @@ function renderDayDetail(ds) {
             <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':'済み'}</div>
           </div>
           <div class="dd-text">${esc(p.text)}</div>
-          ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(244, 114, 182, 0.05);border-radius:5px;border-left:3px solid #f472b6">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
+          ${srcHtmlStr}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
@@ -1006,13 +1057,13 @@ function updateSourceBox() {
     box.classList.add('show');
     if (hasNote && hasBase) {
       lbl.textContent = '📝 note / 🛒 BASE 掲載情報';
-      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
+      box.style.borderColor = 'rgba(244, 114, 182, 0.4)'; // ピンク
     } else if (hasBase) {
       lbl.textContent = '🛒 BASE 商品・掲載情報';
-      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
+      box.style.borderColor = 'rgba(217, 119, 6, 0.4)'; // 黄色
     } else {
       lbl.textContent = '📝 note 掲載情報';
-      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
+      box.style.borderColor = 'rgba(22, 163, 74, 0.4)'; // 緑
     }
   } else {
     box.classList.remove('show');
@@ -1146,9 +1197,16 @@ function clearForm(isAfterSave = false) {
 
 function srcHtml(p) {
   if (!p.sourceTitle && !p.sourceUrl) return '';
-  const isBase = p.platforms.includes('BASE');
-  const cls = isBase ? 'card-source base-src' : 'card-source';
-  const icon = isBase ? '🛒' : '📝';
+  const hasNote = p.platforms.includes('note');
+  const hasBase = p.platforms.includes('BASE');
+  
+  let cls = 'card-source';
+  if (hasNote && hasBase) cls += ' both-src';
+  else if (hasBase) cls += ' base-only';
+  else if (hasNote) cls += ' note-only';
+  else cls += ' note-only'; // 念のためのフォールバック
+
+  const icon = (hasNote && hasBase) ? '📝🛒' : hasBase ? '🛒' : '📝';
   const url = p.sourceUrl
     ? `<br><a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a>`
     : '';
