@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNS投稿マネージャー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07111f;
+  --panel: #0d1f35;
+  --card: #112240;
+  --border: #1e3a5f;
+  --cyan: #00c8b8;
+  --blue: #0090e0;
+  --white: #e8f4f8;
+  --muted: #7a9bb5;
+  --draft: #f59e0b;
+  --scheduled: #00c8b8;
+  --posted: #4b6280;
+  --danger: #ef4444;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; }
+
+header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; color: var(--cyan); }
+.logo-icon { width: 30px; height: 30px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.header-date { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+.tab-bar { display: flex; background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 20px; overflow-x: auto; }
+.tab { padding: 13px 18px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.tab:hover:not(.active) { color: var(--white); }
+
+.view { display: none; padding: 20px; max-width: 680px; }
+.view.active { display: block; }
+
+/* TODAY */
+.today-hero {
+  background: linear-gradient(135deg, rgba(0,200,184,0.12), rgba(0,144,224,0.08));
+  border: 1px solid rgba(0,200,184,0.3);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.today-title { font-size: 18px; font-weight: 700; color: var(--cyan); }
+.today-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.today-count { font-family: 'DM Mono', monospace; font-size: 36px; font-weight: 700; color: var(--cyan); text-align: right; }
+.today-count span { font-size: 13px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 400; }
+
+.today-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+  transition: border-color 0.2s;
+  animation: fadeIn 0.25s ease;
+}
+.today-card:hover { border-color: rgba(0,200,184,0.5); }
+.today-card.is-done { opacity: 0.45; border-style: dashed; }
+
+.card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.pbadge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.pbadge-X { background: rgba(29,161,242,0.15); color: #1da1f2; border: 1px solid rgba(29,161,242,0.3); }
+.pbadge-Threads { background: rgba(200,200,200,0.1); color: #ccc; border: 1px solid rgba(200,200,200,0.2); }
+.pbadge-Facebook { background: rgba(24,119,242,0.15); color: #1877f2; border: 1px solid rgba(24,119,242,0.3); }
+.post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(75,98,128,0.3); color: var(--posted); border: 1px solid rgba(75,98,128,0.4); }
+
+.text-box {
+  font-size: 14px;
+  line-height: 1.78;
+  color: var(--white);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 13px 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  user-select: text;
+}
+.text-box:hover { border-color: rgba(0,200,184,0.3); }
+.text-box.flash { border-color: var(--cyan); background: rgba(0,200,184,0.06); }
+
+.memo-line { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.abtn {
+  padding: 7px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.abtn:hover { border-color: var(--cyan); color: var(--cyan); }
+.abtn.primary { background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; color: #fff; font-size: 13px; padding: 8px 20px; }
+.abtn.primary:hover { opacity: 0.85; transform: translateY(-1px); }
+.abtn.copied { background: rgba(0,200,184,0.12); border-color: var(--cyan); color: var(--cyan); }
+.abtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-state .ico { font-size: 48px; margin-bottom: 14px; }
+.empty-state p { font-size: 14px; line-height: 1.9; }
+.empty-link { color: var(--cyan); cursor: pointer; text-decoration: underline; }
+
+/* CALENDAR */
+.cal-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cal-nav h2 { font-size: 16px; font-weight: 700; }
+.nav-btn { width: 30px; height: 30px; background: var(--card); border: 1px solid var(--border); border-radius: 7px; color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cal-grid-hd { margin-bottom: 5px; }
+.cal-hd { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 5px 0; letter-spacing: 0.06em; }
+.cal-cell { min-height: 80px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 7px 5px 5px; cursor: pointer; transition: border-color 0.18s; }
+.cal-cell:hover { border-color: var(--cyan); }
+.cal-cell.is-today { border-color: var(--cyan); background: rgba(0,200,184,0.1); }
+.cal-cell.is-selected { border-color: var(--blue); background: rgba(0,144,224,0.1); }
+.cal-cell.other-m { opacity: 0.3; pointer-events: none; }
+.cal-day { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 5px; }
+.cal-cell.is-today .cal-day { color: var(--cyan); font-weight: 700; }
+.cal-dot { font-size: 9px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; line-height: 1.4; }
+.cal-dot.draft { background: rgba(245,158,11,0.18); color: #f59e0b; }
+.cal-dot.scheduled { background: rgba(0,200,184,0.18); color: var(--cyan); }
+.cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
+
+.day-detail { margin-top: 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; animation: fadeIn 0.2s ease; }
+.dd-title { font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
+.dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
+.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; margin-bottom: 8px; transition: border-color 0.2s; }
+.dd-card:hover { border-color: rgba(0,200,184,0.4); }
+.dd-left { min-width: 56px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
+.dd-actions { display: flex; flex-direction: column; gap: 5px; }
+.smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.smbtn:hover { border-color: var(--cyan); color: var(--cyan); }
+.smbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+/* CREATE FORM */
+.form-sec { margin-bottom: 16px; }
+.flabel { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
+input[type=text], input[type=datetime-local], textarea, select { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 9px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 10px 13px; outline: none; transition: border-color 0.2s; }
+input:focus, textarea:focus, select:focus { border-color: var(--cyan); }
+input[type=datetime-local] { color-scheme: dark; }
+textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+select option { background: var(--card); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.ppicker { display: flex; gap: 8px; }
+.pbtn { flex: 1; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
+.pbtn.on-X { border-color: #1da1f2; color: #1da1f2; background: rgba(29,161,242,0.1); }
+.pbtn.on-Threads { border-color: #aaa; color: #ddd; background: rgba(255,255,255,0.06); }
+.pbtn.on-Facebook { border-color: #1877f2; color: #1877f2; background: rgba(24,119,242,0.1); }
+
+.char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
+.char-cc.warn { color: var(--draft); }
+.char-cc.over { color: var(--danger); }
+
+.btn-save { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 10px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 4px; }
+.btn-save:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-clear { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn-clear:hover { border-color: var(--cyan); color: var(--cyan); }
+.edit-notice { font-size: 12px; color: var(--draft); padding: 9px 14px; background: rgba(245,158,11,0.1); border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(245,158,11,0.25); display: none; }
+
+/* STOCK */
+.sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.sfbtn { padding: 5px 13px; border-radius: 16px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.18s; }
+.sfbtn.on { background: var(--cyan); border-color: var(--cyan); color: var(--bg); font-weight: 700; }
+.sfbtn:hover:not(.on) { border-color: var(--cyan); color: var(--cyan); }
+.sf-srch { margin-left: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; padding: 5px 14px; width: 160px; outline: none; }
+.sf-srch:focus { border-color: var(--cyan); }
+.stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 14px 16px; margin-bottom: 10px; animation: fadeIn 0.25s ease; transition: border-color 0.18s; }
+.stock-card:hover { border-color: rgba(0,200,184,0.4); }
+.sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+.spill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.spill-draft { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.spill-scheduled { background: rgba(0,200,184,0.15); color: var(--cyan); border: 1px solid rgba(0,200,184,0.3); }
+.spill-posted { background: rgba(75,98,128,0.2); color: var(--posted); border: 1px solid rgba(75,98,128,0.35); }
+.sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.sc-actions { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.scbtn { padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.18s; }
+.scbtn:hover { border-color: var(--cyan); color: var(--cyan); }
+.scbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+.scbtn.copied { background: rgba(0,200,184,0.1); border-color: var(--cyan); color: var(--cyan); }
+.sc-chars { margin-left: auto; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--cyan); color: var(--bg); padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 700; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; }
+@keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes tout { to { opacity: 0; } }
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .cal-cell { min-height: 60px; }
+  .ppicker { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📅</div>
+    SNS投稿マネージャー
+  </div>
+  <div class="header-date" id="hDate"></div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="gotoTab('today',this)">📌 今日の投稿</div>
+  <div class="tab" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
+  <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
+  <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
+</div>
+
+<!-- 今日の投稿 -->
+<div id="view-today" class="view active">
+  <div class="today-hero">
+    <div>
+      <div class="today-title">今日の投稿</div>
+      <div class="today-sub" id="todayLabel"></div>
+    </div>
+    <div class="today-count" id="todayNum">0<span>件</span></div>
+  </div>
+  <div id="todayList"></div>
+</div>
+
+<!-- カレンダー -->
+<div id="view-calendar" class="view">
+  <div class="cal-nav">
+    <button class="nav-btn" onclick="chMonth(-1)">‹</button>
+    <h2 id="calTitle"></h2>
+    <button class="nav-btn" onclick="chMonth(1)">›</button>
+  </div>
+  <div class="cal-grid-hd">
+    <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div>
+    <div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div id="dayDetail" style="display:none;"></div>
+</div>
+
+<!-- ネタ作成 -->
+<div id="view-create" class="view">
+  <div id="editNotice" class="edit-notice">✏️ 編集モード中です</div>
+  <div class="form-sec">
+    <label class="flabel">プラットフォーム</label>
+    <div class="ppicker" id="ppicker">
+      <button class="pbtn" data-p="X" onclick="toggleP('X')">𝕏 X</button>
+      <button class="pbtn" data-p="Threads" onclick="toggleP('Threads')">Threads</button>
+      <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
+    </div>
+  </div>
+  <div class="form-sec">
+    <label class="flabel">投稿テキスト</label>
+    <textarea id="fText" placeholder="投稿内容を入力...&#10;ハッシュタグもここに書いておくと便利です" oninput="updateCC()"></textarea>
+    <div class="char-cc" id="charCC">0 文字</div>
+  </div>
+  <div class="form-row">
+    <div class="form-sec">
+      <label class="flabel">投稿予定日時</label>
+      <input type="datetime-local" id="fDate">
+    </div>
+    <div class="form-sec">
+      <label class="flabel">ステータス</label>
+      <select id="fStatus">
+        <option value="draft">📝 下書き</option>
+        <option value="scheduled">📅 投稿予定</option>
+        <option value="posted">✅ 投稿済み</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-sec">
+    <label class="flabel">メモ（自分だけ見えます）</label>
+    <input type="text" id="fMemo" placeholder="例：画像あり、ハッシュタグ確認済み">
+  </div>
+  <button class="btn-save" onclick="savePost()">💾 保存する</button>
+  <button class="btn-clear" onclick="clearForm()">クリア</button>
+</div>
+
+<!-- ネタ一覧 -->
+<div id="view-stock" class="view">
+  <div class="sfilter-row">
+    <button class="sfbtn on" data-f="all" onclick="setSF('all',this)">すべて</button>
+    <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
+    <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
+    <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
+    <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
+  </div>
+  <div id="stockList"></div>
+</div>
+
+<script>
+let posts = JSON.parse(localStorage.getItem('sns_mgr_v2') || '[]');
+let selP = [];
+let editId = null;
+let cY = new Date().getFullYear();
+let cM = new Date().getMonth();
+let selDate = null;
+let sf = 'all';
+
+const save = () => localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
+const WD = ['日','月','火','水','木','金','土'];
+const todayStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+};
+const pad = n => String(n).padStart(2,'0');
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtDt = d => {
+  if (!d) return '未設定';
+  const dt = new Date(d);
+  return `${dt.getMonth()+1}/${dt.getDate()} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+};
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2400);
+}
+
+// ヘッダー日付
+function initDate() {
+  const d = new Date();
+  document.getElementById('hDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
+}
+
+// タブ切替
+function gotoTab(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'today') renderToday();
+  if (name === 'calendar') renderCalendar();
+  if (name === 'stock') renderStock();
+}
+
+// ── 今日の投稿 ──
+function renderToday() {
+  const ts = todayStr();
+  const d = new Date();
+  document.getElementById('todayLabel').textContent = `${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
+
+  const todayPosts = posts.filter(p => p.date && p.date.startsWith(ts) && p.status !== 'posted');
+  const donePosts  = posts.filter(p => p.date && p.date.startsWith(ts) && p.status === 'posted');
+  document.getElementById('todayNum').innerHTML = `${todayPosts.length}<span>件</span>`;
+
+  const container = document.getElementById('todayList');
+  if (todayPosts.length + donePosts.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="ico">😴</div>
+      <p>今日の投稿予定はありません。<br><br>
+      <span class="empty-link" onclick="gotoTabByName('create')">「ネタ作成」</span>で
+      今日の日時をセットして<br>投稿内容を登録しておきましょう！</p>
+    </div>`;
+    return;
+  }
+
+  const all = [...todayPosts, ...donePosts].sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  container.innerHTML = all.map(p => {
+    const badges = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}">${pl==='X'?'𝕏 X':pl}</span>`).join('');
+    const timeStr = p.date ? p.date.slice(11,16) : '';
+    const done = p.status === 'posted';
+    return `<div class="today-card ${done?'is-done':''}" id="tc-${p.id}">
+      <div class="card-top">
+        ${badges}
+        ${timeStr ? `<span class="post-time">🕐 ${timeStr}</span>` : ''}
+        ${done ? '<span class="done-pill">✅ 投稿済み</span>' : ''}
+      </div>
+      <div class="text-box" id="tb-${p.id}" onclick="flashCopy('${p.id}', this)">${esc(p.text)}</div>
+      ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
+      <div class="card-actions">
+        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
+        ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
+        <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+        <button class="abtn danger" onclick="delPost('${p.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function gotoTabByName(name) {
+  const tabs = document.querySelectorAll('.tab');
+  const names = ['today','calendar','create','stock'];
+  const idx = names.indexOf(name);
+  if (idx > -1) gotoTab(name, tabs[idx]);
+}
+
+async function doCopy(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) return false;
+  try { await navigator.clipboard.writeText(p.text); return true; }
+  catch { showToast('手動でコピーしてください'); return false; }
+}
+
+async function flashCopy(id, el) {
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 800);
+  const ok = await doCopy(id);
+  if (ok) showToast('📋 コピーしました！貼り付けて投稿してください');
+}
+
+async function copyBtn(id, btn) {
+  const ok = await doCopy(id);
+  if (ok) {
+    btn.textContent = '✅ コピー完了！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 コピーする'; btn.classList.remove('copied'); }, 2500);
+  }
+}
+
+function markPosted(id) {
+  const p = posts.find(x => x.id === id);
+  if (p) { p.status = 'posted'; p.updatedAt = Date.now(); }
+  save(); renderToday(); renderStock();
+  showToast('✅ 投稿済みにしました！');
+}
+
+function delPost(id) {
+  if (!confirm('この投稿を削除しますか？')) return;
+  posts = posts.filter(x => x.id !== id);
+  save(); renderToday(); renderStock(); renderCalendar();
+  showToast('🗑️ 削除しました');
+}
+
+function editPost(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  editId = id;
+  selP = [...p.platforms];
+  document.getElementById('fText').value = p.text;
+  document.getElementById('fDate').value = p.date || '';
+  document.getElementById('fMemo').value = p.memo || '';
+  document.getElementById('fStatus').value = p.status;
+  updatePbtns(); updateCC();
+  document.getElementById('editNotice').style.display = 'block';
+  gotoTabByName('create');
+  window.scrollTo(0,0);
+  document.getElementById('fText').focus();
+}
+
+// ── カレンダー ──
+function renderCalendar() {
+  document.getElementById('calTitle').textContent = `${cY}年 ${cM+1}月`;
+  const today = new Date();
+  const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  const firstDay = new Date(cY, cM, 1).getDay();
+  const dim = new Date(cY, cM+1, 0).getDate();
+  const diPrev = new Date(cY, cM, 0).getDate();
+  let total = firstDay + dim;
+  if (total % 7) total += 7 - (total % 7);
+
+  let html = '';
+  for (let i = 0; i < total; i++) {
+    let day, m, y, other = false;
+    if (i < firstDay) { day = diPrev - firstDay + i + 1; m = cM - 1; y = cY; other = true; }
+    else if (i >= firstDay + dim) { day = i - firstDay - dim + 1; m = cM + 1; y = cY; other = true; }
+    else { day = i - firstDay + 1; m = cM; y = cY; }
+
+    const ds = `${y}-${pad(m+1)}-${pad(day)}`;
+    const isToday = ds === tsToday;
+    const isSel = ds === selDate;
+    const dp = posts.filter(p => p.date && p.date.startsWith(ds));
+    const dots = dp.slice(0,4).map(p =>
+      `<div class="cal-dot ${p.status}">${p.platforms[0]?.charAt(0)} ${p.text.slice(0,7)}</div>`
+    ).join('');
+    html += `<div class="cal-cell ${other?'other-m':''} ${isToday?'is-today':''} ${isSel?'is-selected':''}" onclick="pickDate('${ds}')">
+      <div class="cal-day">${day}</div>
+      ${dots}
+    </div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+  if (selDate) renderDayDetail(selDate);
+}
+
+function chMonth(d) {
+  cM += d;
+  if (cM > 11) { cM = 0; cY++; }
+  if (cM < 0) { cM = 11; cY--; }
+  renderCalendar();
+}
+
+function pickDate(ds) {
+  selDate = ds;
+  renderCalendar();
+  renderDayDetail(ds);
+}
+
+function renderDayDetail(ds) {
+  const [y, m, d] = ds.split('-');
+  const dow = WD[new Date(ds).getDay()];
+  const label = `${parseInt(m)}月${parseInt(d)}日（${dow}）`;
+  const dp = posts.filter(p => p.date && p.date.startsWith(ds)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const det = document.getElementById('dayDetail');
+  det.style.display = 'block';
+
+  const cards = dp.length === 0
+    ? `<div class="dd-empty">この日の投稿はありません</div>`
+    : dp.map(p => {
+        const bs = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${pl==='X'?'𝕏':pl.slice(0,2)}</span>`).join('');
+        const tstr = p.date ? p.date.slice(11,16) : '';
+        return `<div class="dd-card">
+          <div class="dd-left">
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">${bs}</div>
+            ${tstr ? `<div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">${tstr}</div>` : ''}
+            <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':'済み'}</div>
+          </div>
+          <div class="dd-text">${esc(p.text)}</div>
+          <div class="dd-actions">
+            <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
+            <button class="smbtn" onclick="editPost('${p.id}')">✏️</button>
+            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅</button>`:''}
+            <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️</button>
+          </div>
+        </div>`;
+      }).join('');
+
+  det.innerHTML = `<div class="dd-title">
+    ${label}の投稿（${dp.length}件）
+    <span class="dd-add-link" onclick="addForDate('${ds}')">＋ 追加</span>
+  </div>${cards}`;
+}
+
+async function ddCopy(id, btn) {
+  await doCopy(id);
+  btn.textContent = '✅ コピー済み';
+  setTimeout(() => btn.textContent = '📋 コピー', 2200);
+}
+
+function addForDate(ds) {
+  document.getElementById('fDate').value = ds + 'T09:00';
+  gotoTabByName('create');
+}
+
+// ── フォーム ──
+function toggleP(p) {
+  const i = selP.indexOf(p);
+  if (i > -1) selP.splice(i, 1); else selP.push(p);
+  updatePbtns();
+}
+function updatePbtns() {
+  document.querySelectorAll('.pbtn').forEach(b => {
+    const p = b.dataset.p;
+    b.className = 'pbtn' + (selP.includes(p) ? ` on-${p}` : '');
+  });
+}
+function updateCC() {
+  const len = document.getElementById('fText').value.length;
+  const el = document.getElementById('charCC');
+  el.textContent = `${len} 文字`;
+  el.className = 'char-cc' + (len > 200 ? ' warn' : '') + (len > 280 ? ' over' : '');
+}
+function savePost() {
+  const text = document.getElementById('fText').value.trim();
+  if (!text) { showToast('テキストを入力してください'); return; }
+  if (selP.length === 0) { showToast('プラットフォームを選んでください'); return; }
+  const post = {
+    id: editId || Date.now().toString(),
+    text, platforms: [...selP],
+    date: document.getElementById('fDate').value,
+    memo: document.getElementById('fMemo').value.trim(),
+    status: document.getElementById('fStatus').value,
+    createdAt: editId ? (posts.find(p=>p.id===editId)?.createdAt || Date.now()) : Date.now(),
+    updatedAt: Date.now()
+  };
+  if (editId) { const i = posts.findIndex(p=>p.id===editId); if(i>-1) posts[i]=post; }
+  else posts.unshift(post);
+  save(); clearForm();
+  showToast(editId ? '✅ 更新しました！' : '💾 保存しました！');
+  editId = null;
+  gotoTabByName('today');
+}
+function clearForm() {
+  document.getElementById('fText').value = '';
+  document.getElementById('fDate').value = '';
+  document.getElementById('fMemo').value = '';
+  document.getElementById('fStatus').value = 'draft';
+  selP = []; updatePbtns(); updateCC();
+  editId = null;
+  document.getElementById('editNotice').style.display = 'none';
+}
+
+// ── ネタ一覧 ──
+function setSF(f, btn) {
+  sf = f;
+  document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderStock();
+}
+function renderStock() {
+  const q = (document.getElementById('stockSearch')?.value || '').toLowerCase();
+  const fl = posts.filter(p => {
+    const mf = sf === 'all' || p.status === sf;
+    const ms = !q || p.text.toLowerCase().includes(q) || (p.memo||'').toLowerCase().includes(q);
+    return mf && ms;
+  }).sort((a,b) => {
+    if (a.date && b.date) return a.date.localeCompare(b.date);
+    if (a.date) return -1; if (b.date) return 1;
+    return b.createdAt - a.createdAt;
+  });
+
+  const c = document.getElementById('stockList');
+  if (fl.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
+    return;
+  }
+  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'] };
+  c.innerHTML = fl.map(p => {
+    const bs = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${pl==='X'?'𝕏':pl.slice(0,2)}</span>`).join('');
+    const [sc,sl] = stMap[p.status]||stMap.draft;
+    return `<div class="stock-card">
+      <div class="sc-top">
+        ${bs}
+        <span class="spill ${sc}">${sl}</span>
+        <span class="sc-date">🕐 ${fmtDt(p.date)}</span>
+      </div>
+      <div class="sc-text">${esc(p.text)}</div>
+      ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
+      <div class="sc-actions">
+        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
+        <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+        ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+        <button class="scbtn danger" onclick="delPost('${p.id}')">🗑️</button>
+        <span class="sc-chars">${p.text.length}文字</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function scCopy(id, btn) {
+  await doCopy(id);
+  btn.textContent = '✅ コピー済み';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = '📋 コピー'; btn.classList.remove('copied'); }, 2500);
+}
+
+// INIT
+initDate();
+renderToday();
+</script>
+</body>
+</html>
