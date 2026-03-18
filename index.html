@@ -243,22 +243,24 @@ select option { background: #fff; color: var(--white); }
 
 /* ★ SNS3つは枠・背景なし、文字を細めに */
 .pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"] {
-  border-color: transparent;
-  background: transparent;
-  font-weight: 400;
+  border-color: transparent !important;
+  background: transparent !important;
+  font-weight: 400 !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
 }
 /* ★ 選択時は枠なしで薄いブルーに */
 .pbtn.on-X, .pbtn.on-Threads, .pbtn.on-Facebook {
-  color: #60a5fa;
-  font-weight: 500;
+  color: #60a5fa !important;
+  font-weight: 700 !important;
 }
 
 /* ★ note, BASE はピンク枠で同じデザインに */
 .pbtn.on-note, .pbtn.on-BASE {
-  border-color: #f472b6;
-  color: #db2777;
-  background: rgba(244, 114, 182, 0.1);
-  font-weight: 700;
+  border-color: #f472b6 !important;
+  color: #db2777 !important;
+  background: rgba(244, 114, 182, 0.1) !important;
+  font-weight: 700 !important;
 }
 
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
