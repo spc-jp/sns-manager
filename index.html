@@ -42,7 +42,7 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-.view { display: none; padding: 24px 32px; max-width: 1200px; }
+.view { display: none; padding: 24px 32px; max-width: 100%; }
 .view.active { display: block; }
 
 /* TODAY */
@@ -129,23 +129,23 @@ header {
 /* CALENDAR */
 /* ── CALENDAR ── */
 .cal-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
-.cal-nav h2 { font-size: 20px; font-weight: 700; }
-.nav-btn { width: 34px; height: 34px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.cal-nav h2 { font-size: 22px; font-weight: 700; }
+.nav-btn { width: 38px; height: 38px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.cal-grid-hd { margin-bottom: 6px; }
-.cal-hd { text-align: center; font-size: 12px; font-weight: 700; padding: 6px 0; letter-spacing: 0.06em; }
+.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+.cal-grid-hd { margin-bottom: 7px; }
+.cal-hd { text-align: center; font-size: 14px; font-weight: 700; padding: 8px 0; letter-spacing: 0.06em; }
 .cal-hd.hd-mon, .cal-hd.hd-tue, .cal-hd.hd-wed, .cal-hd.hd-thu, .cal-hd.hd-fri { color: var(--muted); }
 .cal-hd.hd-sat { color: #60a5fa; }
 .cal-hd.hd-sun { color: #f87171; }
 
 .cal-cell {
-  min-height: 110px;
+  min-height: 140px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 9px 8px 6px;
+  padding: 10px 10px 8px;
   cursor: pointer;
   transition: border-color 0.18s, background 0.18s;
 }
@@ -154,51 +154,44 @@ header {
 .cal-cell.is-selected { border-color: var(--blue); background: rgba(0,144,224,0.1); }
 .cal-cell.other-m { opacity: 0.28; pointer-events: none; }
 
-/* 土曜 */
 .cal-cell.is-sat { background: rgba(96,165,250,0.06); border-color: rgba(96,165,250,0.25); }
 .cal-cell.is-sat:hover { border-color: #60a5fa; }
 .cal-cell.is-sat .cal-day { color: #60a5fa; }
 
-/* 日曜・祝日 */
 .cal-cell.is-sun, .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.25); }
 .cal-cell.is-sun:hover, .cal-cell.is-hol:hover { border-color: #f87171; }
 .cal-cell.is-sun .cal-day, .cal-cell.is-hol .cal-day { color: #f87171; }
 
-/* 今日は優先してcyan */
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
 
-.cal-day { font-size: 14px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-.hol-name { font-size: 9px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68px; }
+.cal-day { font-size: 18px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.hol-name { font-size: 10px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
 
-.cal-dot { font-size: 10px; padding: 2px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; line-height: 1.5; }
+.cal-dot { font-size: 11px; padding: 3px 6px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; }
 .cal-dot.draft { background: rgba(245,158,11,0.18); color: #f59e0b; }
 .cal-dot.scheduled { background: rgba(0,200,184,0.18); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
 
-/* PC 2カラム: カレンダー */
+/* PC カレンダー：上段カレンダー全幅、下段に詳細パネル */
 .cal-layout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.cal-main {}
-.cal-side {
-  position: sticky;
-  top: 80px;
-}
+.cal-main { width: 100%; }
+.cal-side { width: 100%; }
 .day-detail {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 18px;
-  min-height: 200px;
+  padding: 20px;
+  min-height: 80px;
 }
 .dd-placeholder {
   color: var(--muted);
   font-size: 13px;
   text-align: center;
-  padding: 40px 20px;
+  padding: 20px;
   line-height: 2;
 }
 
@@ -226,10 +219,15 @@ header {
   .cal-side { position: static; }
   .today-grid, .stock-grid { grid-template-columns: 1fr; }
 }
-.dd-title { font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.dd-cards-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.dd-title { font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
-.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; margin-bottom: 8px; transition: border-color 0.2s; }
+.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; transition: border-color 0.2s; flex: 1 1 340px; min-width: 280px; }
 .dd-card:hover { border-color: rgba(0,200,184,0.4); }
 .dd-left { min-width: 56px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
 .dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
@@ -679,7 +677,7 @@ function renderDayDetail(ds) {
   document.getElementById('dayDetail').innerHTML = `<div class="dd-title">
     ${label}の投稿（${dp.length}件）
     <span class="dd-add-link" onclick="addForDate('${ds}')">＋ 追加</span>
-  </div>${cards}`;
+  </div><div class="dd-cards-wrap">${cards}</div>`;
 }
 
 async function ddCopy(id, btn) {
