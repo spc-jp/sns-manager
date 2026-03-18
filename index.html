@@ -207,10 +207,10 @@ header {
 .dd-card:hover { border-color: var(--cyan); box-shadow: var(--shadow); }
 .dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
 .dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
-.dd-actions { display: flex; flex-direction: column; gap: 5px; }
-.smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-.smbtn:hover { border-color: var(--cyan); color: var(--cyan); }
-.smbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+.dd-actions { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; }
+.smbtn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+.smbtn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.05); }
+.smbtn.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.05); }
 
 /* 今日の投稿 */
 .today-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
@@ -821,9 +821,9 @@ function renderDayDetail(ds) {
           ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(0,0,0,0.2);border-radius:5px;border-left:3px solid ${p.platforms.includes('BASE')?'#e8380d':'#3dc06c'}">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
-            <button class="smbtn" onclick="editPost('${p.id}')">✏️</button>
-            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅</button>`:''}
-            <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️</button>
+            <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
+            <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
           </div>
         </div>`;
       }).join('');
