@@ -846,10 +846,20 @@ function savePost() {
   };
   if (editId) { const i = posts.findIndex(p=>p.id===editId); if(i>-1) posts[i]=post; }
   else posts.unshift(post);
+  
+  const savedDate = post.date;
   save(); clearForm();
   showToast(editId ? '✅ 更新しました！' : '💾 保存しました！');
   editId = null;
-  gotoTabByName('today');
+  
+  if (savedDate) {
+    cY = parseInt(savedDate.slice(0, 4));
+    cM = parseInt(savedDate.slice(5, 7)) - 1;
+    selDate = savedDate.slice(0, 10);
+    gotoTabByName('calendar');
+  } else {
+    gotoTabByName('stock');
+  }
 }
 function clearForm() {
   document.getElementById('fText').value = '';
