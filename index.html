@@ -240,11 +240,22 @@ select option { background: #fff; color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .ppicker { display: flex; gap: 8px; flex-wrap: wrap; }
 .pbtn { flex: 1; min-width: 90px; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: #f7fafd; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
-.pbtn.on-X { border-color: rgba(26, 143, 209, 0.4); color: rgba(26, 143, 209, 0.7); background: rgba(26, 143, 209, 0.05); font-weight: 500; }
-.pbtn.on-Threads { border-color: rgba(68, 68, 68, 0.3); color: rgba(68, 68, 68, 0.6); background: rgba(68, 68, 68, 0.05); font-weight: 500; }
-.pbtn.on-Facebook { border-color: rgba(21, 101, 192, 0.4); color: rgba(21, 101, 192, 0.7); background: rgba(21, 101, 192, 0.05); font-weight: 500; }
-.pbtn.on-note { border-color: #15803d; color: #ffffff; background: #16a34a; }
-.pbtn.on-BASE { border-color: #b91c1c; color: #ffffff; background: #dc2626; }
+
+/* ★ SNS3つは枠・背景なし、文字を細めに */
+.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"] {
+  border-color: transparent;
+  background: transparent;
+  font-weight: 400;
+}
+/* ★ 選択時は薄い色にするだけ */
+.pbtn.on-X { color: rgba(26, 143, 209, 0.8); font-weight: 500; }
+.pbtn.on-Threads { color: rgba(68, 68, 68, 0.8); font-weight: 500; }
+.pbtn.on-Facebook { color: rgba(21, 101, 192, 0.8); font-weight: 500; }
+
+/* ★ note, BASE は目立つようにベタ塗りに */
+.pbtn.on-note { border-color: #15803d; color: #ffffff; background: #16a34a; font-weight: 700; }
+.pbtn.on-BASE { border-color: #b91c1c; color: #ffffff; background: #dc2626; font-weight: 700; }
+
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
 .char-cc.over { color: var(--danger); }
