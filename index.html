@@ -185,7 +185,8 @@ header {
 .cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #4a6078; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
 .hol-name { font-size: 11px; color: #dc2626; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.cal-dot { font-size: 11px; padding: 3px 7px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; }
+.cal-dot { font-size: 11px; padding: 3px 7px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; cursor: pointer; transition: opacity 0.2s; position: relative; z-index: 2; }
+.cal-dot:hover { opacity: 0.7; }
 .cal-dot.draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
 .cal-dot.scheduled { background: rgba(0,200,184,0.2); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
@@ -760,7 +761,7 @@ function renderCalendar() {
       const dotCls = isBase ? 'base-src' : isNote ? 'note-src' : p.status;
       const icon = isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
-      return `<div class="cal-dot ${dotCls}">${icon} ${label}</div>`;
+      return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
