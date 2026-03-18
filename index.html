@@ -247,14 +247,19 @@ select option { background: #fff; color: var(--white); }
   background: transparent;
   font-weight: 400;
 }
-/* ★ 選択時は薄い色にするだけ */
-.pbtn.on-X { color: rgba(26, 143, 209, 0.8); font-weight: 500; }
-.pbtn.on-Threads { color: rgba(68, 68, 68, 0.8); font-weight: 500; }
-.pbtn.on-Facebook { color: rgba(21, 101, 192, 0.8); font-weight: 500; }
+/* ★ 選択時は枠なしで薄いブルーに */
+.pbtn.on-X, .pbtn.on-Threads, .pbtn.on-Facebook {
+  color: #60a5fa;
+  font-weight: 500;
+}
 
-/* ★ note, BASE は目立つようにベタ塗りに */
-.pbtn.on-note { border-color: #15803d; color: #ffffff; background: #16a34a; font-weight: 700; }
-.pbtn.on-BASE { border-color: #b91c1c; color: #ffffff; background: #dc2626; font-weight: 700; }
+/* ★ note, BASE はピンク枠で同じデザインに */
+.pbtn.on-note, .pbtn.on-BASE {
+  border-color: #f472b6;
+  color: #db2777;
+  background: rgba(244, 114, 182, 0.1);
+  font-weight: 700;
+}
 
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
