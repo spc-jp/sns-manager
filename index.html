@@ -140,9 +140,9 @@ header {
 .cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
 .cal-grid-hd { margin-bottom: 8px; }
 .cal-hd { text-align: center; font-size: 15px; font-weight: 700; padding: 10px 0; letter-spacing: 0.04em; }
-.cal-hd.hd-mon,.cal-hd.hd-tue,.cal-hd.hd-wed,.cal-hd.hd-thu,.cal-hd.hd-fri { color: var(--muted); }
-.cal-hd.hd-sat { color: #60a5fa; }
-.cal-hd.hd-sun { color: #f87171; }
+.cal-hd.hd-mon,.cal-hd.hd-tue,.cal-hd.hd-wed,.cal-hd.hd-thu,.cal-hd.hd-fri { color: #4a6078; }
+.cal-hd.hd-sat { color: #2563eb; }
+.cal-hd.hd-sun { color: #dc2626; }
 
 .cal-cell {
   min-height: 160px;
@@ -161,15 +161,15 @@ header {
 .cal-cell.other-m { opacity: 0.35; pointer-events: none; box-shadow: none; }
 
 .cal-cell.is-sat { background: rgba(96,165,250,0.06); border-color: rgba(96,165,250,0.3); }
-.cal-cell.is-sat:hover { border-color: #60a5fa; }
-.cal-cell.is-sat .cal-day { color: #2563eb; }
+.cal-cell.is-sat:hover { border-color: #3b82f6; }
+.cal-cell.is-sat .cal-day { color: #1d4ed8; }
 
 .cal-cell.is-sun { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
 .cal-cell.is-sun:hover { border-color: #ef4444; }
-.cal-cell.is-sun .cal-day { color: #dc2626; }
+.cal-cell.is-sun .cal-day { color: #b91c1c; }
 
 .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
-.cal-cell.is-hol .cal-day { color: #dc2626; }
+.cal-cell.is-hol .cal-day { color: #b91c1c; }
 
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
 
@@ -182,23 +182,23 @@ header {
   animation: flash-highlight 1.5s ease-out;
 }
 
-.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #4a6078; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
-.hol-name { font-size: 11px; color: #dc2626; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1a2b3c; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
+.hol-name { font-size: 11px; color: #b91c1c; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* 予定ドットのクリックエリアを確実にする */
 .cal-dot { 
-  font-size: 11px; padding: 3px 7px; border-radius: 5px; 
+  font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 5px; 
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
   margin-top: 4px; line-height: 1.5; cursor: pointer; 
   transition: opacity 0.2s, transform 0.1s; 
   position: relative; z-index: 10; 
 }
 .cal-dot:hover { opacity: 0.8; transform: scale(1.02); }
-.cal-dot.draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
-.cal-dot.scheduled { background: rgba(0,200,184,0.2); color: var(--cyan); }
-.cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
-.cal-dot.note-src { background: rgba(61,192,108,0.2); color: #3dc06c; }
-.cal-dot.base-src { background: rgba(232,56,13,0.2); color: #e8380d; }
+.cal-dot.draft { background: rgba(245,158,11,0.2); color: #b45309; }
+.cal-dot.scheduled { background: rgba(0,184,169,0.2); color: #00877c; }
+.cal-dot.posted { background: rgba(154,175,196,0.25); color: #334155; }
+.cal-dot.note-src { background: rgba(61,192,108,0.2); color: #15803d; }
+.cal-dot.base-src { background: rgba(232,56,13,0.2); color: #b91c1c; }
 
 .day-detail {
   background: var(--panel);
@@ -263,6 +263,33 @@ select option { background: #fff; color: var(--white); }
 .btn-clear:hover { border-color: var(--cyan); color: var(--cyan); }
 .btn-danger-form { flex: 1; padding: 13px; background: #fff; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; display: none; font-weight: 700; }
 .btn-danger-form:hover { background: rgba(239,68,68,0.05); }
+
+/* FAB (Floating Action Button) */
+.fab-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  color: #fff;
+  font-size: 32px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,184,169,0.4);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 400;
+  border: none;
+  line-height: 1;
+}
+.fab-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,184,169,0.5);
+}
 
 .edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: rgba(245,158,11,0.08); border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(245,158,11,0.3); display: none; }
 .sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
@@ -359,6 +386,14 @@ select option { background: #fff; color: var(--white); }
   .ppicker { flex-wrap: wrap; }
   .form-actions { flex-wrap: wrap; }
   .btn-save { flex: 100%; }
+  
+  .fab-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+  }
 }
 </style>
 </head>
@@ -511,6 +546,9 @@ select option { background: #fff; color: var(--white); }
   <div class="stock-grid" id="stockList"></div>
 </div>
 
+<!-- ★ 新規作成用のフローティングボタン（FAB） -->
+<button class="fab-btn" id="fabBtn" onclick="createNewPost()">＋</button>
+
 <script>
 let posts = [];
 try {
@@ -573,6 +611,13 @@ function gotoTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   if(el) el.classList.add('active');
+  
+  // ★ ネタ作成画面のときは「＋」ボタンを隠す
+  const fab = document.getElementById('fabBtn');
+  if (fab) {
+    fab.style.display = (name === 'create') ? 'none' : 'flex';
+  }
+
   if (name === 'today') renderToday();
   if (name === 'calendar') renderCalendar();
   if (name === 'stock') renderStock();
@@ -592,7 +637,7 @@ function renderToday() {
     container.innerHTML = `<div class="empty-state">
       <div class="ico">😴</div>
       <p>今日の投稿予定はありません。<br><br>
-      <span class="empty-link" onclick="gotoTabByName('create')">「ネタ作成」</span>で
+      <span class="empty-link" onclick="createNewPost()">「＋」ボタン</span>で
       今日の日時をセットして<br>投稿内容を登録しておきましょう！</p>
     </div>`;
     return;
@@ -629,6 +674,14 @@ function gotoTabByName(name) {
   if (idx > -1 && tabs[idx]) {
     gotoTab(name, tabs[idx]);
   }
+}
+
+// ★ 「＋」ボタンを押したときの処理（確実にリセットしてネタ作成へ飛ぶ）
+function createNewPost() {
+  clearForm(false);
+  gotoTabByName('create');
+  window.scrollTo(0, 0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
 async function doCopy(id) {
@@ -681,30 +734,25 @@ function markPosted(id) {
   showToast('✅ 投稿済みにしました！');
 }
 
-// ★ 削除処理の修正：削除後にカレンダーの下の詳細部分も確実に再描画する
 function delPost(id) {
   if (!confirm('この投稿を削除しますか？')) return;
   posts = posts.filter(x => x.id !== id);
   save(); 
   
-  // 各画面を確実に更新
   renderToday(); 
   renderStock(); 
-  renderCalendar(); // ここでカレンダーのドットも消える
+  renderCalendar(); 
   
-  // カレンダー画面で詳細を開いていた場合は、詳細リストも更新
   if (selDate) renderDayDetail(selDate); 
   
   showToast('🗑️ 削除しました');
   
-  // ★ ネタ作成画面での削除ボタンから呼ばれた場合、カレンダーへ戻す
   if (editId === id) {
-    clearForm(true); // フォームをリセット
+    clearForm(true); 
     gotoTabByName('calendar');
   }
 }
 
-// ★ ネタ作成の「削除」ボタン用処理
 function deleteFromEdit() {
   if (editId) {
     delPost(editId);
@@ -727,12 +775,11 @@ function editPost(id) {
   document.getElementById('editNotice').style.display = 'block';
   document.getElementById('formError').style.display = 'none';
   
-  // ★ 編集モードのときだけ「削除」ボタンを表示
   document.getElementById('btnDeleteForm').style.display = 'block'; 
   
   gotoTabByName('create');
   window.scrollTo(0,0);
-  document.getElementById('fText').focus();
+  setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
 const JP_HOLIDAYS = {
@@ -789,14 +836,12 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
-    // ★ カレンダー上の予定ドットを生成（クリックすると確実に編集画面へ移動）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
       const dotCls = isBase ? 'base-src' : isNote ? 'note-src' : p.status;
       const icon = isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
-      // onClick で event.stopPropagation() を呼び、セルの選択を防ぎつつ編集画面へ飛ばす
       return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
 
@@ -859,7 +904,6 @@ function renderDayDetail(ds) {
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
             ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
-            <!-- ★ カレンダー下の詳細から直接削除 -->
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
           </div>
         </div>`;
@@ -882,6 +926,8 @@ function addForDate(ds) {
   document.getElementById('fDate').value = ds + 'T09:00';
   setDatePickerValue(ds + 'T09:00');
   gotoTabByName('create');
+  window.scrollTo(0,0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
 // ── フォーム ──
@@ -1006,7 +1052,6 @@ function savePost() {
   }
 }
 
-// ★ クリアボタンの挙動を確実に（新規作成状態にリセットする）
 function clearForm(isAfterSave = false) {
   document.getElementById('fText').value = '';
   
@@ -1038,7 +1083,6 @@ function clearForm(isAfterSave = false) {
   editId = null;
   document.getElementById('editNotice').style.display = 'none';
   
-  // ★ クリア時は「削除」ボタンを隠す
   document.getElementById('btnDeleteForm').style.display = 'none'; 
   
   if(!isAfterSave) {
