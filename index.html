@@ -185,8 +185,15 @@ header {
 .cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #4a6078; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
 .hol-name { font-size: 11px; color: #dc2626; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.cal-dot { font-size: 11px; padding: 3px 7px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; cursor: pointer; transition: opacity 0.2s; position: relative; z-index: 2; }
-.cal-dot:hover { opacity: 0.7; }
+/* 予定ドットのクリックエリアを確実にする */
+.cal-dot { 
+  font-size: 11px; padding: 3px 7px; border-radius: 5px; 
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+  margin-top: 4px; line-height: 1.5; cursor: pointer; 
+  transition: opacity 0.2s, transform 0.1s; 
+  position: relative; z-index: 10; 
+}
+.cal-dot:hover { opacity: 0.8; transform: scale(1.02); }
 .cal-dot.draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
 .cal-dot.scheduled { background: rgba(0,200,184,0.2); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
@@ -247,10 +254,16 @@ select option { background: #fff; color: var(--white); }
 .card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: rgba(0,184,169,0.06); border-radius: 6px; border-left: 3px solid #2a9d5c; }
 .card-source.base-src { border-left-color: #c0320a; }
 .card-source a { color: var(--cyan); word-break: break-all; }
-.btn-save { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 10px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 4px; box-shadow: 0 3px 10px rgba(0,184,169,0.3); }
+
+/* ネタ作成のボタンエリア */
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-save { flex: 2; padding: 13px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 10px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 3px 10px rgba(0,184,169,0.3); }
 .btn-save:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-clear { width: 100%; padding: 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn-clear { flex: 1; padding: 13px; background: #fff; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; font-weight: 700; }
 .btn-clear:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-danger-form { flex: 1; padding: 13px; background: #fff; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; display: none; font-weight: 700; }
+.btn-danger-form:hover { background: rgba(239,68,68,0.05); }
+
 .edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: rgba(245,158,11,0.08); border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(245,158,11,0.3); display: none; }
 .sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
 .sfbtn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.18s; box-shadow: var(--shadow); }
@@ -344,6 +357,8 @@ select option { background: #fff; color: var(--white); }
   .form-row { grid-template-columns: 1fr; }
   .cal-cell { min-height: 60px; }
   .ppicker { flex-wrap: wrap; }
+  .form-actions { flex-wrap: wrap; }
+  .btn-save { flex: 100%; }
 }
 </style>
 </head>
@@ -362,15 +377,16 @@ select option { background: #fff; color: var(--white); }
   </div>
 </header>
 
+<!-- ★ デフォルトのactiveを「カレンダー」に変更 -->
 <div class="tab-bar">
-  <div class="tab active" onclick="gotoTab('today',this)">📌 今日の投稿</div>
-  <div class="tab" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
+  <div class="tab" onclick="gotoTab('today',this)">📌 今日の投稿</div>
+  <div class="tab active" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
   <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
   <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
 </div>
 
 <!-- 今日の投稿 -->
-<div id="view-today" class="view active">
+<div id="view-today" class="view">
   <div class="today-hero">
     <div>
       <div class="today-title">今日の投稿</div>
@@ -381,8 +397,8 @@ select option { background: #fff; color: var(--white); }
   <div class="today-grid" id="todayList"></div>
 </div>
 
-<!-- カレンダー -->
-<div id="view-calendar" class="view">
+<!-- ★ デフォルトでカレンダーをアクティブにする -->
+<div id="view-calendar" class="view active">
   <div class="cal-nav">
     <button class="nav-btn" onclick="chMonth(-1)">‹</button>
     <h2 id="calTitle"></h2>
@@ -400,7 +416,6 @@ select option { background: #fff; color: var(--white); }
 <div id="view-create" class="view">
   <div id="editNotice" class="edit-notice">✏️ 編集モード中です</div>
   
-  <!-- エラー表示用 -->
   <div id="formError" style="display:none; color: white; background: var(--danger); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.3);"></div>
 
   <div class="form-sec">
@@ -414,7 +429,6 @@ select option { background: #fff; color: var(--white); }
     </div>
   </div>
 
-  <!-- note/BASE選択時に表示される元ネタ欄 -->
   <div class="source-box" id="sourceBox">
     <div class="source-box-title" id="sourceBoxLabel">📝 note 掲載情報</div>
     <div class="form-sec" style="margin-bottom:10px;">
@@ -476,8 +490,13 @@ select option { background: #fff; color: var(--white); }
     <label class="flabel">メモ（自分だけ見えます）</label>
     <input type="text" id="fMemo" placeholder="例：画像あり、ハッシュタグ確認済み">
   </div>
-  <button class="btn-save" onclick="savePost()">💾 保存する</button>
-  <button class="btn-clear" onclick="clearForm(true)">クリア</button>
+  
+  <!-- ★ ボタンエリア：保存、削除（編集中のみ）、クリアの横並び -->
+  <div class="form-actions">
+    <button class="btn-save" onclick="savePost()">💾 保存する</button>
+    <button id="btnDeleteForm" class="btn-danger-form" onclick="deleteFromEdit()">🗑️ 削除</button>
+    <button class="btn-clear" onclick="clearForm(true)">クリア</button>
+  </div>
 </div>
 
 <!-- ネタ一覧 -->
@@ -493,12 +512,11 @@ select option { background: #fff; color: var(--white); }
 </div>
 
 <script>
-// ★【重要修正】プレビュー環境での localStorage エラーによるフリーズを完全に防止
 let posts = [];
 try {
   posts = JSON.parse(localStorage.getItem('sns_mgr_v2') || '[]');
 } catch (e) {
-  console.warn('プレビュー環境のため、ブラウザの保存機能(localStorage)が制限されています。一時的なメモリで動作します。');
+  console.warn('プレビュー環境のため、ブラウザの保存機能が制限されています。');
 }
 
 let selP = [];
@@ -511,13 +529,10 @@ let dpYear = new Date().getFullYear();
 let dpMonth = new Date().getMonth();
 let dpSelDate = null;
 
-// 安全な保存処理
 const save = () => {
   try {
     localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
-  } catch (e) {
-    console.warn('保存制限により、データはリロードすると消えます。');
-  }
+  } catch (e) {}
 };
 
 const WD = ['日','月','火','水','木','金','土'];
@@ -544,17 +559,15 @@ function showError(msg) {
   const el = document.getElementById('formError');
   el.textContent = '⚠️ ' + msg;
   el.style.display = 'block';
-  window.scrollTo(0, 0); // エラーに気付けるようにトップへ戻す
+  window.scrollTo(0, 0); 
   setTimeout(() => el.style.display = 'none', 4500);
 }
 
-// ヘッダー日付
 function initDate() {
   const d = new Date();
   document.getElementById('hDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
 }
 
-// タブ切替
 function gotoTab(name, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -565,7 +578,6 @@ function gotoTab(name, el) {
   if (name === 'stock') renderStock();
 }
 
-// ── 今日の投稿 ──
 function renderToday() {
   const ts = todayStr();
   const d = new Date();
@@ -619,12 +631,10 @@ function gotoTabByName(name) {
   }
 }
 
-// ★【重要修正】コピー機能のフォールバック強化
 async function doCopy(id) {
   const p = posts.find(x => x.id === id);
   if (!p) return false;
   try { 
-    // プレビュー環境で制限される可能性があるためフォールバックを用意
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(p.text); 
       return true;
@@ -671,11 +681,34 @@ function markPosted(id) {
   showToast('✅ 投稿済みにしました！');
 }
 
+// ★ 削除処理の修正：削除後にカレンダーの下の詳細部分も確実に再描画する
 function delPost(id) {
   if (!confirm('この投稿を削除しますか？')) return;
   posts = posts.filter(x => x.id !== id);
-  save(); renderToday(); renderStock(); renderCalendar();
+  save(); 
+  
+  // 各画面を確実に更新
+  renderToday(); 
+  renderStock(); 
+  renderCalendar(); // ここでカレンダーのドットも消える
+  
+  // カレンダー画面で詳細を開いていた場合は、詳細リストも更新
+  if (selDate) renderDayDetail(selDate); 
+  
   showToast('🗑️ 削除しました');
+  
+  // ★ ネタ作成画面での削除ボタンから呼ばれた場合、カレンダーへ戻す
+  if (editId === id) {
+    clearForm(true); // フォームをリセット
+    gotoTabByName('calendar');
+  }
+}
+
+// ★ ネタ作成の「削除」ボタン用処理
+function deleteFromEdit() {
+  if (editId) {
+    delPost(editId);
+  }
 }
 
 function editPost(id) {
@@ -693,12 +726,15 @@ function editPost(id) {
   setDatePickerValue(p.date || '');
   document.getElementById('editNotice').style.display = 'block';
   document.getElementById('formError').style.display = 'none';
+  
+  // ★ 編集モードのときだけ「削除」ボタンを表示
+  document.getElementById('btnDeleteForm').style.display = 'block'; 
+  
   gotoTabByName('create');
   window.scrollTo(0,0);
   document.getElementById('fText').focus();
 }
 
-// ── 日本の祝日データ（2025〜2026年） ──
 const JP_HOLIDAYS = {
   '2025-01-01':'元日','2025-01-13':'成人の日','2025-02-11':'建国記念の日',
   '2025-02-23':'天皇誕生日','2025-02-24':'天皇誕生日振替','2025-03-20':'春分の日',
@@ -715,15 +751,13 @@ const JP_HOLIDAYS = {
   '2026-10-12':'スポーツの日','2026-11-03':'文化の日','2026-11-23':'勤労感謝の日'
 };
 
-// ── カレンダー（月曜始まり） ──
 function renderCalendar() {
   document.getElementById('calTitle').textContent = `${cY}年 ${cM+1}月`;
   const today = new Date();
   const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
 
-  // 月曜始まり: 月=0, 火=1 ... 日=6
-  const rawFirst = new Date(cY, cM, 1).getDay(); // 0=日, 1=月 ...
-  const firstDay = (rawFirst + 6) % 7; // 月曜起算に変換
+  const rawFirst = new Date(cY, cM, 1).getDay(); 
+  const firstDay = (rawFirst + 6) % 7; 
   const dim = new Date(cY, cM+1, 0).getDate();
   const diPrev = new Date(cY, cM, 0).getDate();
   let total = firstDay + dim;
@@ -740,13 +774,12 @@ function renderCalendar() {
       day = i - firstDay + 1; m = cM; y = cY;
     }
 
-    // 月をまたぐ処理
     let rm = m, ry = y;
     if (rm < 0) { rm = 11; ry = y - 1; }
     if (rm > 11) { rm = 0; ry = y + 1; }
 
     const ds = `${ry}-${pad(rm+1)}-${pad(day)}`;
-    const dow = new Date(ds).getDay(); // 0=日, 6=土
+    const dow = new Date(ds).getDay(); 
     const isSat = dow === 6;
     const isSun = dow === 0;
     const holName = JP_HOLIDAYS[ds] || '';
@@ -756,13 +789,14 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
-    // ★ カレンダー上の予定ドットを生成（クリックイベントとタイトル追加）
+    // ★ カレンダー上の予定ドットを生成（クリックすると確実に編集画面へ移動）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
       const dotCls = isBase ? 'base-src' : isNote ? 'note-src' : p.status;
       const icon = isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
+      // onClick で event.stopPropagation() を呼び、セルの選択を防ぎつつ編集画面へ飛ばす
       return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
 
@@ -825,6 +859,7 @@ function renderDayDetail(ds) {
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
             ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
+            <!-- ★ カレンダー下の詳細から直接削除 -->
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
           </div>
         </div>`;
@@ -894,7 +929,6 @@ function savePost() {
   try {
     const text = document.getElementById('fText').value.trim();
     
-    // バリデーション：投稿先未選択
     if (selP.length === 0) { 
       showError('投稿先（Xやnoteなど）を1つ以上選択してください！'); 
       return; 
@@ -904,7 +938,6 @@ function savePost() {
     const srcUrl = document.getElementById('fSourceUrl').value.trim();
     const snsOnly = selP.every(p => ['X','Threads','Facebook'].includes(p));
     
-    // バリデーション：テキスト未入力
     if (snsOnly && !text) { 
       showError('投稿テキストを入力してください！'); 
       return; 
@@ -938,12 +971,11 @@ function savePost() {
     }
     
     save(); 
-    clearForm(true); // フォームをクリアして初期状態に戻す
+    clearForm(true); 
     showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
     
-    // カレンダー遷移とハイライト処理
     if (dVal) {
-      const dStr = dVal.slice(0, 10); // "YYYY-MM-DD"形式
+      const dStr = dVal.slice(0, 10); 
       if (dStr) {
         const [yy, mm, dd] = dStr.split('-');
         cY = parseInt(yy, 10);
@@ -952,15 +984,14 @@ function savePost() {
         
         gotoTabByName('calendar');
         
-        // 少し待ってからDOM描画後のセルを光らせる
         setTimeout(() => {
           const targetCell = document.getElementById(`cal-cell-${dStr}`);
           if (targetCell) {
             targetCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
             targetCell.classList.add('flash-cell');
-            setTimeout(() => targetCell.classList.remove('flash-cell'), 1600); // クラス除去
+            setTimeout(() => targetCell.classList.remove('flash-cell'), 1600); 
           } else {
-             window.scrollTo(0, 0); // セルが取得できない場合の安全策
+             window.scrollTo(0, 0); 
           }
         }, 80);
         
@@ -968,15 +999,14 @@ function savePost() {
       }
     }
     
-    // 日付がない場合はネタ一覧へ遷移
     gotoTabByName('stock');
     window.scrollTo(0, 0);
   } catch (err) {
     showError('保存中にエラーが発生しました。やり直してください。');
-    console.error(err);
   }
 }
 
+// ★ クリアボタンの挙動を確実に（新規作成状態にリセットする）
 function clearForm(isAfterSave = false) {
   document.getElementById('fText').value = '';
   
@@ -993,26 +1023,29 @@ function clearForm(isAfterSave = false) {
   if(hrSel) hrSel.value = hs;
   if(mnSel) mnSel.value = ms;
   
-  updateDatePickerLabel(); // これにより fDate に現在時刻がセットされる
+  updateDatePickerLabel(); 
   
   document.getElementById('fMemo').value = '';
-  document.getElementById('fStatus').value = 'scheduled'; // デフォルトは「予定」
+  document.getElementById('fStatus').value = 'scheduled';
   document.getElementById('fSourceTitle').value = '';
   document.getElementById('fSourceUrl').value = '';
   
-  selP = ['X']; // デフォルトで「X」を選択状態にする
+  selP = ['X']; 
   updatePbtns(); 
   updateCC(); 
   updateSourceBox();
   
   editId = null;
   document.getElementById('editNotice').style.display = 'none';
+  
+  // ★ クリア時は「削除」ボタンを隠す
+  document.getElementById('btnDeleteForm').style.display = 'none'; 
+  
   if(!isAfterSave) {
     document.getElementById('formError').style.display = 'none';
   }
 }
 
-// 元ネタ表示HTML生成
 function srcHtml(p) {
   if (!p.sourceTitle && !p.sourceUrl) return '';
   const isBase = p.platforms.includes('BASE');
@@ -1024,13 +1057,13 @@ function srcHtml(p) {
   return `<div class="${cls}">${icon} ${esc(p.sourceTitle||'')}${url}</div>`;
 }
 
-// ── ネタ一覧 ──
 function setSF(f, btn) {
   sf = f;
   document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   renderStock();
 }
+
 function renderStock() {
   const q = (document.getElementById('stockSearch')?.value || '').toLowerCase();
   const fl = posts.filter(p => {
@@ -1072,7 +1105,6 @@ function renderStock() {
   }).join('');
 }
 
-// ── カスタム日付ピッカー ──
 function initDatePicker() {
   const hourSel = document.getElementById('dpHour');
   const minSel = document.getElementById('dpMin');
@@ -1181,7 +1213,6 @@ function setDatePickerValue(val) {
   updateDatePickerLabel();
 }
 
-// パネル外クリックで閉じる
 document.addEventListener('click', e => {
   const wrap = document.getElementById('datePickerWrap');
   if (wrap && !wrap.contains(e.target)) {
@@ -1190,7 +1221,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── バックアップ・データ復元 ──
 function backupData() {
   const data = { version: 2, exportedAt: new Date().toISOString(), posts };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1228,8 +1258,10 @@ function restoreData(e) {
 // INIT
 initDate();
 initDatePicker();
-clearForm(); // ここで「現在日時」と「X」が初期セットされる
-renderToday();
+clearForm(); // フォームの初期化（削除ボタンも隠す）
+
+// ★ 初期画面を「カレンダー」に強制指定
+gotoTabByName('calendar');
 </script>
 </body>
 </html>
