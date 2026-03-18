@@ -42,7 +42,7 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-.view { display: none; padding: 20px; max-width: 680px; }
+.view { display: none; padding: 24px 32px; max-width: 1200px; }
 .view.active { display: block; }
 
 /* TODAY */
@@ -147,7 +147,57 @@ header {
 .cal-dot.scheduled { background: rgba(0,200,184,0.18); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
 
-.day-detail { margin-top: 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; animation: fadeIn 0.2s ease; }
+/* PC 2カラム: カレンダー */
+.cal-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+.cal-main {}
+.cal-side {
+  position: sticky;
+  top: 80px;
+}
+.day-detail {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 200px;
+}
+.dd-placeholder {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 40px 20px;
+  line-height: 2;
+}
+
+/* 今日の投稿: PC 2カラム */
+.today-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+}
+.today-grid .today-card { margin-bottom: 0; }
+
+/* ネタ作成: PC 広め */
+#view-create > div { max-width: 640px; }
+
+/* ネタ一覧: PC 2カラム */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 14px;
+}
+.stock-grid .stock-card { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .cal-layout { grid-template-columns: 1fr; }
+  .cal-side { position: static; }
+  .today-grid, .stock-grid { grid-template-columns: 1fr; }
+}
 .dd-title { font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
@@ -249,22 +299,28 @@ select option { background: var(--card); }
     </div>
     <div class="today-count" id="todayNum">0<span>件</span></div>
   </div>
-  <div id="todayList"></div>
+  <div class="today-grid" id="todayList"></div>
 </div>
 
 <!-- カレンダー -->
 <div id="view-calendar" class="view">
-  <div class="cal-nav">
-    <button class="nav-btn" onclick="chMonth(-1)">‹</button>
-    <h2 id="calTitle"></h2>
-    <button class="nav-btn" onclick="chMonth(1)">›</button>
+  <div class="cal-layout">
+    <div class="cal-main">
+      <div class="cal-nav">
+        <button class="nav-btn" onclick="chMonth(-1)">‹</button>
+        <h2 id="calTitle"></h2>
+        <button class="nav-btn" onclick="chMonth(1)">›</button>
+      </div>
+      <div class="cal-grid-hd">
+        <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div>
+        <div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="cal-side">
+      <div id="dayDetail"><div class="dd-placeholder">📅 日付をクリックすると<br>その日の投稿が表示されます</div></div>
+    </div>
   </div>
-  <div class="cal-grid-hd">
-    <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div>
-    <div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
-  </div>
-  <div class="cal-grid" id="calGrid"></div>
-  <div id="dayDetail" style="display:none;"></div>
 </div>
 
 <!-- ネタ作成 -->
@@ -314,7 +370,7 @@ select option { background: var(--card); }
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
-  <div id="stockList"></div>
+  <div class="stock-grid" id="stockList"></div>
 </div>
 
 <script>
@@ -520,8 +576,7 @@ function renderDayDetail(ds) {
   const dow = WD[new Date(ds).getDay()];
   const label = `${parseInt(m)}月${parseInt(d)}日（${dow}）`;
   const dp = posts.filter(p => p.date && p.date.startsWith(ds)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  const det = document.getElementById('dayDetail');
-  det.style.display = 'block';
+
 
   const cards = dp.length === 0
     ? `<div class="dd-empty">この日の投稿はありません</div>`
@@ -544,7 +599,7 @@ function renderDayDetail(ds) {
         </div>`;
       }).join('');
 
-  det.innerHTML = `<div class="dd-title">
+  document.getElementById('dayDetail').innerHTML = `<div class="dd-title">
     ${label}の投稿（${dp.length}件）
     <span class="dd-add-link" onclick="addForDate('${ds}')">＋ 追加</span>
   </div>${cards}`;
