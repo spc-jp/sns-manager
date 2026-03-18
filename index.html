@@ -81,12 +81,26 @@ header {
 .today-card.is-done { opacity: 0.5; border-style: dashed; box-shadow: none; }
 
 .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* ★ 共通バッジスタイル（リストや今日画面用） */
 .pbadge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
-.pbadge-X { background: rgba(29,161,242,0.12); color: #1a8fd1; border: 1px solid rgba(29,161,242,0.25); }
-.pbadge-Threads { background: rgba(80,80,80,0.08); color: #555; border: 1px solid rgba(80,80,80,0.18); }
-.pbadge-Facebook { background: rgba(24,119,242,0.12); color: #1565c0; border: 1px solid rgba(24,119,242,0.25); }
-.pbadge-note { background: rgba(61,192,108,0.12); color: #2a9d5c; border: 1px solid rgba(61,192,108,0.25); }
-.pbadge-BASE { background: rgba(232,56,13,0.1); color: #c0320a; border: 1px solid rgba(232,56,13,0.22); }
+
+/* ★ X, Threads, FB のバッジ（背景なし・青文字） */
+.pbadge-X, .pbadge-Threads, .pbadge-Facebook {
+  background: transparent !important;
+  border: none !important;
+  color: #3b82f6 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+}
+
+/* ★ note, BASE のバッジ（ピンク枠） */
+.pbadge-note, .pbadge-BASE {
+  background: rgba(244, 114, 182, 0.1) !important;
+  border: 1px solid #f472b6 !important;
+  color: #db2777 !important;
+}
+
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
 .done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(154,175,196,0.18); color: var(--posted); border: 1px solid rgba(154,175,196,0.3); }
 
@@ -173,7 +187,6 @@ header {
 
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
 
-/* 追加時フラッシュアニメーション */
 @keyframes flash-highlight {
   0% { box-shadow: 0 0 0 4px var(--cyan); transform: scale(1.03); background-color: rgba(0, 184, 169, 0.15); z-index: 10; }
   100% { box-shadow: var(--shadow); transform: scale(1); background-color: var(--card); z-index: 1; }
@@ -185,20 +198,31 @@ header {
 .cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1a2b3c; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
 .hol-name { font-size: 11px; color: #b91c1c; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* 予定ドットのクリックエリアを確実にする */
+/* ★ カレンダーのドット表示共通 */
 .cal-dot { 
-  font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 5px; 
+  font-size: 12px; font-weight: 700; padding: 3px 7px; border-radius: 5px; 
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
   margin-top: 4px; line-height: 1.5; cursor: pointer; 
   transition: opacity 0.2s, transform 0.1s; 
   position: relative; z-index: 10; 
 }
 .cal-dot:hover { opacity: 0.8; transform: scale(1.02); }
-.cal-dot.draft { background: rgba(245,158,11,0.2); color: #b45309; }
-.cal-dot.scheduled { background: rgba(0,184,169,0.2); color: #00877c; }
-.cal-dot.posted { background: rgba(154,175,196,0.25); color: #334155; }
-.cal-dot.note-src { background: rgba(61,192,108,0.2); color: #15803d; }
-.cal-dot.base-src { background: rgba(232,56,13,0.2); color: #b91c1c; }
+
+/* ★ カレンダー：SNS3つは「枠線なし・背景なし・青文字」 */
+.cal-dot.sns-src {
+  background: transparent !important;
+  border: none !important;
+  color: #3b82f6 !important; /* 青文字 */
+  padding-left: 2px !important;
+}
+
+/* ★ カレンダー：note, BASE は「ピンク枠・ピンク背景」 */
+.cal-dot.pink-src {
+  background: rgba(244, 114, 182, 0.1) !important;
+  border: 1px solid #f472b6 !important;
+  color: #db2777 !important;
+}
+
 
 .day-detail {
   background: var(--panel);
@@ -241,21 +265,28 @@ select option { background: #fff; color: var(--white); }
 .ppicker { display: flex; gap: 8px; flex-wrap: wrap; }
 .pbtn { flex: 1; min-width: 90px; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: #f7fafd; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
 
-/* ★ SNS3つは枠・背景なし、文字を細めに */
+/* ★ フォームボタン：SNS3つは常に枠・背景なし */
 .pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"] {
   border-color: transparent !important;
-  background: transparent !important;
-  font-weight: 400 !important;
-  color: var(--muted) !important;
+  background-color: transparent !important;
   box-shadow: none !important;
 }
-/* ★ 選択時は枠なしで薄いブルーに */
+
+/* ★ フォームボタン：SNS3つの未選択時はグレーの細文字 */
+.pbtn[data-p="X"]:not([class*="on-"]),
+.pbtn[data-p="Threads"]:not([class*="on-"]),
+.pbtn[data-p="Facebook"]:not([class*="on-"]) {
+  color: var(--muted) !important;
+  font-weight: 400 !important;
+}
+
+/* ★ フォームボタン：SNS3つの選択時は薄いブルーの青文字 */
 .pbtn.on-X, .pbtn.on-Threads, .pbtn.on-Facebook {
-  color: #60a5fa !important;
+  color: #3b82f6 !important;
   font-weight: 700 !important;
 }
 
-/* ★ note, BASE はピンク枠で同じデザインに */
+/* ★ フォームボタン：note, BASE はピンク枠で同じデザインに */
 .pbtn.on-note, .pbtn.on-BASE {
   border-color: #f472b6 !important;
   color: #db2777 !important;
@@ -266,11 +297,14 @@ select option { background: #fff; color: var(--white); }
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
 .char-cc.over { color: var(--danger); }
+
+/* 元ネタ情報ボックス */
 .source-box { background: rgba(0,184,169,0.05); border: 1px solid rgba(0,184,169,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: none; }
 .source-box.show { display: block; }
 .source-box-title { font-size: 12px; font-weight: 700; color: var(--cyan); margin-bottom: 10px; letter-spacing: 0.05em; }
-.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: rgba(0,184,169,0.06); border-radius: 6px; border-left: 3px solid #2a9d5c; }
-.card-source.base-src { border-left-color: #c0320a; }
+
+/* ★ リスト内に表示されるリンク表示部分もピンクに統一 */
+.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: rgba(244, 114, 182, 0.05); border-radius: 6px; border-left: 3px solid #f472b6; }
 .card-source a { color: var(--cyan); word-break: break-all; }
 
 /* ネタ作成のボタンエリア */
@@ -854,10 +888,12 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
+    // ★ カレンダー上のドット表示（X, Threads, FBは青文字、note/BASEはピンク枠に統一）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
-      const dotCls = isBase ? 'base-src' : isNote ? 'note-src' : p.status;
+      const isPink = isNote || isBase;
+      const dotCls = isPink ? 'pink-src' : 'sns-src';
       const icon = isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
       return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
@@ -917,7 +953,7 @@ function renderDayDetail(ds) {
             <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':'済み'}</div>
           </div>
           <div class="dd-text">${esc(p.text)}</div>
-          ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(0,0,0,0.2);border-radius:5px;border-left:3px solid ${p.platforms.includes('BASE')?'#e8380d':'#3dc06c'}">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
+          ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(244, 114, 182, 0.05);border-radius:5px;border-left:3px solid #f472b6">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
@@ -970,13 +1006,13 @@ function updateSourceBox() {
     box.classList.add('show');
     if (hasNote && hasBase) {
       lbl.textContent = '📝 note / 🛒 BASE 掲載情報';
-      box.style.borderColor = 'rgba(61,192,108,0.35)';
+      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
     } else if (hasBase) {
       lbl.textContent = '🛒 BASE 商品・掲載情報';
-      box.style.borderColor = 'rgba(232,56,13,0.35)';
+      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
     } else {
       lbl.textContent = '📝 note 掲載情報';
-      box.style.borderColor = 'rgba(61,192,108,0.35)';
+      box.style.borderColor = 'rgba(244, 114, 182, 0.4)';
     }
   } else {
     box.classList.remove('show');
