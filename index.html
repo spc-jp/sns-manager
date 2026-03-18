@@ -127,22 +127,50 @@ header {
 .empty-link { color: var(--cyan); cursor: pointer; text-decoration: underline; }
 
 /* CALENDAR */
-.cal-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-.cal-nav h2 { font-size: 16px; font-weight: 700; }
-.nav-btn { width: 30px; height: 30px; background: var(--card); border: 1px solid var(--border); border-radius: 7px; color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+/* ── CALENDAR ── */
+.cal-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.cal-nav h2 { font-size: 20px; font-weight: 700; }
+.nav-btn { width: 34px; height: 34px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-.cal-grid-hd { margin-bottom: 5px; }
-.cal-hd { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 5px 0; letter-spacing: 0.06em; }
-.cal-cell { min-height: 80px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 7px 5px 5px; cursor: pointer; transition: border-color 0.18s; }
-.cal-cell:hover { border-color: var(--cyan); }
-.cal-cell.is-today { border-color: var(--cyan); background: rgba(0,200,184,0.1); }
+.cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-grid-hd { margin-bottom: 6px; }
+.cal-hd { text-align: center; font-size: 12px; font-weight: 700; padding: 6px 0; letter-spacing: 0.06em; }
+.cal-hd.hd-mon, .cal-hd.hd-tue, .cal-hd.hd-wed, .cal-hd.hd-thu, .cal-hd.hd-fri { color: var(--muted); }
+.cal-hd.hd-sat { color: #60a5fa; }
+.cal-hd.hd-sun { color: #f87171; }
+
+.cal-cell {
+  min-height: 110px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 8px 6px;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.cal-cell:hover { border-color: var(--cyan); background: rgba(0,200,184,0.04); }
+.cal-cell.is-today  { border-color: var(--cyan); background: rgba(0,200,184,0.1); }
 .cal-cell.is-selected { border-color: var(--blue); background: rgba(0,144,224,0.1); }
-.cal-cell.other-m { opacity: 0.3; pointer-events: none; }
-.cal-day { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 5px; }
-.cal-cell.is-today .cal-day { color: var(--cyan); font-weight: 700; }
-.cal-dot { font-size: 9px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; line-height: 1.4; }
+.cal-cell.other-m { opacity: 0.28; pointer-events: none; }
+
+/* 土曜 */
+.cal-cell.is-sat { background: rgba(96,165,250,0.06); border-color: rgba(96,165,250,0.25); }
+.cal-cell.is-sat:hover { border-color: #60a5fa; }
+.cal-cell.is-sat .cal-day { color: #60a5fa; }
+
+/* 日曜・祝日 */
+.cal-cell.is-sun, .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.25); }
+.cal-cell.is-sun:hover, .cal-cell.is-hol:hover { border-color: #f87171; }
+.cal-cell.is-sun .cal-day, .cal-cell.is-hol .cal-day { color: #f87171; }
+
+/* 今日は優先してcyan */
+.cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
+
+.cal-day { font-size: 14px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+.hol-name { font-size: 9px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68px; }
+
+.cal-dot { font-size: 10px; padding: 2px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; line-height: 1.5; }
 .cal-dot.draft { background: rgba(245,158,11,0.18); color: #f59e0b; }
 .cal-dot.scheduled { background: rgba(0,200,184,0.18); color: var(--cyan); }
 .cal-dot.posted { background: rgba(75,98,128,0.2); color: var(--posted); }
@@ -312,8 +340,8 @@ select option { background: var(--card); }
         <button class="nav-btn" onclick="chMonth(1)">›</button>
       </div>
       <div class="cal-grid-hd">
-        <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div>
-        <div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
+        <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
+        <div class="cal-hd hd-thu">木</div><div class="cal-hd hd-fri">金</div><div class="cal-hd hd-sat">土</div><div class="cal-hd hd-sun">日</div>
       </div>
       <div class="cal-grid" id="calGrid"></div>
     </div>
@@ -524,12 +552,32 @@ function editPost(id) {
   document.getElementById('fText').focus();
 }
 
-// ── カレンダー ──
+// ── 日本の祝日データ（2025〜2026年） ──
+const JP_HOLIDAYS = {
+  '2025-01-01':'元日','2025-01-13':'成人の日','2025-02-11':'建国記念の日',
+  '2025-02-23':'天皇誕生日','2025-02-24':'天皇誕生日振替','2025-03-20':'春分の日',
+  '2025-04-29':'昭和の日','2025-05-03':'憲法記念日','2025-05-04':'みどりの日',
+  '2025-05-05':'こどもの日','2025-05-06':'こどもの日振替','2025-07-21':'海の日',
+  '2025-08-11':'山の日','2025-09-15':'敬老の日','2025-09-23':'秋分の日',
+  '2025-10-13':'スポーツの日','2025-11-03':'文化の日','2025-11-23':'勤労感謝の日',
+  '2025-11-24':'勤労感謝の日振替',
+  '2026-01-01':'元日','2026-01-12':'成人の日','2026-02-11':'建国記念の日',
+  '2026-02-23':'天皇誕生日','2026-03-20':'春分の日','2026-04-29':'昭和の日',
+  '2026-05-03':'憲法記念日','2026-05-04':'みどりの日','2026-05-05':'こどもの日',
+  '2026-05-06':'こどもの日振替','2026-07-20':'海の日','2026-08-11':'山の日',
+  '2026-09-21':'敬老の日','2026-09-22':'国民の休日','2026-09-23':'秋分の日',
+  '2026-10-12':'スポーツの日','2026-11-03':'文化の日','2026-11-23':'勤労感謝の日'
+};
+
+// ── カレンダー（月曜始まり） ──
 function renderCalendar() {
   document.getElementById('calTitle').textContent = `${cY}年 ${cM+1}月`;
   const today = new Date();
   const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-  const firstDay = new Date(cY, cM, 1).getDay();
+
+  // 月曜始まり: 月=0, 火=1 ... 日=6
+  const rawFirst = new Date(cY, cM, 1).getDay(); // 0=日, 1=月 ...
+  const firstDay = (rawFirst + 6) % 7; // 月曜起算に変換
   const dim = new Date(cY, cM+1, 0).getDate();
   const diPrev = new Date(cY, cM, 0).getDate();
   let total = firstDay + dim;
@@ -538,19 +586,45 @@ function renderCalendar() {
   let html = '';
   for (let i = 0; i < total; i++) {
     let day, m, y, other = false;
-    if (i < firstDay) { day = diPrev - firstDay + i + 1; m = cM - 1; y = cY; other = true; }
-    else if (i >= firstDay + dim) { day = i - firstDay - dim + 1; m = cM + 1; y = cY; other = true; }
-    else { day = i - firstDay + 1; m = cM; y = cY; }
+    if (i < firstDay) {
+      day = diPrev - firstDay + i + 1; m = cM - 1; y = cY; other = true;
+    } else if (i >= firstDay + dim) {
+      day = i - firstDay - dim + 1; m = cM + 1; y = cY; other = true;
+    } else {
+      day = i - firstDay + 1; m = cM; y = cY;
+    }
 
-    const ds = `${y}-${pad(m+1)}-${pad(day)}`;
+    // 月をまたぐ処理
+    let rm = m, ry = y;
+    if (rm < 0) { rm = 11; ry = y - 1; }
+    if (rm > 11) { rm = 0; ry = y + 1; }
+
+    const ds = `${ry}-${pad(rm+1)}-${pad(day)}`;
+    const dow = new Date(ds).getDay(); // 0=日, 6=土
+    const isSat = dow === 6;
+    const isSun = dow === 0;
+    const holName = JP_HOLIDAYS[ds] || '';
+    const isHol = !!holName;
     const isToday = ds === tsToday;
     const isSel = ds === selDate;
+
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
-    const dots = dp.slice(0,4).map(p =>
-      `<div class="cal-dot ${p.status}">${p.platforms[0]?.charAt(0)} ${p.text.slice(0,7)}</div>`
+    const dots = dp.slice(0, 4).map(p =>
+      `<div class="cal-dot ${p.status}">${p.platforms[0]?.charAt(0)} ${p.text.slice(0,8)}</div>`
     ).join('');
-    html += `<div class="cal-cell ${other?'other-m':''} ${isToday?'is-today':''} ${isSel?'is-selected':''}" onclick="pickDate('${ds}')">
-      <div class="cal-day">${day}</div>
+
+    const classes = [
+      other ? 'other-m' : '',
+      isToday ? 'is-today' : '',
+      isSel ? 'is-selected' : '',
+      isSat && !other ? 'is-sat' : '',
+      (isSun || isHol) && !other ? 'is-sun' : ''
+    ].filter(Boolean).join(' ');
+
+    const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
+
+    html += `<div class="cal-cell ${classes}" onclick="pickDate('${ds}')">
+      <div class="cal-day">${day}${holTag}</div>
       ${dots}
     </div>`;
   }
@@ -573,8 +647,11 @@ function pickDate(ds) {
 
 function renderDayDetail(ds) {
   const [y, m, d] = ds.split('-');
-  const dow = WD[new Date(ds).getDay()];
-  const label = `${parseInt(m)}月${parseInt(d)}日（${dow}）`;
+  const dow = new Date(ds).getDay();
+  const dowLabel = ['日','月','火','水','木','金','土'][dow];
+  const holName = JP_HOLIDAYS[ds] || '';
+  const holStr = holName ? ` 🎌${holName}` : '';
+  const label = `${parseInt(m)}月${parseInt(d)}日（${dowLabel}）${holStr}`;
   const dp = posts.filter(p => p.date && p.date.startsWith(ds)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
 
 
