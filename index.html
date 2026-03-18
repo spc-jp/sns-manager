@@ -7,18 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07111f;
-  --panel: #0d1f35;
-  --card: #112240;
-  --border: #1e3a5f;
-  --cyan: #00c8b8;
+  --bg: #e8eef6;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --border: #d0dae8;
+  --border-light: #e4ecf5;
+  --cyan: #00b8a9;
   --blue: #0090e0;
-  --white: #e8f4f8;
-  --muted: #7a9bb5;
+  --white: #1a2b3c;
+  --muted: #7a8fa8;
   --draft: #f59e0b;
-  --scheduled: #00c8b8;
-  --posted: #4b6280;
+  --scheduled: #00b8a9;
+  --posted: #9aafc4;
   --danger: #ef4444;
+  --shadow: 0 2px 8px rgba(0,80,160,0.08);
+  --shadow-hover: 0 4px 16px rgba(0,80,160,0.13);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; }
@@ -26,19 +29,21 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 header {
   background: var(--panel);
   border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  height: 52px;
+  padding: 0 24px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,80,160,0.07);
 }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; color: var(--cyan); }
-.logo-icon { width: 30px; height: 30px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--white); }
+.logo span { color: var(--cyan); }
+.logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .header-date { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
 
-.tab-bar { display: flex; background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 20px; overflow-x: auto; }
-.tab { padding: 13px 18px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab-bar { display: flex; background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 24px; overflow-x: auto; }
+.tab { padding: 14px 20px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
@@ -47,14 +52,15 @@ header {
 
 /* TODAY */
 .today-hero {
-  background: linear-gradient(135deg, rgba(0,200,184,0.12), rgba(0,144,224,0.08));
-  border: 1px solid rgba(0,200,184,0.3);
+  background: linear-gradient(135deg, rgba(0,184,169,0.1), rgba(0,144,224,0.07));
+  border: 1px solid rgba(0,184,169,0.25);
   border-radius: 14px;
-  padding: 18px 20px;
+  padding: 18px 24px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: var(--shadow);
 }
 .today-title { font-size: 18px; font-weight: 700; color: var(--cyan); }
 .today-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
@@ -67,21 +73,22 @@ header {
   border-radius: 12px;
   padding: 18px;
   margin-bottom: 14px;
-  transition: border-color 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
   animation: fadeIn 0.25s ease;
+  box-shadow: var(--shadow);
 }
-.today-card:hover { border-color: rgba(0,200,184,0.5); }
-.today-card.is-done { opacity: 0.45; border-style: dashed; }
+.today-card:hover { box-shadow: var(--shadow-hover); border-color: var(--cyan); }
+.today-card.is-done { opacity: 0.5; border-style: dashed; box-shadow: none; }
 
 .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .pbadge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
-.pbadge-X { background: rgba(29,161,242,0.15); color: #1da1f2; border: 1px solid rgba(29,161,242,0.3); }
-.pbadge-Threads { background: rgba(200,200,200,0.1); color: #ccc; border: 1px solid rgba(200,200,200,0.2); }
-.pbadge-Facebook { background: rgba(24,119,242,0.15); color: #1877f2; border: 1px solid rgba(24,119,242,0.3); }
-.pbadge-note { background: rgba(61,192,108,0.15); color: #3dc06c; border: 1px solid rgba(61,192,108,0.3); }
-.pbadge-BASE { background: rgba(232,56,13,0.15); color: #e8380d; border: 1px solid rgba(232,56,13,0.3); }
+.pbadge-X { background: rgba(29,161,242,0.12); color: #1a8fd1; border: 1px solid rgba(29,161,242,0.25); }
+.pbadge-Threads { background: rgba(80,80,80,0.08); color: #555; border: 1px solid rgba(80,80,80,0.18); }
+.pbadge-Facebook { background: rgba(24,119,242,0.12); color: #1565c0; border: 1px solid rgba(24,119,242,0.25); }
+.pbadge-note { background: rgba(61,192,108,0.12); color: #2a9d5c; border: 1px solid rgba(61,192,108,0.25); }
+.pbadge-BASE { background: rgba(232,56,13,0.1); color: #c0320a; border: 1px solid rgba(232,56,13,0.22); }
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(75,98,128,0.3); color: var(--posted); border: 1px solid rgba(75,98,128,0.4); }
+.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(154,175,196,0.18); color: var(--posted); border: 1px solid rgba(154,175,196,0.3); }
 
 .text-box {
   font-size: 14px;
@@ -89,17 +96,17 @@ header {
   color: var(--white);
   white-space: pre-wrap;
   word-break: break-word;
-  background: rgba(0,0,0,0.25);
-  border: 1px solid transparent;
+  background: #f4f7fb;
+  border: 1px solid var(--border-light);
   border-radius: 9px;
   padding: 13px 14px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   user-select: text;
 }
-.text-box:hover { border-color: rgba(0,200,184,0.3); }
-.text-box.flash { border-color: var(--cyan); background: rgba(0,200,184,0.06); }
+.text-box:hover { border-color: var(--cyan); background: rgba(0,184,169,0.04); }
+.text-box.flash { border-color: var(--cyan); background: rgba(0,184,169,0.08); }
 
 .memo-line { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
 .card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -108,7 +115,7 @@ header {
   padding: 7px 15px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: transparent;
+  background: #fff;
   color: var(--muted);
   font-size: 12px;
   font-family: 'Noto Sans JP', sans-serif;
@@ -117,11 +124,11 @@ header {
   transition: all 0.2s;
   display: flex; align-items: center; gap: 5px;
 }
-.abtn:hover { border-color: var(--cyan); color: var(--cyan); }
+.abtn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.05); }
 .abtn.primary { background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; color: #fff; font-size: 13px; padding: 8px 20px; }
-.abtn.primary:hover { opacity: 0.85; transform: translateY(-1px); }
-.abtn.copied { background: rgba(0,200,184,0.12); border-color: var(--cyan); color: var(--cyan); }
-.abtn.danger:hover { border-color: var(--danger); color: var(--danger); }
+.abtn.primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.abtn.copied { background: rgba(0,184,169,0.1); border-color: var(--cyan); color: var(--cyan); }
+.abtn.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.05); }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 .empty-state .ico { font-size: 48px; margin-bottom: 14px; }
@@ -144,28 +151,29 @@ header {
   border-radius: 10px;
   padding: 12px 12px 8px;
   cursor: pointer;
-  transition: border-color 0.18s, background 0.18s;
+  transition: box-shadow 0.18s, border-color 0.18s;
+  box-shadow: var(--shadow);
 }
-.cal-cell:hover { border-color: var(--cyan); background: rgba(0,200,184,0.04); }
-.cal-cell.is-today { border-color: var(--cyan); border-width: 2px; background: rgba(0,200,184,0.1); }
-.cal-cell.is-selected { border-color: var(--blue); border-width: 2px; background: rgba(0,144,224,0.1); }
-.cal-cell.other-m { opacity: 0.25; pointer-events: none; }
+.cal-cell:hover { border-color: var(--cyan); box-shadow: var(--shadow-hover); }
+.cal-cell.is-today { border-color: var(--cyan); border-width: 2px; background: rgba(0,184,169,0.07); }
+.cal-cell.is-selected { border-color: var(--blue); border-width: 2px; background: rgba(0,144,224,0.07); }
+.cal-cell.other-m { opacity: 0.35; pointer-events: none; box-shadow: none; }
 
-.cal-cell.is-sat { background: rgba(96,165,250,0.07); border-color: rgba(96,165,250,0.3); }
+.cal-cell.is-sat { background: rgba(96,165,250,0.06); border-color: rgba(96,165,250,0.3); }
 .cal-cell.is-sat:hover { border-color: #60a5fa; }
-.cal-cell.is-sat .cal-day { color: #60a5fa; }
+.cal-cell.is-sat .cal-day { color: #2563eb; }
 
-.cal-cell.is-sun { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.3); }
-.cal-cell.is-sun:hover { border-color: #f87171; }
-.cal-cell.is-sun .cal-day { color: #f87171; }
+.cal-cell.is-sun { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
+.cal-cell.is-sun:hover { border-color: #ef4444; }
+.cal-cell.is-sun .cal-day { color: #dc2626; }
 
-.cal-cell.is-hol { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.3); }
-.cal-cell.is-hol .cal-day { color: #f87171; }
+.cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
+.cal-cell.is-hol .cal-day { color: #dc2626; }
 
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
 
-.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
-.hol-name { font-size: 11px; color: #f87171; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #4a6078; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
+.hol-name { font-size: 11px; color: #dc2626; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .cal-dot { font-size: 11px; padding: 3px 7px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; line-height: 1.5; }
 .cal-dot.draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
@@ -185,118 +193,139 @@ header {
 .dd-title { font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
-.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; transition: border-color 0.2s; flex: 1 1 360px; }
-.dd-card:hover { border-color: rgba(0,200,184,0.4); }
+.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #f7fafd; border: 1px solid var(--border); border-radius: 9px; transition: box-shadow 0.2s, border-color 0.2s; flex: 1 1 360px; }
+.dd-card:hover { border-color: var(--cyan); box-shadow: var(--shadow); }
 .dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
 .dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
 .dd-actions { display: flex; flex-direction: column; gap: 5px; }
-.smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
 .smbtn:hover { border-color: var(--cyan); color: var(--cyan); }
 .smbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
 
 /* 今日の投稿 */
 .today-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
 .today-grid .today-card { margin-bottom: 0; }
-
 /* ネタ作成 */
 #view-create > * { max-width: 660px; }
-
 /* ネタ一覧 */
 .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 14px; }
 .stock-grid .stock-card { margin-bottom: 0; }
 
-/* CREATE FORM */
+/* フォーム */
 .form-sec { margin-bottom: 16px; }
 .flabel { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
-input[type=text], input[type=datetime-local], textarea, select { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 9px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 10px 13px; outline: none; transition: border-color 0.2s; }
-input:focus, textarea:focus, select:focus { border-color: var(--cyan); }
-input[type=datetime-local] { color-scheme: dark; }
+input[type=text], input[type=datetime-local], textarea, select { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 9px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 10px 13px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04); }
+input:focus, textarea:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,184,169,0.12); }
+input[type=datetime-local] { color-scheme: light; }
 textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
-select option { background: var(--card); }
+select option { background: #fff; color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-.ppicker { display: flex; gap: 8px; }
-.pbtn { flex: 1; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
-.pbtn.on-X { border-color: #1da1f2; color: #1da1f2; background: rgba(29,161,242,0.1); }
-.pbtn.on-Threads { border-color: #aaa; color: #ddd; background: rgba(255,255,255,0.06); }
-.pbtn.on-Facebook { border-color: #1877f2; color: #1877f2; background: rgba(24,119,242,0.1); }
-.pbtn.on-note { border-color: #3dc06c; color: #3dc06c; background: rgba(61,192,108,0.1); }
-.pbtn.on-BASE { border-color: #e8380d; color: #e8380d; background: rgba(232,56,13,0.1); }
-
+.ppicker { display: flex; gap: 8px; flex-wrap: wrap; }
+.pbtn { flex: 1; min-width: 90px; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: #f7fafd; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
+.pbtn.on-X { border-color: #1a8fd1; color: #1a8fd1; background: rgba(29,161,242,0.08); }
+.pbtn.on-Threads { border-color: #666; color: #444; background: rgba(80,80,80,0.07); }
+.pbtn.on-Facebook { border-color: #1565c0; color: #1565c0; background: rgba(24,119,242,0.08); }
+.pbtn.on-note { border-color: #2a9d5c; color: #2a9d5c; background: rgba(61,192,108,0.08); }
+.pbtn.on-BASE { border-color: #c0320a; color: #c0320a; background: rgba(232,56,13,0.08); }
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
 .char-cc.over { color: var(--danger); }
-
-/* 元ネタ情報欄 */
-.source-box {
-  background: rgba(61,192,108,0.06);
-  border: 1px solid rgba(61,192,108,0.25);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  display: none;
-}
+.source-box { background: rgba(0,184,169,0.05); border: 1px solid rgba(0,184,169,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: none; }
 .source-box.show { display: block; }
-.source-box-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #3dc06c;
-  margin-bottom: 10px;
-  letter-spacing: 0.05em;
-}
-.source-link {
-  font-size: 12px;
-  color: var(--cyan);
-  word-break: break-all;
-}
-.source-link a { color: var(--cyan); }
-
-/* カード内の元ネタ表示 */
-.card-source {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 10px;
-  padding: 6px 10px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 6px;
-  border-left: 3px solid #3dc06c;
-}
-.card-source.base-src { border-left-color: #e8380d; }
+.source-box-title { font-size: 12px; font-weight: 700; color: var(--cyan); margin-bottom: 10px; letter-spacing: 0.05em; }
+.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: rgba(0,184,169,0.06); border-radius: 6px; border-left: 3px solid #2a9d5c; }
+.card-source.base-src { border-left-color: #c0320a; }
 .card-source a { color: var(--cyan); word-break: break-all; }
-
-.btn-save { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 10px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 4px; }
+.btn-save { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 10px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 4px; box-shadow: 0 3px 10px rgba(0,184,169,0.3); }
 .btn-save:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-clear { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn-clear { width: 100%; padding: 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
 .btn-clear:hover { border-color: var(--cyan); color: var(--cyan); }
-.edit-notice { font-size: 12px; color: var(--draft); padding: 9px 14px; background: rgba(245,158,11,0.1); border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(245,158,11,0.25); display: none; }
-
-/* STOCK */
+.edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: rgba(245,158,11,0.08); border-radius: 8px; margin-bottom: 14px; border: 1px solid rgba(245,158,11,0.3); display: none; }
 .sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-.sfbtn { padding: 5px 13px; border-radius: 16px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.18s; }
-.sfbtn.on { background: var(--cyan); border-color: var(--cyan); color: var(--bg); font-weight: 700; }
+.sfbtn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.18s; box-shadow: var(--shadow); }
+.sfbtn.on { background: var(--cyan); border-color: var(--cyan); color: #fff; font-weight: 700; }
 .sfbtn:hover:not(.on) { border-color: var(--cyan); color: var(--cyan); }
-.sf-srch { margin-left: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; padding: 5px 14px; width: 160px; outline: none; }
+.sf-srch { margin-left: auto; background: #fff; border: 1px solid var(--border); border-radius: 16px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; padding: 6px 14px; width: 180px; outline: none; box-shadow: var(--shadow); }
 .sf-srch:focus { border-color: var(--cyan); }
-.stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 14px 16px; margin-bottom: 10px; animation: fadeIn 0.25s ease; transition: border-color 0.18s; }
-.stock-card:hover { border-color: rgba(0,200,184,0.4); }
+.stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 16px 18px; animation: fadeIn 0.25s ease; transition: box-shadow 0.18s, border-color 0.18s; box-shadow: var(--shadow); }
+.stock-card:hover { box-shadow: var(--shadow-hover); border-color: var(--cyan); }
 .sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
 .spill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-.spill-draft { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-.spill-scheduled { background: rgba(0,200,184,0.15); color: var(--cyan); border: 1px solid rgba(0,200,184,0.3); }
-.spill-posted { background: rgba(75,98,128,0.2); color: var(--posted); border: 1px solid rgba(75,98,128,0.35); }
+.spill-draft { background: rgba(245,158,11,0.12); color: #b45309; border: 1px solid rgba(245,158,11,0.3); }
+.spill-scheduled { background: rgba(0,184,169,0.12); color: var(--cyan); border: 1px solid rgba(0,184,169,0.3); }
+.spill-posted { background: rgba(154,175,196,0.15); color: var(--posted); border: 1px solid rgba(154,175,196,0.3); }
 .sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
 .sc-actions { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
-.scbtn { padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.18s; }
+.scbtn { padding: 5px 12px; border-radius: 7px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.18s; }
 .scbtn:hover { border-color: var(--cyan); color: var(--cyan); }
 .scbtn.danger:hover { border-color: var(--danger); color: var(--danger); }
-.scbtn.copied { background: rgba(0,200,184,0.1); border-color: var(--cyan); color: var(--cyan); }
+.scbtn.copied { background: rgba(0,184,169,0.1); border-color: var(--cyan); color: var(--cyan); }
 .sc-chars { margin-left: auto; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--cyan); color: var(--bg); padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 700; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; }
+/* ヘッダー右側 */
+.header-right { display: flex; align-items: center; gap: 10px; }
+.hdr-btn {
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: #f4f7fb;
+  color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 700; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.hdr-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.06); }
+.hdr-btn.accent { background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; color: #fff; box-shadow: 0 2px 8px rgba(0,184,169,0.3); }
+.hdr-btn.accent:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* カスタム日付ピッカー */
+.date-picker-wrap { position: relative; }
+.date-picker-btn {
+  width: 100%; padding: 10px 13px; background: #fff;
+  border: 1px solid var(--border); border-radius: 9px;
+  color: var(--white); font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px; text-align: left; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+}
+.date-picker-btn:hover, .date-picker-btn.open { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,184,169,0.12); }
+.date-picker-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 500;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; width: 310px;
+  box-shadow: 0 8px 32px rgba(0,60,120,0.14);
+  animation: fadeIn 0.18s ease;
+}
+.dp-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-weight: 700; font-size: 14px; color: var(--white); }
+.dp-cal-nav button { width: 28px; height: 28px; border: 1px solid var(--border); background: #f4f7fb; border-radius: 7px; cursor: pointer; font-size: 15px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.dp-cal-nav button:hover { border-color: var(--cyan); color: var(--cyan); }
+.dp-cal-hd { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
+.dp-cal-hd span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 4px 0; }
+.dp-cal-hd .sat { color: #2563eb; }
+.dp-cal-hd .sun { color: #dc2626; }
+.dp-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.dp-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 7px; font-size: 13px; font-family: 'DM Mono', monospace;
+  cursor: pointer; color: var(--white); transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.dp-day:hover { background: rgba(0,184,169,0.1); border-color: var(--cyan); }
+.dp-day.other { color: #c0d0e0; pointer-events: none; }
+.dp-day.today { border-color: var(--cyan); color: var(--cyan); font-weight: 700; }
+.dp-day.selected { background: var(--cyan); color: #fff !important; font-weight: 700; border-color: var(--cyan); }
+.dp-day.sat { color: #2563eb; }
+.dp-day.sun { color: #dc2626; }
+.dp-time-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dp-time-label { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.dp-time-row select { width: auto; flex: 1; padding: 7px 8px; font-size: 13px; border-radius: 8px; }
+.dp-ok-btn { flex: 1; padding: 8px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border: none; border-radius: 8px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+.dp-ok-btn:hover { opacity: 0.88; }
+.dp-clear-btn { padding: 8px 14px; background: #f4f7fb; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.dp-clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--cyan); color: #fff; padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 700; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 4px 16px rgba(0,184,169,0.4); }
 @keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 @keyframes tout { to { opacity: 0; } }
 
@@ -314,7 +343,12 @@ select option { background: var(--card); }
     <div class="logo-icon">📅</div>
     SNS投稿マネージャー
   </div>
-  <div class="header-date" id="hDate"></div>
+  <div class="header-right">
+    <div class="header-date" id="hDate"></div>
+    <button class="hdr-btn" onclick="backupData()">⬇️ バックアップ</button>
+    <button class="hdr-btn accent" onclick="document.getElementById('restoreFile').click()">⬆️ データ復元</button>
+    <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
+  </div>
 </header>
 
 <div class="tab-bar">
@@ -387,7 +421,33 @@ select option { background: var(--card); }
   <div class="form-row">
     <div class="form-sec">
       <label class="flabel">投稿予定日時</label>
-      <input type="datetime-local" id="fDate">
+      <div class="date-picker-wrap" id="datePickerWrap">
+        <button type="button" class="date-picker-btn" onclick="toggleDatePicker()">
+          <span id="datePickerLabel">📅 日付・時間を選択</span>
+        </button>
+        <div class="date-picker-panel" id="datePickerPanel" style="display:none;">
+          <div class="dp-cal-nav">
+            <button type="button" onclick="dpChangeMonth(-1)">‹</button>
+            <span id="dpCalTitle"></span>
+            <button type="button" onclick="dpChangeMonth(1)">›</button>
+          </div>
+          <div class="dp-cal-hd">
+            <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span><span class="sun">日</span>
+          </div>
+          <div class="dp-cal-grid" id="dpCalGrid"></div>
+          <div class="dp-time-row">
+            <label class="dp-time-label">🕐 時間</label>
+            <select id="dpHour" onchange="updateDatePickerLabel()"></select>
+            <span>:</span>
+            <select id="dpMin" onchange="updateDatePickerLabel()"></select>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button type="button" class="dp-ok-btn" onclick="closeDatePicker()">✅ 確定</button>
+            <button type="button" class="dp-clear-btn" onclick="clearDatePicker()">クリア</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="fDate">
     </div>
     <div class="form-sec">
       <label class="flabel">ステータス</label>
@@ -426,6 +486,9 @@ let cY = new Date().getFullYear();
 let cM = new Date().getMonth();
 let selDate = null;
 let sf = 'all';
+let dpYear = new Date().getFullYear();
+let dpMonth = new Date().getMonth();
+let dpSelDate = null;
 
 const save = () => localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
 const WD = ['日','月','火','水','木','金','土'];
@@ -566,6 +629,7 @@ function editPost(id) {
   document.getElementById('fSourceTitle').value = p.sourceTitle || '';
   document.getElementById('fSourceUrl').value = p.sourceUrl || '';
   updatePbtns(); updateCC(); updateSourceBox();
+  setDatePickerValue(p.date || '');
   document.getElementById('editNotice').style.display = 'block';
   gotoTabByName('create');
   window.scrollTo(0,0);
@@ -790,6 +854,8 @@ function savePost() {
 function clearForm() {
   document.getElementById('fText').value = '';
   document.getElementById('fDate').value = '';
+  dpSelDate = null;
+  document.getElementById('datePickerLabel').textContent = '📅 日付・時間を選択';
   document.getElementById('fMemo').value = '';
   document.getElementById('fStatus').value = 'draft';
   document.getElementById('fSourceTitle').value = '';
@@ -868,6 +934,153 @@ async function scCopy(id, btn) {
 // INIT
 initDate();
 renderToday();
+initDatePicker();
+
+// ── カスタム日付ピッカー ──
+
+function initDatePicker() {
+  const hourSel = document.getElementById('dpHour');
+  const minSel = document.getElementById('dpMin');
+  hourSel.innerHTML = Array.from({length:24},(_,i)=>`<option value="${pad(i)}">${pad(i)}時</option>`).join('');
+  minSel.innerHTML = ['00','05','10','15','20','25','30','35','40','45','50','55'].map(m=>`<option value="${m}">${m}分</option>`).join('');
+  hourSel.value = '09';
+  renderDpCal();
+}
+
+function toggleDatePicker() {
+  const panel = document.getElementById('datePickerPanel');
+  const btn = document.querySelector('.date-picker-btn');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  btn.classList.toggle('open', !isOpen);
+  if (!isOpen) renderDpCal();
+}
+
+function closeDatePicker() {
+  document.getElementById('datePickerPanel').style.display = 'none';
+  document.querySelector('.date-picker-btn').classList.remove('open');
+  updateDatePickerLabel();
+}
+
+function clearDatePicker() {
+  dpSelDate = null;
+  document.getElementById('fDate').value = '';
+  document.getElementById('dpCalGrid').querySelectorAll('.dp-day').forEach(d => d.classList.remove('selected'));
+  document.getElementById('datePickerLabel').textContent = '📅 日付・時間を選択';
+  closeDatePicker();
+}
+
+function dpChangeMonth(d) {
+  dpMonth += d;
+  if (dpMonth > 11) { dpMonth = 0; dpYear++; }
+  if (dpMonth < 0) { dpMonth = 11; dpYear--; }
+  renderDpCal();
+}
+
+function renderDpCal() {
+  document.getElementById('dpCalTitle').textContent = `${dpYear}年${dpMonth+1}月`;
+  const today = new Date();
+  const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  const firstDay = new Date(dpYear, dpMonth, 1).getDay();
+  const firstMon = (firstDay + 6) % 7;
+  const dim = new Date(dpYear, dpMonth+1, 0).getDate();
+  const diPrev = new Date(dpYear, dpMonth, 0).getDate();
+  let total = firstMon + dim;
+  if (total % 7) total += 7 - (total % 7);
+
+  let html = '';
+  for (let i = 0; i < total; i++) {
+    let day, m, y, other = false;
+    if (i < firstMon) { day = diPrev - firstMon + i + 1; m = dpMonth-1; y = dpYear; other = true; }
+    else if (i >= firstMon + dim) { day = i - firstMon - dim + 1; m = dpMonth+1; y = dpYear; other = true; }
+    else { day = i - firstMon + 1; m = dpMonth; y = dpYear; }
+    let rm = m, ry = y;
+    if (rm < 0) { rm = 11; ry--; } if (rm > 11) { rm = 0; ry++; }
+    const ds = `${ry}-${pad(rm+1)}-${pad(day)}`;
+    const dow = new Date(ds).getDay();
+    const isSat = dow === 6, isSun = dow === 0;
+    const isSel = ds === dpSelDate;
+    const isToday = ds === tsToday;
+    const cls = [other?'other':'', isSat&&!other?'sat':'', isSun&&!other?'sun':'', isSel?'selected':'', isToday&&!isSel?'today':''].filter(Boolean).join(' ');
+    html += `<div class="dp-day ${cls}" onclick="dpPickDay('${ds}')">${day}</div>`;
+  }
+  document.getElementById('dpCalGrid').innerHTML = html;
+}
+
+function dpPickDay(ds) {
+  dpSelDate = ds;
+  renderDpCal();
+  updateDatePickerLabel();
+}
+
+function updateDatePickerLabel() {
+  if (!dpSelDate) return;
+  const h = document.getElementById('dpHour').value;
+  const m = document.getElementById('dpMin').value;
+  const [y, mo, d] = dpSelDate.split('-');
+  const dow = ['日','月','火','水','木','金','土'][new Date(dpSelDate).getDay()];
+  document.getElementById('datePickerLabel').textContent = `📅 ${parseInt(mo)}月${parseInt(d)}日（${dow}） ${h}:${m}`;
+  document.getElementById('fDate').value = `${dpSelDate}T${h}:${m}`;
+}
+
+function setDatePickerValue(val) {
+  // 既存データの編集時にピッカーに値をセット
+  if (!val) return;
+  dpSelDate = val.slice(0, 10);
+  const h = val.slice(11, 13) || '09';
+  const rawMin = val.slice(14, 16) || '00';
+  const m = ['00','05','10','15','20','25','30','35','40','45','50','55']
+    .reduce((acc, v) => Math.abs(parseInt(v)-parseInt(rawMin)) < Math.abs(parseInt(acc)-parseInt(rawMin)) ? v : acc, '00');
+  dpYear = parseInt(dpSelDate.slice(0,4));
+  dpMonth = parseInt(dpSelDate.slice(5,7)) - 1;
+  document.getElementById('dpHour').value = h;
+  document.getElementById('dpMin').value = m;
+  updateDatePickerLabel();
+}
+
+// パネル外クリックで閉じる
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('datePickerWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('datePickerPanel').style.display = 'none';
+    document.querySelector('.date-picker-btn')?.classList.remove('open');
+  }
+});
+
+// ── バックアップ・データ復元 ──
+function backupData() {
+  const data = { version: 2, exportedAt: new Date().toISOString(), posts };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = `sns_posts_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.json`;
+  a.click();
+  showToast('⬇️ バックアップを保存しました');
+}
+
+function restoreData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const imported = data.posts || data;
+      if (!Array.isArray(imported)) throw new Error('形式エラー');
+      if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。\nよろしいですか？`)) return;
+      posts = imported;
+      save();
+      renderToday(); renderStock();
+      if (document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
+      showToast(`✅ ${imported.length}件のデータを復元しました`);
+    } catch {
+      showToast('❌ ファイルの読み込みに失敗しました');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
 </script>
 </body>
 </html>
