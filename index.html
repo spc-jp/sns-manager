@@ -388,6 +388,9 @@ select option { background: #fff; color: var(--white); }
 <!-- ネタ作成 -->
 <div id="view-create" class="view">
   <div id="editNotice" class="edit-notice">✏️ 編集モード中です</div>
+  
+  <!-- エラー表示用 -->
+  <div id="formError" style="display:none; color: white; background: var(--danger); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.3);"></div>
 
   <div class="form-sec">
     <label class="flabel">投稿先・掲載先</label>
@@ -463,7 +466,7 @@ select option { background: #fff; color: var(--white); }
     <input type="text" id="fMemo" placeholder="例：画像あり、ハッシュタグ確認済み">
   </div>
   <button class="btn-save" onclick="savePost()">💾 保存する</button>
-  <button class="btn-clear" onclick="clearForm()">クリア</button>
+  <button class="btn-clear" onclick="clearForm(true)">クリア</button>
 </div>
 
 <!-- ネタ一覧 -->
@@ -509,6 +512,14 @@ function showToast(msg) {
   t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2400);
+}
+
+function showError(msg) {
+  const el = document.getElementById('formError');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  window.scrollTo(0, 0); // エラーに気付けるようにトップへ戻す
+  setTimeout(() => el.style.display = 'none', 4500);
 }
 
 // ヘッダー日付
@@ -633,6 +644,7 @@ function editPost(id) {
   updatePbtns(); updateCC(); updateSourceBox();
   setDatePickerValue(p.date || '');
   document.getElementById('editNotice').style.display = 'block';
+  document.getElementById('formError').style.display = 'none';
   gotoTabByName('create');
   window.scrollTo(0,0);
   document.getElementById('fText').focus();
@@ -744,9 +756,8 @@ function renderDayDetail(ds) {
   const dowLabel = ['日','月','火','水','木','金','土'][dow];
   const holName = JP_HOLIDAYS[ds] || '';
   const holStr = holName ? ` 🎌${holName}` : '';
-  const label = `${parseInt(m)}月${parseInt(d)}日（${dowLabel}）${holStr}`;
+  const label = `${parseInt(m, 10)}月${parseInt(d, 10)}日（${dowLabel}）${holStr}`;
   const dp = posts.filter(p => p.date && p.date.startsWith(ds)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-
 
   const cards = dp.length === 0
     ? `<div class="dd-empty">この日の投稿はありません</div>`
@@ -783,7 +794,9 @@ async function ddCopy(id, btn) {
 }
 
 function addForDate(ds) {
+  clearForm();
   document.getElementById('fDate').value = ds + 'T09:00';
+  setDatePickerValue(ds + 'T09:00');
   gotoTabByName('create');
 }
 
@@ -827,74 +840,116 @@ function updateCC() {
   el.textContent = `${len} 文字`;
   el.className = 'char-cc' + (len > 200 ? ' warn' : '') + (len > 280 ? ' over' : '');
 }
+
 function savePost() {
-  const text = document.getElementById('fText').value.trim();
-  if (selP.length === 0) { showToast('投稿先を選んでください'); return; }
-  // note/BASEのみの場合はtextが空でも許可（タイトルがあればOK）
-  const srcTitle = document.getElementById('fSourceTitle').value.trim();
-  const srcUrl = document.getElementById('fSourceUrl').value.trim();
-  const snsOnly = selP.every(p => ['X','Threads','Facebook'].includes(p));
-  if (snsOnly && !text) { showToast('投稿テキストを入力してください'); return; }
-  if (!text && !srcTitle) { showToast('投稿テキストかタイトルを入力してください'); return; }
-
-  const dVal = document.getElementById('fDate').value; // 日付を確実に取得
-
-  const post = {
-    id: editId || Date.now().toString(),
-    text, 
-    platforms: [...selP],
-    sourceTitle: srcTitle,
-    sourceUrl: srcUrl,
-    date: dVal,
-    memo: document.getElementById('fMemo').value.trim(),
-    status: document.getElementById('fStatus').value,
-    createdAt: editId ? (posts.find(p=>p.id===editId)?.createdAt || Date.now()) : Date.now(),
-    updatedAt: Date.now()
-  };
-  
-  if (editId) { 
-    const i = posts.findIndex(p=>p.id===editId); 
-    if(i > -1) posts[i] = post; 
-  } else {
-    posts.unshift(post);
-  }
-  
-  save(); 
-  clearForm();
-  showToast(editId ? '✅ 更新しました！' : '💾 保存しました！');
-  editId = null;
-  
-  // 日付が入力されている場合はカレンダーへ遷移
-  if (dVal) {
-    const dStr = dVal.slice(0, 10); // "YYYY-MM-DD"形式
-    if (dStr) {
-      const [yy, mm, dd] = dStr.split('-');
-      cY = parseInt(yy, 10);
-      cM = parseInt(mm, 10) - 1;
-      selDate = dStr;
-      gotoTabByName('calendar');
-      window.scrollTo(0, 0); // 画面トップへ移動
-      return;
+  try {
+    const text = document.getElementById('fText').value.trim();
+    
+    // バリデーション：投稿先未選択
+    if (selP.length === 0) { 
+      showError('投稿先（Xやnoteなど）を1つ以上選択してください！'); 
+      return; 
     }
+    
+    const srcTitle = document.getElementById('fSourceTitle').value.trim();
+    const srcUrl = document.getElementById('fSourceUrl').value.trim();
+    const snsOnly = selP.every(p => ['X','Threads','Facebook'].includes(p));
+    
+    // バリデーション：テキスト未入力
+    if (snsOnly && !text) { 
+      showError('投稿テキストを入力してください！'); 
+      return; 
+    }
+    if (!text && !srcTitle) { 
+      showError('投稿テキストまたはタイトルを入力してください！'); 
+      return; 
+    }
+
+    const dVal = document.getElementById('fDate').value;
+
+    const post = {
+      id: editId || Date.now().toString(),
+      text, 
+      platforms: [...selP],
+      sourceTitle: srcTitle,
+      sourceUrl: srcUrl,
+      date: dVal,
+      memo: document.getElementById('fMemo').value.trim(),
+      status: document.getElementById('fStatus').value,
+      createdAt: editId ? (posts.find(p=>p.id===editId)?.createdAt || Date.now()) : Date.now(),
+      updatedAt: Date.now()
+    };
+    
+    const isEdit = !!editId;
+    if (isEdit) { 
+      const i = posts.findIndex(p=>p.id===editId); 
+      if(i > -1) posts[i] = post; 
+    } else {
+      posts.unshift(post);
+    }
+    
+    save(); 
+    clearForm(true); // フォームをクリアして初期状態に戻す
+    showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
+    
+    // 日付が入力されている場合は対象月のカレンダーへ確実に遷移
+    if (dVal) {
+      const dStr = dVal.slice(0, 10); // "YYYY-MM-DD"形式
+      if (dStr) {
+        const [yy, mm, dd] = dStr.split('-');
+        cY = parseInt(yy, 10);
+        cM = parseInt(mm, 10) - 1;
+        selDate = dStr;
+        
+        gotoTabByName('calendar');
+        window.scrollTo(0, 0); // 画面トップへ移動
+        return;
+      }
+    }
+    
+    // 日付がない場合はネタ一覧へ遷移
+    gotoTabByName('stock');
+    window.scrollTo(0, 0);
+  } catch (err) {
+    showError('保存中にエラーが発生しました。やり直してください。');
+    console.error(err);
   }
-  
-  // 日付がない場合はネタ一覧へ遷移
-  gotoTabByName('stock');
-  window.scrollTo(0, 0);
 }
 
-function clearForm() {
+function clearForm(isAfterSave = false) {
   document.getElementById('fText').value = '';
-  document.getElementById('fDate').value = '';
-  dpSelDate = null;
-  document.getElementById('datePickerLabel').textContent = '📅 日付・時間を選択';
+  
+  // ★ 初期値として「今日・現在の時間」を確実にセットする
+  const now = new Date();
+  const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const hs = pad(now.getHours());
+  const ms = pad(Math.floor(now.getMinutes()/5)*5);
+  dpSelDate = ds;
+  dpYear = now.getFullYear();
+  dpMonth = now.getMonth();
+  
+  const hrSel = document.getElementById('dpHour');
+  const mnSel = document.getElementById('dpMin');
+  if(hrSel) hrSel.value = hs;
+  if(mnSel) mnSel.value = ms;
+  
+  updateDatePickerLabel(); // これにより fDate に現在時刻がセットされる
+  
   document.getElementById('fMemo').value = '';
-  document.getElementById('fStatus').value = 'draft';
+  document.getElementById('fStatus').value = 'scheduled'; // デフォルトは「予定」
   document.getElementById('fSourceTitle').value = '';
   document.getElementById('fSourceUrl').value = '';
-  selP = []; updatePbtns(); updateCC(); updateSourceBox();
+  
+  selP = ['X']; // ★ デフォルトで「X」を選択状態にする
+  updatePbtns(); 
+  updateCC(); 
+  updateSourceBox();
+  
   editId = null;
   document.getElementById('editNotice').style.display = 'none';
+  if(!isAfterSave) {
+    document.getElementById('formError').style.display = 'none';
+  }
 }
 
 // 元ネタ表示HTML生成
@@ -963,13 +1018,7 @@ async function scCopy(id, btn) {
   setTimeout(() => { btn.textContent = '📋 コピー'; btn.classList.remove('copied'); }, 2500);
 }
 
-// INIT
-initDate();
-renderToday();
-initDatePicker();
-
 // ── カスタム日付ピッカー ──
-
 function initDatePicker() {
   const hourSel = document.getElementById('dpHour');
   const minSel = document.getElementById('dpMin');
@@ -1047,26 +1096,34 @@ function dpPickDay(ds) {
 
 function updateDatePickerLabel() {
   if (!dpSelDate) return;
-  const h = document.getElementById('dpHour').value;
-  const m = document.getElementById('dpMin').value;
+  const hSel = document.getElementById('dpHour');
+  const mSel = document.getElementById('dpMin');
+  if(!hSel || !mSel) return;
+  
+  const h = hSel.value;
+  const m = mSel.value;
   const [y, mo, d] = dpSelDate.split('-');
   const dow = ['日','月','火','水','木','金','土'][new Date(dpSelDate).getDay()];
-  document.getElementById('datePickerLabel').textContent = `📅 ${parseInt(mo)}月${parseInt(d)}日（${dow}） ${h}:${m}`;
+  
+  document.getElementById('datePickerLabel').textContent = `📅 ${parseInt(mo, 10)}月${parseInt(d, 10)}日（${dow}） ${h}:${m}`;
   document.getElementById('fDate').value = `${dpSelDate}T${h}:${m}`;
 }
 
 function setDatePickerValue(val) {
-  // 既存データの編集時にピッカーに値をセット
   if (!val) return;
   dpSelDate = val.slice(0, 10);
   const h = val.slice(11, 13) || '09';
   const rawMin = val.slice(14, 16) || '00';
   const m = ['00','05','10','15','20','25','30','35','40','45','50','55']
     .reduce((acc, v) => Math.abs(parseInt(v)-parseInt(rawMin)) < Math.abs(parseInt(acc)-parseInt(rawMin)) ? v : acc, '00');
-  dpYear = parseInt(dpSelDate.slice(0,4));
-  dpMonth = parseInt(dpSelDate.slice(5,7)) - 1;
-  document.getElementById('dpHour').value = h;
-  document.getElementById('dpMin').value = m;
+  dpYear = parseInt(dpSelDate.slice(0,4), 10);
+  dpMonth = parseInt(dpSelDate.slice(5,7), 10) - 1;
+  
+  const hSel = document.getElementById('dpHour');
+  const mSel = document.getElementById('dpMin');
+  if(hSel) hSel.value = h;
+  if(mSel) mSel.value = m;
+  
   updateDatePickerLabel();
 }
 
@@ -1113,6 +1170,12 @@ function restoreData(e) {
   };
   reader.readAsText(file);
 }
+
+// INIT
+initDate();
+initDatePicker();
+clearForm(); // ここで「現在日時」と「X」が初期セットされる
+renderToday();
 </script>
 </body>
 </html>
