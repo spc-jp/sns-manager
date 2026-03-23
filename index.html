@@ -37,7 +37,8 @@ header {
   position: sticky; top: 0; z-index: 200;
   box-shadow: 0 2px 8px rgba(0,80,160,0.07);
 }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--white); }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--white); cursor: pointer; transition: opacity 0.2s; }
+.logo:hover { opacity: 0.8; }
 .logo span { color: var(--cyan); }
 .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--cyan), var(--blue)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .header-date { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
@@ -516,7 +517,8 @@ select option { background: #fff; color: var(--white); }
 <body>
 
 <header>
-  <div class="logo">
+  <!-- ★ ロゴ部分にクリックイベントとカーソルスタイルを追加 -->
+  <div class="logo" onclick="gotoTabByName('calendar')">
     <div class="logo-icon">📅</div>
     SNS投稿マネージャー
   </div>
@@ -835,7 +837,7 @@ async function doCopy(id) {
       document.body.removeChild(ta);
       if (res) return true;
     } catch(e2) {}
-    showToast('手動でコピーしてください'); 
+    showToast('手持でコピーしてください'); 
     return false; 
   }
 }
@@ -1151,6 +1153,8 @@ function savePost() {
       return; 
     }
 
+    const dVal = document.getElementById('fDate').value;
+
     const post = {
       id: editId || Date.now().toString(),
       text, 
@@ -1159,7 +1163,7 @@ function savePost() {
       sourceUrl: document.getElementById('fSourceUrl').value.trim(),
       stripeSalesUrl: document.getElementById('fStripeSalesUrl').value.trim(),
       stripeThanksUrl: document.getElementById('fStripeThanksUrl').value.trim(),
-      date: document.getElementById('fDate').value,
+      date: dVal,
       memo: document.getElementById('fMemo').value.trim(),
       status: document.getElementById('fStatus').value,
       createdAt: editId ? (posts.find(p=>p.id===editId)?.createdAt || Date.now()) : Date.now(),
@@ -1176,12 +1180,12 @@ function savePost() {
     
     save(); 
     
-    const dVal = post.date; // 保存した日付を取得しておく
+    const savedDate = post.date; // 保存した日付を取得しておく
     clearForm(true); 
     showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
     
-    if (dVal) {
-      const dStr = dVal.slice(0, 10); 
+    if (savedDate) {
+      const dStr = savedDate.slice(0, 10); 
       if (dStr) {
         const [yy, mm, dd] = dStr.split('-');
         cY = parseInt(yy, 10);
