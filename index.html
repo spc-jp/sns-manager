@@ -210,7 +210,11 @@ header {
   animation: flash-highlight 1.5s ease-out;
 }
 
-.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1a2b3c; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; line-height: 1.2; }
+.cal-cell-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1a2b3c; font-weight: 600; display: flex; align-items: center; gap: 8px; line-height: 1.2; margin-bottom: 0; }
+.cal-add-btn { font-size: 14px; color: var(--cyan); background: rgba(0,184,169,0.1); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; opacity: 0.6; transition: all 0.2s; }
+.cal-cell:hover .cal-add-btn { opacity: 1; background: rgba(0,184,169,0.2); }
+.cal-add-btn:hover { background: var(--cyan) !important; color: #fff; transform: scale(1.1); }
 .hol-name { font-size: 11px; color: #b91c1c; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ★ カレンダーのドット表示共通 */
@@ -987,7 +991,7 @@ function renderCalendar() {
       
       const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
-      return `<div class="cal-dot ${dotCls}" title="${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
+      return `<div class="cal-dot ${dotCls}" title="クリックで修正: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
@@ -1001,7 +1005,10 @@ function renderCalendar() {
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
 
     html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')">
-      <div class="cal-day">${day}${holTag}</div>
+      <div class="cal-cell-header">
+        <div class="cal-day">${day}${holTag}</div>
+        <div class="cal-add-btn" onclick="event.stopPropagation(); addForDate('${ds}')" title="この日に新規作成">＋</div>
+      </div>
       ${dots}
     </div>`;
   }
