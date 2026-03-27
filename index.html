@@ -200,7 +200,12 @@ header {
 .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
 .cal-cell.is-hol .cal-day { color: #b91c1c; }
 
-.cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 700; }
+.cal-cell.is-today { 
+  border: 3px solid var(--cyan) !important; 
+  background: rgba(0, 184, 169, 0.08) !important; 
+  box-shadow: 0 4px 12px rgba(0, 184, 169, 0.2) !important; 
+}
+.cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 800; }
 
 @keyframes flash-highlight {
   0% { box-shadow: 0 0 0 4px var(--cyan); transform: scale(1.03); background-color: rgba(0, 184, 169, 0.15); z-index: 10; }
@@ -1003,10 +1008,11 @@ function renderCalendar() {
     ].filter(Boolean).join(' ');
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
+    const todayBadge = isToday ? `<span style="font-size:10px; background:var(--cyan); color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px; font-weight:700;">今日</span>` : '';
 
     html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')">
       <div class="cal-cell-header">
-        <div class="cal-day">${day}${holTag}</div>
+        <div class="cal-day">${day}${todayBadge}${holTag}</div>
         <div class="cal-add-btn" onclick="event.stopPropagation(); addForDate('${ds}')" title="この日に新規作成">＋</div>
       </div>
       ${dots}
