@@ -83,41 +83,19 @@ header {
 
 .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 
-/* ★ 共通バッジスタイル（リストや今日画面用） */
-.pbadge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+/* ★ 共通バッジスタイル（明るくポップに！） */
+.pbadge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; border: none !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
-/* ★ X, Threads, FB のバッジ（背景なし・青文字） */
-.pbadge-X, .pbadge-Threads, .pbadge-Facebook {
-  background: transparent !important;
-  border: none !important;
-  color: #3b82f6 !important;
-  padding: 0 !important;
-  font-size: 13px !important;
-}
-
-/* ★ note のバッジ（緑系） */
-.pbadge-note {
-  background: rgba(22, 163, 74, 0.1) !important;
-  border: 1px solid #16a34a !important;
-  color: #15803d !important;
-}
-
-/* ★ BASE のバッジ（黄色系） */
-.pbadge-BASE {
-  background: rgba(245, 158, 11, 0.15) !important;
-  border: 1px solid #d97706 !important;
-  color: #b45309 !important;
-}
-
-/* ★ Stripe のバッジ（紫系） */
-.pbadge-Stripe {
-  background: rgba(99, 102, 241, 0.1) !important;
-  border: 1px solid #6366f1 !important;
-  color: #4f46e5 !important;
-}
+/* 各種バッジのカラーパレット */
+.pbadge-X { background: #e0f2fe !important; color: #0284c7 !important; }
+.pbadge-Threads { background: #f3f4f6 !important; color: #4b5563 !important; }
+.pbadge-Facebook { background: #dbeafe !important; color: #1d4ed8 !important; }
+.pbadge-note { background: #dcfce7 !important; color: #15803d !important; }
+.pbadge-BASE { background: #fef3c7 !important; color: #b45309 !important; }
+.pbadge-Stripe { background: #e0e7ff !important; color: #4338ca !important; }
 
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(154,175,196,0.18); color: var(--posted); border: 1px solid rgba(154,175,196,0.3); }
+.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
 
 .text-box {
   font-size: 14px;
@@ -125,7 +103,7 @@ header {
   color: var(--white);
   white-space: pre-wrap;
   word-break: break-word;
-  background: #f4f7fb;
+  background: #f8fafc;
   border: 1px solid var(--border-light);
   border-radius: 9px;
   padding: 13px 14px;
@@ -134,8 +112,8 @@ header {
   transition: border-color 0.2s, background 0.2s;
   user-select: text;
 }
-.text-box:hover { border-color: var(--cyan); background: rgba(0,184,169,0.04); }
-.text-box.flash { border-color: var(--cyan); background: rgba(0,184,169,0.08); }
+.text-box:hover { border-color: var(--cyan); background: #f0fdfa; }
+.text-box.flash { border-color: var(--cyan); background: #ccfbf1; }
 
 .memo-line { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
 .card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -185,7 +163,7 @@ header {
   position: relative;
 }
 .cal-cell:hover { border-color: var(--cyan); box-shadow: var(--shadow-hover); }
-.cal-cell.is-today { border-color: var(--cyan); border-width: 2px; background: rgba(0,184,169,0.07); }
+.cal-cell.is-today { border-color: var(--cyan); border-width: 3px; background: rgba(0,184,169,0.04); }
 .cal-cell.is-selected { border-color: var(--blue); border-width: 2px; background: rgba(0,144,224,0.07); }
 .cal-cell.other-m { opacity: 0.35; pointer-events: none; box-shadow: none; }
 
@@ -200,11 +178,6 @@ header {
 .cal-cell.is-hol { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.28); }
 .cal-cell.is-hol .cal-day { color: #b91c1c; }
 
-.cal-cell.is-today { 
-  border: 3px solid var(--cyan) !important; 
-  background: rgba(0, 184, 169, 0.08) !important; 
-  box-shadow: 0 4px 12px rgba(0, 184, 169, 0.2) !important; 
-}
 .cal-cell.is-today .cal-day { color: var(--cyan) !important; font-weight: 800; }
 
 @keyframes flash-highlight {
@@ -216,64 +189,34 @@ header {
 }
 
 .cal-cell-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1a2b3c; font-weight: 600; display: flex; align-items: center; gap: 8px; line-height: 1.2; margin-bottom: 0; }
+.cal-day { font-size: 20px; font-family: 'DM Mono', monospace; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px; line-height: 1.2; margin-bottom: 0; }
 .cal-add-btn { font-size: 14px; color: var(--cyan); background: rgba(0,184,169,0.1); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; opacity: 0.6; transition: all 0.2s; }
 .cal-cell:hover .cal-add-btn { opacity: 1; background: rgba(0,184,169,0.2); }
 .cal-add-btn:hover { background: var(--cyan) !important; color: #fff; transform: scale(1.1); }
 .hol-name { font-size: 11px; color: #b91c1c; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* ★ カレンダーのドット表示共通 */
+/* ★ カレンダーのドット表示共通（明るくふっくらさせる） */
 .cal-dot { 
-  font-size: 12px; font-weight: 700; padding: 3px 7px; border-radius: 5px; 
+  font-size: 12px; font-weight: 700; padding: 5px 8px; border-radius: 6px; 
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-  margin-top: 4px; line-height: 1.5; cursor: pointer; 
-  transition: opacity 0.2s, transform 0.1s; 
+  margin-top: 5px; line-height: 1.3; cursor: pointer; 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
   position: relative; z-index: 10; 
+  border: none !important; /* 枠線をなくす */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 軽い影で浮かせる */
 }
-.cal-dot:hover { opacity: 0.8; transform: scale(1.02); }
+.cal-dot:hover { transform: scale(1.03) translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); filter: brightness(1.05); }
 
-/* ★ カレンダー：SNS3つは「枠線なし・背景なし・青文字」 */
-.cal-dot.sns-src {
-  background: transparent !important;
-  border: none !important;
-  color: #3b82f6 !important; /* 青文字 */
-  padding-left: 2px !important;
-}
+/* 各種カラーパレット（明るいパステル調） */
+.cal-dot.x-src { background: #e0f2fe !important; color: #0284c7 !important; }
+.cal-dot.threads-src { background: #f3f4f6 !important; color: #4b5563 !important; }
+.cal-dot.fb-src { background: #dbeafe !important; color: #1d4ed8 !important; }
+.cal-dot.note-src { background: #dcfce7 !important; color: #15803d !important; }
+.cal-dot.base-src { background: #fef3c7 !important; color: #b45309 !important; }
+.cal-dot.stripe-src { background: #e0e7ff !important; color: #4338ca !important; }
+.cal-dot.pink-src { background: #fce7f3 !important; color: #be185d !important; }
+.cal-dot.note-stripe-src { background: #ccfbf1 !important; color: #0f766e !important; }
 
-/* ★ カレンダー：noteのみ（緑系） */
-.cal-dot.note-src {
-  background: rgba(22, 163, 74, 0.1) !important;
-  border: 1px solid #16a34a !important;
-  color: #15803d !important;
-}
-
-/* ★ カレンダー：BASEのみ（黄色系） */
-.cal-dot.base-src {
-  background: rgba(245, 158, 11, 0.15) !important;
-  border: 1px solid #d97706 !important;
-  color: #b45309 !important;
-}
-
-/* ★ カレンダー：Stripeのみ（紫系） */
-.cal-dot.stripe-src {
-  background: rgba(99, 102, 241, 0.15) !important;
-  border: 1px solid #6366f1 !important;
-  color: #4f46e5 !important;
-}
-
-/* ★ カレンダー：note・BASE両方（ピンク系） */
-.cal-dot.pink-src {
-  background: rgba(244, 114, 182, 0.1) !important;
-  border: 1px solid #f472b6 !important;
-  color: #db2777 !important;
-}
-
-/* ★ カレンダー：note・Stripe両方（青緑系 Teal） */
-.cal-dot.note-stripe-src {
-  background: rgba(13, 148, 136, 0.15) !important;
-  border: 1px solid #0d9488 !important;
-  color: #0f766e !important;
-}
 
 .day-detail {
   background: var(--panel);
@@ -314,52 +257,17 @@ textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
 select option { background: #fff; color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .ppicker { display: flex; gap: 8px; flex-wrap: wrap; }
-.pbtn { flex: 1; min-width: 80px; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: #f7fafd; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
+.pbtn { flex: 1; min-width: 80px; padding: 9px 6px; border-radius: 9px; border: 2px solid var(--border); background: #f8fafc; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.18s; }
 
-/* ★ フォームボタン：SNS3つは常に枠・背景なし */
-.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"] {
-  border-color: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
+/* フォームボタン：SNS3つは枠・背景なし */
+.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"] { border-color: transparent !important; background-color: transparent !important; box-shadow: none !important; }
+.pbtn[data-p="X"]:not([class*="on-"]), .pbtn[data-p="Threads"]:not([class*="on-"]), .pbtn[data-p="Facebook"]:not([class*="on-"]) { color: #94a3b8 !important; font-weight: 400 !important; }
+.pbtn.on-X, .pbtn.on-Threads, .pbtn.on-Facebook { color: #3b82f6 !important; font-weight: 700 !important; }
 
-/* ★ フォームボタン：SNS3つの未選択時はグレーの細文字 */
-.pbtn[data-p="X"]:not([class*="on-"]),
-.pbtn[data-p="Threads"]:not([class*="on-"]),
-.pbtn[data-p="Facebook"]:not([class*="on-"]) {
-  color: var(--muted) !important;
-  font-weight: 400 !important;
-}
-
-/* ★ フォームボタン：SNS3つの選択時は薄いブルーの青文字 */
-.pbtn.on-X, .pbtn.on-Threads, .pbtn.on-Facebook {
-  color: #3b82f6 !important;
-  font-weight: 700 !important;
-}
-
-/* ★ フォームボタン：note は緑系 */
-.pbtn.on-note {
-  border-color: #16a34a !important;
-  color: #15803d !important;
-  background: rgba(22, 163, 74, 0.1) !important;
-  font-weight: 700 !important;
-}
-
-/* ★ フォームボタン：BASE は黄色系 */
-.pbtn.on-BASE {
-  border-color: #d97706 !important;
-  color: #b45309 !important;
-  background: rgba(245, 158, 11, 0.15) !important;
-  font-weight: 700 !important;
-}
-
-/* ★ フォームボタン：Stripe は紫系 */
-.pbtn.on-Stripe {
-  border-color: #6366f1 !important;
-  color: #4f46e5 !important;
-  background: rgba(99, 102, 241, 0.1) !important;
-  font-weight: 700 !important;
-}
+/* フォームボタン：他 */
+.pbtn.on-note { border-color: #16a34a !important; color: #15803d !important; background: rgba(22, 163, 74, 0.1) !important; font-weight: 700 !important; }
+.pbtn.on-BASE { border-color: #d97706 !important; color: #b45309 !important; background: rgba(245, 158, 11, 0.15) !important; font-weight: 700 !important; }
+.pbtn.on-Stripe { border-color: #6366f1 !important; color: #4f46e5 !important; background: rgba(99, 102, 241, 0.1) !important; font-weight: 700 !important; }
 
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
@@ -370,16 +278,22 @@ select option { background: #fff; color: var(--white); }
 .source-box.show { display: block; }
 .source-box-title { font-size: 12px; font-weight: 700; color: var(--cyan); margin-bottom: 10px; letter-spacing: 0.05em; }
 
-/* ★ リスト内に表示されるリンク表示部分 */
-.card-source { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; line-height: 1.6; }
-.card-source-title { font-weight: 700; margin-bottom: 4px; color: var(--cyan); }
-.card-source a { color: var(--cyan); word-break: break-all; }
-/* それぞれの色分け */
-.card-source.note-only { background: rgba(22, 163, 74, 0.05); border-left: 3px solid #16a34a; }
-.card-source.base-only { background: rgba(245, 158, 11, 0.05); border-left: 3px solid #d97706; }
-.card-source.stripe-only { background: rgba(99, 102, 241, 0.05); border-left: 3px solid #6366f1; }
-.card-source.note-base { background: rgba(244, 114, 182, 0.05); border-left: 3px solid #f472b6; }
-.card-source.note-stripe { background: rgba(13, 148, 136, 0.05); border-left: 3px solid #0d9488; }
+/* ★ リスト内に表示されるリンク表示部分も明るくリニューアル */
+.card-source { font-size: 12px; color: var(--white); margin-bottom: 10px; padding: 10px 14px; border-radius: 8px; line-height: 1.6; border-left: none !important; }
+.card-source-title { font-weight: 700; margin-bottom: 6px; }
+.card-source a { color: #0284c7; text-decoration: underline; font-weight: 500; word-break: break-all; transition: color 0.2s; }
+.card-source a:hover { color: #0369a1; }
+
+.card-source.note-only { background: #dcfce7; }
+.card-source.note-only .card-source-title { color: #15803d; }
+.card-source.base-only { background: #fef3c7; }
+.card-source.base-only .card-source-title { color: #b45309; }
+.card-source.stripe-only { background: #e0e7ff; }
+.card-source.stripe-only .card-source-title { color: #4338ca; }
+.card-source.note-base { background: #fce7f3; }
+.card-source.note-base .card-source-title { color: #be185d; }
+.card-source.note-stripe { background: #ccfbf1; }
+.card-source.note-stripe .card-source-title { color: #0f766e; }
 
 /* ネタ作成のボタンエリア */
 .form-actions { display: flex; gap: 10px; margin-top: 20px; }
@@ -428,9 +342,9 @@ select option { background: #fff; color: var(--white); }
 .stock-card:hover { box-shadow: var(--shadow-hover); border-color: var(--cyan); }
 .sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
 .spill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-.spill-draft { background: rgba(245, 158, 11, 0.12); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.3); }
-.spill-scheduled { background: rgba(0, 184, 169, 0.12); color: var(--cyan); border: 1px solid rgba(0, 184, 169, 0.3); }
-.spill-posted { background: rgba(154, 175, 196, 0.15); color: var(--posted); border: 1px solid rgba(154, 175, 196, 0.3); }
+.spill-draft { background: #fef3c7; color: #b45309; }
+.spill-scheduled { background: #e0f2fe; color: #0369a1; }
+.spill-posted { background: #f1f5f9; color: #475569; }
 .sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
@@ -912,7 +826,6 @@ function editPost(id) {
   document.getElementById('fSourceTitle').value = p.sourceTitle || '';
   document.getElementById('fSourceUrl').value = p.sourceUrl || '';
   
-  // ★ Stripe用URLの読み込み（既存データにない場合は空欄）
   document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
   document.getElementById('fStripeThanksUrl').value = p.stripeThanksUrl || '';
 
@@ -987,12 +900,15 @@ function renderCalendar() {
       const isBase = p.platforms.includes('BASE');
       const isStripe = p.platforms.includes('Stripe');
       
-      let dotCls = 'sns-src';
-      if (isNote && isStripe) dotCls = 'note-stripe-src'; // 青緑系（Teal）
-      else if (isNote && isBase) dotCls = 'pink-src'; // ピンク系
-      else if (isStripe) dotCls = 'stripe-src'; // 紫系
-      else if (isBase) dotCls = 'base-src'; // 黄色系
-      else if (isNote) dotCls = 'note-src'; // 緑系
+      let dotCls = 'x-src'; 
+      if (isNote && isStripe) dotCls = 'note-stripe-src'; 
+      else if (isNote && isBase) dotCls = 'pink-src'; 
+      else if (isStripe) dotCls = 'stripe-src'; 
+      else if (isBase) dotCls = 'base-src'; 
+      else if (isNote) dotCls = 'note-src'; 
+      else if (p.platforms.includes('Facebook')) dotCls = 'fb-src';
+      else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
+      else if (p.platforms.includes('X')) dotCls = 'x-src';
       
       const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isNote ? '📝' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
