@@ -454,6 +454,14 @@ select option { background: #fff; color: var(--white); }
   .ppicker { flex-wrap: wrap; }
   .form-actions { flex-wrap: wrap; }
   .btn-save { flex: 100%; }
+  
+  .fab-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+  }
 }
 </style>
 </head>
@@ -477,7 +485,8 @@ select option { background: #fff; color: var(--white); }
   <div class="tab active" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
   <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
   <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
-  <a href="https://spc-jp.github.io/sns-generator/" target="_blank" class="tab" style="text-decoration: none; margin-left: auto; display: flex; align-items: center; gap: 4px;">✨ 投稿ジェネレーター <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/note-rewrite/" target="_blank" class="tab" style="text-decoration: none; margin-left: auto; display: flex; align-items: center; gap: 4px;">📝 Note Rewrite <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/sns-generator/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">✨ 投稿ジェネレーター <span style="font-size: 10px;">↗</span></a>
 </div>
 
 <div id="view-today" class="view">
@@ -911,7 +920,6 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
-    // ★ カレンダー上のドット表示（集客と販売の視覚化）
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isBase = p.platforms.includes('BASE');
