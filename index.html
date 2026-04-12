@@ -93,6 +93,7 @@ header {
 
 /* ★ 販売系バッジ（白背景・枠・色文字） */
 .pbadge-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; }
+.pbadge-note-re { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; } /* note再投稿用バッジ */
 .pbadge-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; }
 .pbadge-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; }
 
@@ -232,6 +233,7 @@ header {
 
 /* ★ 販売系（note, BASE, Stripe）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
+.cal-dot.note-re-src { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; } 
 .cal-dot.base-src { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; } 
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
 .cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } /* note+base等 */
@@ -300,6 +302,7 @@ select option { background: #fff; color: var(--white); }
 
 /* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
 .pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
+.pbtn.on-note-re { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; font-weight: 700 !important; }
 .pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
 .pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
 
@@ -317,6 +320,14 @@ select option { background: #fff; color: var(--white); }
 .card-source-title { font-weight: 500; margin-bottom: 6px; color: #3c4043; }
 .card-source a { color: #1a73e8; text-decoration: none; font-weight: 500; word-break: break-all; transition: text-decoration 0.2s; }
 .card-source a:hover { text-decoration: underline; }
+
+/* それぞれの色分け */
+.card-source.note-only { background: #dcfce7; border-left: 3px solid #16a34a; }
+.card-source.note-re-only { background: #d1fae5; border-left: 3px solid #059669; }
+.card-source.base-only { background: #fef3c7; border-left: 3px solid #d97706; }
+.card-source.stripe-only { background: #e0e7ff; border-left: 3px solid #6366f1; }
+.card-source.note-base { background: #fce7f3; border-left: 3px solid #f472b6; }
+.card-source.note-stripe { background: #ccfbf1; border-left: 3px solid #0d9488; }
 
 /* ネタ作成のボタンエリア */
 .form-actions { display: flex; gap: 10px; margin-top: 20px; }
@@ -375,6 +386,7 @@ select option { background: #fff; color: var(--white); }
 .spill-draft { background: #fef3c7; color: #b45309; }
 .spill-scheduled { background: #e8f0fe; color: #1a73e8; }
 .spill-posted { background: #e6f4ea; color: #137333; }
+.spill-attract { background: #e0e7ff; color: #4338ca; } /* 集客用バッジ */
 .sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
@@ -530,6 +542,8 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
       <button class="pbtn" data-p="note" onclick="toggleP('note')">📝 note</button>
+      <!-- ★ note再投稿ボタンを追加 -->
+      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">📝 note再投稿</button>
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
     </div>
@@ -600,6 +614,8 @@ select option { background: #fff; color: var(--white); }
         <option value="draft">📝 下書き</option>
         <option value="scheduled">📅 投稿予定</option>
         <option value="posted">✅ 投稿済み</option>
+        <!-- ★ ステータスに集客を追加 -->
+        <option value="attract">📣 集客</option>
       </select>
     </div>
   </div>
@@ -621,6 +637,8 @@ select option { background: #fff; color: var(--white); }
     <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
+    <!-- ★ フィルター用ボタンにも集客を追加 -->
+    <button class="sfbtn" data-f="attract" onclick="setSF('attract',this)">📣 集客</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
   <div class="stock-grid" id="stockList"></div>
@@ -728,6 +746,7 @@ function renderToday() {
       if(pl === 'X') label = '𝕏 X';
       else if(pl === 'Stripe') label = '💳 Stripe';
       else if(pl === 'Instagram') label = '📷 IG';
+      else if(pl === 'note-re') label = '📝 note再';
       return `<span class="pbadge pbadge-${pl}">${label}</span>`;
     }).join('');
     const timeStr = p.date ? p.date.slice(11,16) : '';
@@ -743,6 +762,8 @@ function renderToday() {
       ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
       <div class="card-actions">
         <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
+        <!-- ★ 複製ボタンを追加 -->
+        <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
         <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         <button class="abtn danger" onclick="delPost('${p.id}')">🗑️</button>
@@ -766,6 +787,37 @@ function createNewPost() {
   window.scrollTo(0, 0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
+
+// ★ 予定をそのまま複製して新規作成状態にする関数
+function duplicatePost(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  
+  editId = null; // 新規作成扱いにする
+  selP = [...p.platforms];
+  document.getElementById('fText').value = p.text;
+  document.getElementById('fDate').value = p.date || '';
+  document.getElementById('fMemo').value = p.memo || '';
+  document.getElementById('fStatus').value = p.status;
+  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
+  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
+  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
+  document.getElementById('fStripeThanksUrl').value = p.stripeThanksUrl || '';
+  
+  updatePbtns(); updateCC(); updateSourceBox();
+  setDatePickerValue(p.date || '');
+  
+  // 編集モードではないので隠す
+  document.getElementById('editNotice').style.display = 'none';
+  document.getElementById('btnDeleteForm').style.display = 'none'; 
+  document.getElementById('formError').style.display = 'none';
+  
+  gotoTabByName('create');
+  window.scrollTo(0,0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
+  showToast('📄 投稿を複製しました。内容を編集して保存できます。');
+}
+
 
 async function doCopy(id) {
   const p = posts.find(x => x.id === id);
@@ -925,6 +977,7 @@ function renderCalendar() {
     
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
+      const isNoteRe = p.platforms.includes('note-re'); // note再投稿
       const isBase = p.platforms.includes('BASE');
       const isStripe = p.platforms.includes('Stripe');
       const isInstagram = p.platforms.includes('Instagram');
@@ -934,13 +987,14 @@ function renderCalendar() {
       else if (isNote && isBase) dotCls = 'pink-src'; 
       else if (isStripe) dotCls = 'stripe-src'; 
       else if (isBase) dotCls = 'base-src'; 
+      else if (isNoteRe) dotCls = 'note-re-src'; // note再投稿の判定
       else if (isNote) dotCls = 'note-src'; 
       else if (isInstagram) dotCls = 'ig-src';
       else if (p.platforms.includes('Facebook')) dotCls = 'fb-src';
       else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
       else if (p.platforms.includes('X')) dotCls = 'x-src';
       
-      const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isNote ? '📝' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
+      const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isNoteRe ? '♻️' : isNote ? '📝' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
       return `<div class="cal-dot ${dotCls}" title="クリックで修正: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
@@ -999,6 +1053,7 @@ function renderDayDetail(ds) {
           if (pl === 'X') badgeLabel = '𝕏';
           else if (pl === 'Stripe') badgeLabel = '💳';
           else if (pl === 'Instagram') badgeLabel = '📷';
+          else if (pl === 'note-re') badgeLabel = '📝 再';
           else badgeLabel = pl.slice(0,2);
           return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
         }).join('');
@@ -1008,12 +1063,14 @@ function renderDayDetail(ds) {
           <div class="dd-left">
             <div style="display:flex;gap:3px;flex-wrap:wrap;">${bs}</div>
             ${tstr ? `<div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">${tstr}</div>` : ''}
-            <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':'済み'}</div>
+            <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':p.status==='attract'?'集客':'済み'}</div>
           </div>
           <div class="dd-text">${esc(p.text)}</div>
           ${srcHtml(p)}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
+            <!-- ★ 複製ボタンを追加 -->
+            <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
             ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
@@ -1061,10 +1118,11 @@ function updateSourceBox() {
   const stripeGrp = document.getElementById('stripeUrlGroup');
   
   const hasNote = selP.includes('note');
+  const hasNoteRe = selP.includes('note-re');
   const hasBase = selP.includes('BASE');
   const hasStripe = selP.includes('Stripe');
   
-  if (hasNote || hasBase || hasStripe) {
+  if (hasNote || hasBase || hasStripe || hasNoteRe) {
     box.classList.add('show');
     
     // ★ Stripeが選ばれていれば専用URL欄を表示
@@ -1078,6 +1136,8 @@ function updateSourceBox() {
       lbl.textContent = '💳 Stripe 掲載情報';
     } else if (hasBase) {
       lbl.textContent = '🛒 BASE 商品・掲載情報';
+    } else if (hasNoteRe) {
+      lbl.textContent = '♻️ note再投稿 掲載情報';
     } else {
       lbl.textContent = '📝 note 掲載情報';
     }
@@ -1221,6 +1281,7 @@ function srcHtml(p) {
   if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.stripeThanksUrl) return '';
   
   const hasNote = p.platforms.includes('note');
+  const hasNoteRe = p.platforms.includes('note-re');
   const hasBase = p.platforms.includes('BASE');
   const hasStripe = p.platforms.includes('Stripe');
   
@@ -1229,9 +1290,11 @@ function srcHtml(p) {
   else if (hasNote && hasBase) cls += ' note-base';
   else if (hasStripe) cls += ' stripe-only';
   else if (hasBase) cls += ' base-only';
+  else if (hasNoteRe) cls += ' note-re-only';
   else cls += ' note-only'; // デフォルトは緑系
 
   const iconStr = [];
+  if (hasNoteRe) iconStr.push('♻️');
   if (hasNote) iconStr.push('📝');
   if (hasBase) iconStr.push('🛒');
   if (hasStripe) iconStr.push('💳');
@@ -1276,13 +1339,15 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'] };
+  // ★ 集客用ステータスのマッピングを追加
+  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => {
       let badgeLabel = pl;
       if (pl === 'X') badgeLabel = '𝕏';
       else if (pl === 'Stripe') badgeLabel = '💳';
       else if (pl === 'Instagram') badgeLabel = '📷';
+      else if (pl === 'note-re') badgeLabel = '📝 再';
       else badgeLabel = pl.slice(0,2);
       return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
     }).join('');
@@ -1298,6 +1363,8 @@ function renderStock() {
       ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
       <div class="sc-actions">
         <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
+        <!-- ★ 複製ボタンを追加 -->
+        <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
         <button class="scbtn danger" onclick="delPost('${p.id}')">🗑️</button>
