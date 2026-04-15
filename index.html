@@ -542,7 +542,6 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
       <button class="pbtn" data-p="note" onclick="toggleP('note')">📝 note</button>
-      <!-- ★ note再投稿ボタンを追加 -->
       <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">📝 note再投稿</button>
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
@@ -551,23 +550,29 @@ select option { background: #fff; color: var(--white); }
 
   <div class="source-box" id="sourceBox">
     <div class="source-box-title" id="sourceBoxLabel">📝 掲載情報</div>
+    
+    <!-- ★ 項目を5つに整理・追加 -->
     <div class="form-sec" style="margin-bottom:10px;">
-      <label class="flabel">タイトル</label>
-      <input type="text" id="fSourceTitle" placeholder="例：AIツールで時短！中小企業のSNS運用術">
+      <label class="flabel">アプリ名</label>
+      <input type="text" id="fSourceTitle" placeholder="例：SNS投稿マネージャー">
     </div>
     <div class="form-sec" style="margin-bottom:10px;">
-      <label class="flabel">URL（note/BASE等）</label>
+      <label class="flabel">アプリURL</label>
+      <input type="text" id="fAppUrl" placeholder="https://...">
+    </div>
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">キャッチ</label>
+      <input type="text" id="fCatchphrase" placeholder="例：AIツールで時短！中小企業のSNS運用術">
+    </div>
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">note投稿URL販売</label>
       <input type="text" id="fSourceUrl" placeholder="https://note.com/...">
     </div>
     
     <div id="stripeUrlGroup" style="display:none; border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 4px;">
-      <div class="form-sec" style="margin-bottom:10px;">
-        <label class="flabel" style="color:#6366f1;">💳 Stripe 販売URL</label>
-        <input type="text" id="fStripeSalesUrl" placeholder="https://buy.stripe.com/...">
-      </div>
       <div class="form-sec" style="margin-bottom:0;">
-        <label class="flabel" style="color:#6366f1;">💳 Stripe サンクスURL</label>
-        <input type="text" id="fStripeThanksUrl" placeholder="決済完了後のリダイレクト先 URL">
+        <label class="flabel" style="color:#6366f1;">💳 StripeURL</label>
+        <input type="text" id="fStripeSalesUrl" placeholder="https://buy.stripe.com/...">
       </div>
     </div>
   </div>
@@ -614,7 +619,6 @@ select option { background: #fff; color: var(--white); }
         <option value="draft">📝 下書き</option>
         <option value="scheduled">📅 投稿予定</option>
         <option value="posted">✅ 投稿済み</option>
-        <!-- ★ ステータスに集客を追加 -->
         <option value="attract">📣 集客</option>
       </select>
     </div>
@@ -637,7 +641,6 @@ select option { background: #fff; color: var(--white); }
     <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
-    <!-- ★ フィルター用ボタンにも集客を追加 -->
     <button class="sfbtn" data-f="attract" onclick="setSF('attract',this)">📣 集客</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
@@ -762,7 +765,6 @@ function renderToday() {
       ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
       <div class="card-actions">
         <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
-        <!-- ★ 複製ボタンを追加 -->
         <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
         <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
@@ -788,26 +790,26 @@ function createNewPost() {
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
-// ★ 予定をそのまま複製して新規作成状態にする関数
 function duplicatePost(id) {
   const p = posts.find(x => x.id === id);
   if (!p) return;
   
   editId = null; // 新規作成扱いにする
   selP = [...p.platforms];
+  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
+  document.getElementById('fAppUrl').value = p.appUrl || '';
+  document.getElementById('fCatchphrase').value = p.catchphrase || '';
+  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
+  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
+  
   document.getElementById('fText').value = p.text;
   document.getElementById('fDate').value = p.date || '';
   document.getElementById('fMemo').value = p.memo || '';
   document.getElementById('fStatus').value = p.status;
-  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
-  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
-  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
-  document.getElementById('fStripeThanksUrl').value = p.stripeThanksUrl || '';
   
   updatePbtns(); updateCC(); updateSourceBox();
   setDatePickerValue(p.date || '');
   
-  // 編集モードではないので隠す
   document.getElementById('editNotice').style.display = 'none';
   document.getElementById('btnDeleteForm').style.display = 'none'; 
   document.getElementById('formError').style.display = 'none';
@@ -817,7 +819,6 @@ function duplicatePost(id) {
   setTimeout(() => document.getElementById('fText').focus(), 100);
   showToast('📄 投稿を複製しました。内容を編集して保存できます。');
 }
-
 
 async function doCopy(id) {
   const p = posts.find(x => x.id === id);
@@ -899,15 +900,17 @@ function editPost(id) {
   if (!p) return;
   editId = id;
   selP = [...p.platforms];
+  
+  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
+  document.getElementById('fAppUrl').value = p.appUrl || '';
+  document.getElementById('fCatchphrase').value = p.catchphrase || '';
+  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
+  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
+  
   document.getElementById('fText').value = p.text;
   document.getElementById('fDate').value = p.date || '';
   document.getElementById('fMemo').value = p.memo || '';
   document.getElementById('fStatus').value = p.status;
-  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
-  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
-  
-  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
-  document.getElementById('fStripeThanksUrl').value = p.stripeThanksUrl || '';
 
   updatePbtns(); updateCC(); updateSourceBox();
   setDatePickerValue(p.date || '');
@@ -977,7 +980,7 @@ function renderCalendar() {
     
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
-      const isNoteRe = p.platforms.includes('note-re'); // note再投稿
+      const isNoteRe = p.platforms.includes('note-re');
       const isBase = p.platforms.includes('BASE');
       const isStripe = p.platforms.includes('Stripe');
       const isInstagram = p.platforms.includes('Instagram');
@@ -987,7 +990,7 @@ function renderCalendar() {
       else if (isNote && isBase) dotCls = 'pink-src'; 
       else if (isStripe) dotCls = 'stripe-src'; 
       else if (isBase) dotCls = 'base-src'; 
-      else if (isNoteRe) dotCls = 'note-re-src'; // note再投稿の判定
+      else if (isNoteRe) dotCls = 'note-re-src';
       else if (isNote) dotCls = 'note-src'; 
       else if (isInstagram) dotCls = 'ig-src';
       else if (p.platforms.includes('Facebook')) dotCls = 'fb-src';
@@ -1069,7 +1072,6 @@ function renderDayDetail(ds) {
           ${srcHtml(p)}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
-            <!-- ★ 複製ボタンを追加 -->
             <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
             ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
@@ -1129,13 +1131,13 @@ function updateSourceBox() {
     stripeGrp.style.display = hasStripe ? 'block' : 'none';
 
     if (hasNote && hasStripe) {
-      lbl.textContent = '📝💳 note / Stripe 掲載情報';
+      lbl.textContent = '📝💳 掲載情報';
     } else if (hasNote && hasBase) {
-      lbl.textContent = '📝🛒 note / BASE 掲載情報';
+      lbl.textContent = '📝🛒 掲載情報';
     } else if (hasStripe) {
       lbl.textContent = '💳 Stripe 掲載情報';
     } else if (hasBase) {
-      lbl.textContent = '🛒 BASE 商品・掲載情報';
+      lbl.textContent = '🛒 BASE 掲載情報';
     } else if (hasNoteRe) {
       lbl.textContent = '♻️ note再投稿 掲載情報';
     } else {
@@ -1180,9 +1182,11 @@ function savePost() {
       text, 
       platforms: [...selP],
       sourceTitle: srcTitle,
+      appUrl: document.getElementById('fAppUrl').value.trim(),
+      catchphrase: document.getElementById('fCatchphrase').value.trim(),
       sourceUrl: document.getElementById('fSourceUrl').value.trim(),
       stripeSalesUrl: document.getElementById('fStripeSalesUrl').value.trim(),
-      stripeThanksUrl: document.getElementById('fStripeThanksUrl').value.trim(),
+      stripeThanksUrl: editId ? (posts.find(p=>p.id===editId)?.stripeThanksUrl || '') : '', // 既存のサンクスURLデータを保護
       date: dVal,
       memo: document.getElementById('fMemo').value.trim(),
       status: document.getElementById('fStatus').value,
@@ -1256,10 +1260,12 @@ function clearForm(isAfterSave = false) {
   
   document.getElementById('fMemo').value = '';
   document.getElementById('fStatus').value = 'scheduled';
+  
   document.getElementById('fSourceTitle').value = '';
+  document.getElementById('fAppUrl').value = '';
+  document.getElementById('fCatchphrase').value = '';
   document.getElementById('fSourceUrl').value = '';
   document.getElementById('fStripeSalesUrl').value = '';
-  document.getElementById('fStripeThanksUrl').value = '';
   
   selP = ['X']; 
   updatePbtns(); 
@@ -1276,9 +1282,10 @@ function clearForm(isAfterSave = false) {
   }
 }
 
-// ★ 共通の「元ネタ・URL」表示ロジック（リスト・カレンダー詳細両方で使う）
+// ★ 共通の「元ネタ・URL」表示ロジック
 function srcHtml(p) {
-  if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.stripeThanksUrl) return '';
+  // いずれかの項目が入力されていれば表示
+  if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.appUrl && !p.catchphrase) return '';
   
   const hasNote = p.platforms.includes('note');
   const hasNoteRe = p.platforms.includes('note-re');
@@ -1301,17 +1308,35 @@ function srcHtml(p) {
   if (iconStr.length === 0) iconStr.push('📝');
 
   let html = `<div class="${cls}">`;
+  
+  // アプリ名 (旧タイトル)
   if (p.sourceTitle) {
     html += `<div class="card-source-title">${iconStr.join('')} ${esc(p.sourceTitle)}</div>`;
   } else {
-    html += `<div class="card-source-title">${iconStr.join('')} リンク情報</div>`;
+    html += `<div class="card-source-title">${iconStr.join('')} 掲載情報</div>`;
   }
 
-  if (p.sourceUrl) html += `<div><a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a></div>`;
-  if (p.stripeSalesUrl) html += `<div style="margin-top:3px;"><span style="opacity:0.7;">販売:</span> <a href="${esc(p.stripeSalesUrl)}" target="_blank">${esc(p.stripeSalesUrl)}</a></div>`;
-  if (p.stripeThanksUrl) html += `<div style="margin-top:3px;"><span style="opacity:0.7;">完了:</span> <a href="${esc(p.stripeThanksUrl)}" target="_blank">${esc(p.stripeThanksUrl)}</a></div>`;
-  html += `</div>`;
+  // キャッチ
+  if (p.catchphrase) {
+    html += `<div style="margin-bottom:4px; font-weight:700; color:var(--cyan);">${esc(p.catchphrase)}</div>`;
+  }
+
+  // アプリURL
+  if (p.appUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">アプリ:</span> <a href="${esc(p.appUrl)}" target="_blank">${esc(p.appUrl)}</a></div>`;
+  }
+
+  // note投稿URL販売 (旧URL)
+  if (p.sourceUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">note/販売:</span> <a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a></div>`;
+  }
   
+  // StripeURL
+  if (p.stripeSalesUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">Stripe:</span> <a href="${esc(p.stripeSalesUrl)}" target="_blank">${esc(p.stripeSalesUrl)}</a></div>`;
+  }
+  
+  html += `</div>`;
   return html;
 }
 
@@ -1339,7 +1364,6 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  // ★ 集客用ステータスのマッピングを追加
   const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => {
@@ -1363,7 +1387,6 @@ function renderStock() {
       ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
       <div class="sc-actions">
         <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
-        <!-- ★ 複製ボタンを追加 -->
         <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
