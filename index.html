@@ -1009,7 +1009,7 @@ function renderCalendar() {
       
       const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '♻️' : isNote ? '📝' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
-      return `<div class="cal-dot ${dotCls}" title="クリックで修正: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')">${icon} ${label}</div>`;
+      return `<div class="cal-dot ${dotCls}" title="左クリックで修正 / 右クリックで複製: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); duplicatePost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
