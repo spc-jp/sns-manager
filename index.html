@@ -93,7 +93,7 @@ header {
 
 /* ★ 販売系バッジ（白背景・枠・色文字） */
 .pbadge-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; }
-.pbadge-note-re { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; } 
+.pbadge-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
 .pbadge-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Mediumバッジ */
 .pbadge-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; }
 .pbadge-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; }
@@ -234,7 +234,7 @@ header {
 
 /* ★ 販売系（note, BASE, Stripe, Medium）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
-.cal-dot.note-re-src { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; } 
+.cal-dot.note-re-src { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
 .cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Medium */
 .cal-dot.base-src { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; } 
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
@@ -304,7 +304,7 @@ select option { background: #fff; color: var(--white); }
 
 /* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
 .pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
-.pbtn.on-note-re { background: #fff !important; border: 1px solid #059669 !important; color: #059669 !important; font-weight: 700 !important; }
+.pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
 .pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
 .pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
@@ -326,7 +326,7 @@ select option { background: #fff; color: var(--white); }
 
 /* それぞれの色分け */
 .card-source.note-only { background: #dcfce7; border-left: 3px solid #16a34a; }
-.card-source.note-re-only { background: #d1fae5; border-left: 3px solid #059669; }
+.card-source.note-re-only { background: #fef9c3; border-left: 3px solid #eab308; }
 .card-source.medium-only { background: #f8f9fa; border-left: 3px solid #292929; }
 .card-source.base-only { background: #fef3c7; border-left: 3px solid #d97706; }
 .card-source.stripe-only { background: #e0e7ff; border-left: 3px solid #6366f1; }
@@ -548,7 +548,7 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
       <button class="pbtn" data-p="note" onclick="toggleP('note')">📝 note</button>
-      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">📝 note再投稿</button>
+      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">📝 noteリライト</button>
       <button class="pbtn" data-p="Medium" onclick="toggleP('Medium')">Ⓜ️ Medium</button>
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
@@ -756,7 +756,7 @@ function renderToday() {
       if(pl === 'X') label = '𝕏 X';
       else if(pl === 'Stripe') label = '💳 Stripe';
       else if(pl === 'Instagram') label = '📷 IG';
-      else if(pl === 'note-re') label = '📝 note再';
+      else if(pl === 'note-re') label = '📝 noteリライト';
       else if(pl === 'Medium') label = 'Ⓜ️ Medium';
       return `<span class="pbadge pbadge-${pl}">${label}</span>`;
     }).join('');
@@ -1066,7 +1066,7 @@ function renderDayDetail(ds) {
           if (pl === 'X') badgeLabel = '𝕏';
           else if (pl === 'Stripe') badgeLabel = '💳';
           else if (pl === 'Instagram') badgeLabel = '📷';
-          else if (pl === 'note-re') badgeLabel = '📝 再';
+          else if (pl === 'note-re') badgeLabel = '📝 リライト';
           else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
           else badgeLabel = pl.slice(0,2);
           return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
@@ -1151,7 +1151,7 @@ function updateSourceBox() {
     } else if (hasBase) {
       lbl.textContent = '🛒 BASE 掲載情報';
     } else if (hasNoteRe) {
-      lbl.textContent = '♻️ note再投稿 掲載情報';
+      lbl.textContent = '♻️ noteリライト 掲載情報';
     } else if (hasMedium) {
       lbl.textContent = 'Ⓜ️ Medium 掲載情報';
     } else {
@@ -1388,7 +1388,7 @@ function renderStock() {
       if (pl === 'X') badgeLabel = '𝕏';
       else if (pl === 'Stripe') badgeLabel = '💳';
       else if (pl === 'Instagram') badgeLabel = '📷';
-      else if (pl === 'note-re') badgeLabel = '📝 再';
+      else if (pl === 'note-re') badgeLabel = '📝 リライト';
       else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
       else badgeLabel = pl.slice(0,2);
       return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
