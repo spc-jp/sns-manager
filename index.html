@@ -547,8 +547,8 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Threads" onclick="toggleP('Threads')">Threads</button>
       <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
-      <button class="pbtn" data-p="note" onclick="toggleP('note')">📝 note</button>
-      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">📝 noteリライト</button>
+      <button class="pbtn" data-p="note" onclick="toggleP('note')">🟢 note</button>
+      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">🟡 noteリライト</button>
       <button class="pbtn" data-p="Medium" onclick="toggleP('Medium')">Ⓜ️ Medium</button>
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
@@ -556,7 +556,7 @@ select option { background: #fff; color: var(--white); }
   </div>
 
   <div class="source-box" id="sourceBox">
-    <div class="source-box-title" id="sourceBoxLabel">📝 掲載情報</div>
+    <div class="source-box-title" id="sourceBoxLabel">🟢 掲載情報</div>
     
     <!-- ★ 項目を5つに整理・追加 -->
     <div class="form-sec" style="margin-bottom:10px;">
@@ -756,7 +756,8 @@ function renderToday() {
       if(pl === 'X') label = '𝕏 X';
       else if(pl === 'Stripe') label = '💳 Stripe';
       else if(pl === 'Instagram') label = '📷 IG';
-      else if(pl === 'note-re') label = '📝 noteリライト';
+      else if(pl === 'note-re') label = '🟡 noteリライト';
+      else if(pl === 'note') label = '🟢 note';
       else if(pl === 'Medium') label = 'Ⓜ️ Medium';
       return `<span class="pbadge pbadge-${pl}">${label}</span>`;
     }).join('');
@@ -1007,7 +1008,7 @@ function renderCalendar() {
       else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
       else if (p.platforms.includes('X')) dotCls = 'x-src';
       
-      const icon = (isNote && isStripe) ? '📝💳' : (isNote && isBase) ? '📝🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '♻️' : isNote ? '📝' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
+      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
       const label = (p.sourceTitle || p.text).slice(0, 9);
       return `<div class="cal-dot ${dotCls}" title="左クリックで修正 / 右クリックで複製: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); duplicatePost('${p.id}')">${icon} ${label}</div>`;
     }).join('');
@@ -1066,7 +1067,8 @@ function renderDayDetail(ds) {
           if (pl === 'X') badgeLabel = '𝕏';
           else if (pl === 'Stripe') badgeLabel = '💳';
           else if (pl === 'Instagram') badgeLabel = '📷';
-          else if (pl === 'note-re') badgeLabel = '📝 リライト';
+          else if (pl === 'note-re') badgeLabel = '🟡 リライト';
+          else if (pl === 'note') badgeLabel = '🟢 note';
           else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
           else badgeLabel = pl.slice(0,2);
           return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
@@ -1143,19 +1145,19 @@ function updateSourceBox() {
     stripeGrp.style.display = hasStripe ? 'block' : 'none';
 
     if (hasNote && hasStripe) {
-      lbl.textContent = '📝💳 掲載情報';
+      lbl.textContent = '🟢💳 掲載情報';
     } else if (hasNote && hasBase) {
-      lbl.textContent = '📝🛒 掲載情報';
+      lbl.textContent = '🟢🛒 掲載情報';
     } else if (hasStripe) {
       lbl.textContent = '💳 Stripe 掲載情報';
     } else if (hasBase) {
       lbl.textContent = '🛒 BASE 掲載情報';
     } else if (hasNoteRe) {
-      lbl.textContent = '♻️ noteリライト 掲載情報';
+      lbl.textContent = '🟡 noteリライト 掲載情報';
     } else if (hasMedium) {
       lbl.textContent = 'Ⓜ️ Medium 掲載情報';
     } else {
-      lbl.textContent = '📝 note 掲載情報';
+      lbl.textContent = '🟢 note 掲載情報';
     }
   } else {
     box.classList.remove('show');
@@ -1317,12 +1319,12 @@ function srcHtml(p) {
   else cls += ' note-only'; // デフォルトは緑系
 
   const iconStr = [];
-  if (hasNoteRe) iconStr.push('♻️');
-  if (hasNote) iconStr.push('📝');
+  if (hasNoteRe) iconStr.push('🟡');
+  if (hasNote) iconStr.push('🟢');
   if (hasMedium) iconStr.push('Ⓜ️');
   if (hasBase) iconStr.push('🛒');
   if (hasStripe) iconStr.push('💳');
-  if (iconStr.length === 0) iconStr.push('📝');
+  if (iconStr.length === 0) iconStr.push('🟢');
 
   let html = `<div class="${cls}">`;
   
@@ -1388,7 +1390,8 @@ function renderStock() {
       if (pl === 'X') badgeLabel = '𝕏';
       else if (pl === 'Stripe') badgeLabel = '💳';
       else if (pl === 'Instagram') badgeLabel = '📷';
-      else if (pl === 'note-re') badgeLabel = '📝 リライト';
+      else if (pl === 'note-re') badgeLabel = '🟡 リライト';
+      else if (pl === 'note') badgeLabel = '🟢 note';
       else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
       else badgeLabel = pl.slice(0,2);
       return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
