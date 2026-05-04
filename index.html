@@ -458,6 +458,7 @@ select option { background: #fff; color: var(--white); }
   <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
   <a href="https://spc-jp.github.io/note-mikke/" target="_blank" class="tab" style="text-decoration: none; margin-left: auto; display: flex; align-items: center; gap: 4px;">🔍 noteみっけ <span style="font-size: 10px;">↗</span></a>
   <a href="https://spc-jp.github.io/note-rewrite/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">📝 Note Rewrite <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/note-generator/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">✍️ note-generator <span style="font-size: 10px;">↗</span></a>
   <a href="https://spc-jp.github.io/gazou-kun/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">🖼️ 画像くん <span style="font-size: 10px;">↗</span></a>
   <a href="https://spc-jp.github.io/apl-mikke/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">📱 アプリみっけ <span style="font-size: 10px;">↗</span></a>
   <a href="https://spc-jp.github.io/sns-generator/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">✨ 投稿ジェネレーター <span style="font-size: 10px;">↗</span></a>
@@ -1035,7 +1036,8 @@ async function ddCopy(id, btn) {
 
 function addForDate(ds) {
   clearForm();
-  setDatePickerValue(ds + 'T09:00');
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fDateTime').value = '09:00';
   gotoTabByName('create');
   window.scrollTo(0,0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
