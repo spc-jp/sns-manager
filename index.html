@@ -220,11 +220,12 @@ header {
 .cal-dot { 
   font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 4px; 
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-  margin: 0 2px 2px 2px; line-height: 1.4; cursor: pointer; 
+  margin: 0 2px 2px 2px; line-height: 1.4; cursor: grab; 
   transition: filter 0.2s; 
   position: relative; z-index: 10; 
   display: block; 
 }
+.cal-dot:active { cursor: grabbing; }
 
 /* ★ 集客系（X, Threads, FB, Instagram）：枠なし、背景なし、色文字 */
 .cal-dot.x-src { background: transparent !important; color: #1a73e8 !important; border: none !important; padding-left: 2px !important; } 
@@ -240,6 +241,33 @@ header {
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
 .cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } /* note+base等 */
 .cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } /* note+stripe等 */
+
+/* ★ コンテキストメニュー（右クリックで表示） */
+.context-menu {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 8px 0;
+  min-width: 160px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.menu-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #3c4043;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+.menu-item:hover { background: #f1f3f4; }
+.menu-item.danger { color: #d93025; border-top: 1px solid var(--border-light); margin-top: 4px; padding-top: 12px; }
+.menu-item.danger:hover { background: #fce8e6; }
 
 
 .day-detail {
@@ -490,6 +518,13 @@ select option { background: #fff; color: var(--white); }
   <div id="dayDetail" style="margin-top:20px;"><div class="dd-placeholder">📅 日付をクリックするとその日の投稿が表示されます</div></div>
 </div>
 
+<!-- ★ カレンダー用右クリックメニュー -->
+<div id="calContextMenu" class="context-menu" style="display:none;">
+  <div class="menu-item" onclick="handleMenu('edit')">✏️ 編集画面へ</div>
+  <div class="menu-item" onclick="handleMenu('duplicate')">📄 同じ日に複製する</div>
+  <div class="menu-item danger" onclick="handleMenu('delete')">🗑️ 削除する</div>
+</div>
+
 <div id="view-create" class="view">
   <div id="editNotice" class="edit-notice">✏️ 編集モード中です</div>
   
@@ -544,7 +579,6 @@ select option { background: #fff; color: var(--white); }
     <div class="char-cc" id="charCC">0 文字</div>
   </div>
   
-  <!-- ★ 投稿予定日時を分割して標準の input 要素に変更 -->
   <div class="form-row">
     <div class="form-sec">
       <label class="flabel">投稿予定日時</label>
@@ -692,7 +726,7 @@ function renderToday() {
       else if(pl === 'Medium') label = 'Ⓜ️ Medium';
       return `<span class="pbadge pbadge-${pl}">${label}</span>`;
     }).join('');
-    const timeStr = p.date ? p.date.slice(11,16) : '';
+    const timeStr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
     const done = p.status === 'posted';
     return `<div class="today-card ${done?'is-done':''}" id="tc-${p.id}">
       <div class="card-top">
@@ -730,6 +764,7 @@ function createNewPost() {
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
+// 編集画面へ飛ぶ複製（旧来の挙動用）
 function duplicatePost(id) {
   const p = posts.find(x => x.id === id);
   if (!p) return;
@@ -757,6 +792,22 @@ function duplicatePost(id) {
   window.scrollTo(0,0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
   showToast('📄 投稿を複製しました。内容を編集して保存できます。');
+}
+
+// ★ カレンダー上で直接複製する関数
+function duplicatePostDirect(id) {
+  const p = posts.find(x => x.id === id);
+  if(!p) return;
+  const newPost = JSON.parse(JSON.stringify(p)); 
+  newPost.id = Date.now().toString();
+  if(newPost.status === 'posted') newPost.status = 'scheduled'; // 投稿済みの場合は予定に戻す
+  newPost.createdAt = Date.now();
+  newPost.updatedAt = Date.now();
+  posts.unshift(newPost);
+  save();
+  renderCalendar();
+  if(selDate) renderDayDetail(selDate);
+  showToast('📄 同じ日に複製しました');
 }
 
 async function doCopy(id) {
@@ -862,6 +913,63 @@ function editPost(id) {
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
+// ★ カレンダーの右クリックメニュー処理
+let ctxTargetId = null;
+
+function showContextMenu(ev, id) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  ctxTargetId = id;
+  const menu = document.getElementById('calContextMenu');
+  menu.style.display = 'block';
+  menu.style.left = ev.pageX + 'px';
+  menu.style.top = ev.pageY + 'px';
+}
+
+document.addEventListener('click', () => {
+  const menu = document.getElementById('calContextMenu');
+  if(menu) menu.style.display = 'none';
+});
+
+function handleMenu(action) {
+  if(!ctxTargetId) return;
+  const id = ctxTargetId;
+  if (action === 'edit') {
+    editPost(id);
+  } else if (action === 'duplicate') {
+    duplicatePostDirect(id);
+  } else if (action === 'delete') {
+    delPost(id);
+  }
+  ctxTargetId = null;
+}
+
+// ★ カレンダーのドラッグ＆ドロップ移動処理
+function dragStart(ev, id) {
+  ev.dataTransfer.setData("text/plain", id);
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drop(ev, ds) {
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text/plain");
+  const p = posts.find(x => x.id === id);
+  if (p) {
+    let time = '09:00'; // デフォルト時間
+    if(p.date && p.date.includes('T')) {
+       time = p.date.split('T')[1];
+    }
+    p.date = `${ds}T${time}`;
+    save();
+    renderCalendar();
+    if(selDate === ds || selDate === p.date.slice(0,10)) renderDayDetail(selDate);
+    showToast('📅 日付を移動しました');
+  }
+}
+
 const JP_HOLIDAYS = {
   '2025-01-01':'元日','2025-01-13':'成人の日','2025-02-11':'建国記念の日',
   '2025-02-23':'天皇誕生日','2025-02-24':'天皇誕生日振替','2025-03-20':'春分の日',
@@ -916,6 +1024,7 @@ function renderCalendar() {
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
     
+    // ★ 表示順を「時間 + アイコン(投稿タイプ) + タイトル」に変更
     const dots = dp.slice(0, 4).map(p => {
       const isNote = p.platforms.includes('note');
       const isNoteRe = p.platforms.includes('note-re');
@@ -938,8 +1047,12 @@ function renderCalendar() {
       else if (p.platforms.includes('X')) dotCls = 'x-src';
       
       const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
+      
+      const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
+      const displayTime = timeStr ? `${timeStr} ` : '';
       const label = (p.sourceTitle || p.text).slice(0, 9);
-      return `<div class="cal-dot ${dotCls}" title="左クリックで修正 / 右クリックで複製: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="event.preventDefault(); event.stopPropagation(); duplicatePost('${p.id}')">${icon} ${label}</div>`;
+      
+      return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="左クリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
@@ -952,7 +1065,7 @@ function renderCalendar() {
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
 
-    html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')">
+    html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
       <div class="cal-cell-header">
         <div class="cal-day">${day}</div>
         <div class="hol-name">${holTag}</div>
@@ -1002,7 +1115,7 @@ function renderDayDetail(ds) {
           else badgeLabel = pl.slice(0,2);
           return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
         }).join('');
-        const tstr = p.date ? p.date.slice(11,16) : '';
+        const tstr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
         
         return `<div class="dd-card">
           <div class="dd-left">
