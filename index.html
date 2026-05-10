@@ -750,14 +750,19 @@ function renderToday() {
     const done = p.status === 'posted';
     
     // ★ 今日の投稿画面にもステータスバッジを表示するように修正
-    const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
+    const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'] };
     const [sc,sl] = stMap[p.status]||stMap.draft;
+    
+    // ★ アクションボタンのテキストを状況に応じて変更
+    let actionBtnLabel = '✅ 完了にする';
+    if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
+    if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
 
     return `<div class="today-card ${done?'is-done':''}" id="tc-${p.id}">
       <div class="card-top">
         ${badges}
         ${timeStr ? `<span class="post-time">🕐 ${timeStr}</span>` : ''}
-        <span class="spill ${sc}" style="margin-left:auto;">${sl}</span>
+        <span class="spill ${sc}" style="margin-left:auto; font-size:12px; padding:4px 10px;">状況: ${sl}</span>
       </div>
       <div class="text-box" id="tb-${p.id}" onclick="flashCopy('${p.id}', this)">${esc(p.text)}</div>
       ${srcHtml(p)}
@@ -765,7 +770,7 @@ function renderToday() {
       <div class="card-actions">
         <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
         <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
-        ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
+        ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">${actionBtnLabel}</button>` : ''}
         <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         <button class="abtn danger" onclick="delPost('${p.id}')">🗑️</button>
       </div>
@@ -878,15 +883,20 @@ async function copyBtn(id, btn) {
   }
 }
 
+// ★ 投稿を「完了（posted）」にする処理。トースト表示も変更
 function markPosted(id) {
   const p = posts.find(x => String(x.id) === String(id));
-  if (p) { p.status = 'posted'; p.updatedAt = Date.now(); }
-  save(); 
-  renderToday(); 
-  renderStock(); 
-  renderCalendar(); 
-  if (selDate) renderDayDetail(selDate); 
-  showToast('✅ 投稿済みにしました！');
+  if (p) { 
+    const isAttract = p.status === 'attract';
+    p.status = 'posted'; 
+    p.updatedAt = Date.now(); 
+    save(); 
+    renderToday(); 
+    renderStock(); 
+    renderCalendar(); 
+    if (selDate) renderDayDetail(selDate); 
+    showToast(isAttract ? '✅ 集客を完了にしました！' : '✅ 投稿済みにしました！');
+  }
 }
 
 function delPost(id) {
@@ -1263,11 +1273,19 @@ function renderDayDetail(ds) {
         }).join('');
         const tstr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
         
+        // ★ アクションボタンのテキストを状況に応じて変更
+        let actionBtnLabel = '✅ 完了にする';
+        if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
+        if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
+        
+        // ★ 現在のステータスをはっきり表示
+        const statusText = p.status==='draft'?'📝 下書き':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':'✅ 完了';
+        
         return `<div class="dd-card">
           <div class="dd-left">
             <div style="display:flex;gap:3px;flex-wrap:wrap;">${bs}</div>
             ${tstr ? `<div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">${tstr}</div>` : ''}
-            <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':p.status==='attract'?'集客':'済み'}</div>
+            <div class="spill spill-${p.status}" style="font-size:11px;padding:3px 8px;margin-top:4px;display:inline-block;">状況: ${statusText}</div>
           </div>
           <div class="dd-content">
             ${p.text ? `<div class="dd-text">${esc(p.text)}</div>` : ''}
@@ -1276,7 +1294,7 @@ function renderDayDetail(ds) {
               <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
               <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
               <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
-              ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
+              ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">${actionBtnLabel}</button>`:''}
               <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
             </div>
           </div>
@@ -1589,7 +1607,7 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
+  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'] };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => {
       let badgeLabel = pl;
@@ -1603,10 +1621,16 @@ function renderStock() {
       return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
     }).join('');
     const [sc,sl] = stMap[p.status]||stMap.draft;
+    
+    // ★ アクションボタンのテキストを状況に応じて変更
+    let actionBtnLabel = '✅ 完了にする';
+    if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
+    if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
+    
     return `<div class="stock-card">
       <div class="sc-top">
         ${bs}
-        <span class="spill ${sc}">${sl}</span>
+        <span class="spill ${sc}" style="font-size:12px; padding:4px 10px;">状況: ${sl}</span>
         <span class="sc-date">🕐 ${fmtDt(p.date)}</span>
       </div>
       <div class="sc-text">${esc(p.text)}</div>
@@ -1616,7 +1640,7 @@ function renderStock() {
         <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
         <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
-        ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+        ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">${actionBtnLabel}</button>`:''}
         <button class="scbtn danger" onclick="delPost('${p.id}')">🗑️</button>
         <span class="sc-chars">${p.text.length}文字</span>
       </div>
