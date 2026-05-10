@@ -447,6 +447,51 @@ select option { background: #fff; color: var(--white); }
 .hdr-btn.accent { background: #1a73e8; border: none; color: #fff; }
 .hdr-btn.accent:hover { background: #1557b0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
 
+/* カスタム日付ピッカー */
+.date-picker-wrap { position: relative; }
+.date-picker-btn {
+  width: 100%; padding: 10px 13px; background: #fff;
+  border: 1px solid var(--border); border-radius: 4px;
+  color: var(--white); font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px; text-align: left; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.date-picker-btn:hover, .date-picker-btn.open { border-color: var(--cyan); border-width: 2px; padding: 9px 12px; }
+.date-picker-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 500;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; width: 310px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  animation: fadeIn 0.18s ease;
+}
+.dp-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-weight: 500; font-size: 14px; color: var(--white); }
+.dp-cal-nav button { width: 28px; height: 28px; border: none; background: transparent; border-radius: 50%; cursor: pointer; font-size: 15px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.dp-cal-nav button:hover { background: #f1f3f4; }
+.dp-cal-hd { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
+.dp-cal-hd span { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 4px 0; }
+.dp-cal-hd .sat { color: #1a73e8; }
+.dp-cal-hd .sun { color: #d93025; }
+.dp-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.dp-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 12px; font-family: 'DM Mono', monospace;
+  cursor: pointer; color: var(--white); transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.dp-day:hover { background: #f1f3f4; }
+.dp-day.other { color: #dadce0; pointer-events: none; }
+.dp-day.today { color: #1a73e8; font-weight: 700; background: #e8f0fe; }
+.dp-day.selected { background: #1a73e8; color: #fff !important; font-weight: 700; }
+.dp-day.sat { color: #1a73e8; }
+.dp-day.sun { color: #d93025; }
+.dp-time-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dp-time-label { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.dp-time-row select { width: auto; flex: 1; padding: 7px 8px; font-size: 13px; border-radius: 4px; }
+.dp-ok-btn { flex: 1; padding: 8px; background: #1a73e8; border: none; border-radius: 4px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.dp-ok-btn:hover { background: #1557b0; }
+.dp-clear-btn { padding: 8px 14px; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.dp-clear-btn:hover { background: #f1f3f4; color: var(--white); }
+
 .toast { position: fixed; bottom: 24px; right: 24px; background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 400; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3); }
 @keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 @keyframes tout { to { opacity: 0; } }
@@ -899,6 +944,21 @@ function deleteFromEdit() {
   }
 }
 
+// ★ クリックエラーを回避するためのヘルパー関数
+function editFromCalendar(ev, id) {
+  if (ev) {
+    ev.stopPropagation();
+  }
+  editPost(id);
+}
+
+function addFromCalendar(ev, ds) {
+  if (ev) {
+    ev.stopPropagation();
+  }
+  addForDate(ds);
+}
+
 function editPost(id) {
   const p = posts.find(x => x.id === id);
   if (!p) return;
@@ -931,13 +991,16 @@ function editPost(id) {
 let ctxTargetId = null;
 
 function showContextMenu(ev, id) {
-  ev.preventDefault();
-  ev.stopPropagation();
+  const e = ev || window.event;
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
   ctxTargetId = id;
   const menu = document.getElementById('calContextMenu');
   menu.style.display = 'block';
-  menu.style.left = ev.pageX + 'px';
-  menu.style.top = ev.pageY + 'px';
+  menu.style.left = (e.pageX || 0) + 'px';
+  menu.style.top = (e.pageY || 0) + 'px';
 }
 
 document.addEventListener('click', () => {
@@ -1146,7 +1209,8 @@ function renderCalendar() {
       const displayTime = timeStr ? `${timeStr} ` : '';
       const label = (p.sourceTitle || p.text).slice(0, 15); // 週/日モード用に文字数を少し多めに
       
-      return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="左クリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
+      // ★ onclickで確実にイベントを止めて編集画面へ飛ぶように関数を変更
+      return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="左クリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" onclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
@@ -1173,7 +1237,7 @@ function renderCalendar() {
       <div class="cal-cell-header">
         <div class="cal-day">${dayLabel}</div>
         <div class="hol-name">${holTag}</div>
-        <div class="cal-add-btn" onclick="event.stopPropagation(); addForDate('${ds}')" title="この日に新規作成">＋</div>
+        <div class="cal-add-btn" onclick="addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
       </div>
       ${dots}
       ${dp.length > displayLimit ? `<div style="font-size:10px; color:var(--muted); text-align:center; margin-top:4px;">他 ${dp.length - displayLimit} 件</div>` : ''}
@@ -1395,6 +1459,21 @@ function savePost() {
   } catch (err) {
     showError('保存中にエラーが発生しました。やり直してください。');
   }
+}
+
+// ★ 日付と時間の入力欄に値をセットするヘルパー関数
+function setDatePickerValue(val) {
+  if (!val) {
+    document.getElementById('fDateDay').value = '';
+    document.getElementById('fDateTime').value = '';
+    return;
+  }
+  const ds = val.slice(0, 10);
+  const hs = val.slice(11, 13) || '09';
+  const ms = val.slice(14, 16) || '00';
+  
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
 }
 
 function clearForm(isAfterSave = false) {
