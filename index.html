@@ -316,4 +316,1354 @@ select option { background: #fff; color: var(--white); }
 .ppicker { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* フォームボタン共通 */
-.pbtn { flex: 1; min-width: 80px;
+.pbtn { flex: 1; min-width: 80px; padding: 9px 6px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: #5f6368; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s; }
+.pbtn:hover { background: #f1f3f4; }
+
+/* ★ フォームボタン：集客系は未選択・選択時ともに背景なし・枠なし */
+.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"], .pbtn[data-p="Instagram"] {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+/* 未選択時はグレーの細文字 */
+.pbtn[data-p="X"]:not([class*="on-"]), .pbtn[data-p="Threads"]:not([class*="on-"]), .pbtn[data-p="Facebook"]:not([class*="on-"]), .pbtn[data-p="Instagram"]:not([class*="on-"]) { 
+  color: #9aa0a6 !important; font-weight: 500 !important; 
+}
+/* 選択時は色付き太文字 */
+.pbtn.on-X { color: #1a73e8 !important; font-weight: 700 !important; }
+.pbtn.on-Threads { color: #202124 !important; font-weight: 700 !important; }
+.pbtn.on-Facebook { color: #1877f2 !important; font-weight: 700 !important; }
+.pbtn.on-Instagram { color: #e1306c !important; font-weight: 700 !important; }
+
+/* ★ 販売系バッジ（白背景・色枠・色文字） */
+.pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
+.pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
+.pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
+.pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
+.pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
+
+.char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
+.char-cc.warn { color: var(--draft); }
+.char-cc.over { color: var(--danger); }
+
+/* 元ネタ情報ボックス */
+.source-box { background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; display: none; }
+.source-box.show { display: block; }
+.source-box-title { font-size: 13px; font-weight: 500; color: #3c4043; margin-bottom: 12px; }
+
+/* ★ リスト内に表示されるリンク表示部分 */
+.card-source { font-size: 12px; color: var(--white); margin-bottom: 10px; padding: 10px 14px; border-radius: 8px; line-height: 1.6; border: 1px solid var(--border); background: #fafafa; }
+.card-source-title { font-weight: 500; margin-bottom: 6px; color: #3c4043; }
+.card-source a { color: #1a73e8; text-decoration: none; font-weight: 500; word-break: break-all; transition: text-decoration 0.2s; }
+.card-source a:hover { text-decoration: underline; }
+
+/* それぞれの色分け */
+.card-source.note-only { background: #dcfce7; border-left: 3px solid #16a34a; }
+.card-source.note-re-only { background: #fef9c3; border-left: 3px solid #eab308; }
+.card-source.medium-only { background: #f8f9fa; border-left: 3px solid #292929; }
+.card-source.base-only { background: #fef3c7; border-left: 3px solid #d97706; }
+.card-source.stripe-only { background: #e0e7ff; border-left: 3px solid #6366f1; }
+.card-source.note-base { background: #fce7f3; border-left: 3px solid #f472b6; }
+.card-source.note-stripe { background: #ccfbf1; border-left: 3px solid #0d9488; }
+
+/* ネタ作成のボタンエリア */
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-save { flex: 2; padding: 12px; background: #1a73e8; border: none; border-radius: 6px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+.btn-save:hover { background: #1557b0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15); }
+.btn-clear { flex: 1; padding: 12px; background: #fff; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.btn-clear:hover { background: #f1f3f4; color: var(--white); }
+.btn-danger-form { flex: 1; padding: 12px; background: #fff; border: 1px solid transparent; border-radius: 6px; color: #d93025; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: none; }
+.btn-danger-form:hover { background: #fce8e6; }
+
+/* FAB (Floating Action Button) */
+.fab-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #ea4335; /* Googleカラーの＋ */
+  font-size: 32px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  z-index: 400;
+  border: 1px solid #dadce0;
+  line-height: 1;
+}
+.fab-btn:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+}
+.fab-btn::before {
+  content: "＋";
+  background: linear-gradient(135deg, #ea4335 25%, #4285f4 25%, #4285f4 50%, #34a853 50%, #34a853 75%, #fbbc05 75%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 400;
+}
+
+.edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: #fef3c7; border-radius: 6px; margin-bottom: 14px; border: 1px solid #fde68a; display: none; }
+
+/* ステータスフィルター（すべて、下書きなど） */
+.sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.sfbtn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.18s; }
+.sfbtn.on { background: #e8f0fe; border-color: transparent; color: #1a73e8; font-weight: 700; }
+.sfbtn:hover:not(.on) { background: #f1f3f4; color: var(--white); }
+.sf-srch { margin-left: auto; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 8px 12px; width: 180px; outline: none; }
+.sf-srch:focus { border-color: var(--cyan); border-width: 2px; padding: 7px 11px; }
+
+/* 各種カード */
+.stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; animation: fadeIn 0.25s ease; transition: box-shadow 0.18s, border-color 0.18s; }
+.stock-card:hover { box-shadow: var(--shadow); }
+.sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+.spill { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.spill-draft { background: #fef3c7; color: #b45309; }
+.spill-scheduled { background: #e8f0fe; color: #1a73e8; }
+.spill-posted { background: #e6f4ea; color: #137333; }
+.spill-attract { background: #e0e7ff; color: #4338ca; } /* 集客用バッジ */
+.sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.sc-actions { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.scbtn { padding: 5px 12px; border-radius: 4px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.18s; }
+.scbtn:hover { background: #f1f3f4; color: var(--white); }
+.scbtn.danger:hover { color: #d93025; background: #fce8e6; border-color: transparent; }
+.scbtn.copied { background: #e8f0fe; color: #1a73e8; border-color: transparent; }
+.sc-chars { margin-left: auto; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ヘッダー右側 */
+.header-right { display: flex; align-items: center; gap: 10px; }
+.hdr-btn {
+  padding: 6px 14px; border-radius: 4px;
+  border: 1px solid var(--border); background: #fff;
+  color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.hdr-btn:hover { background: #f1f3f4; color: var(--white); }
+.hdr-btn.accent { background: #1a73e8; border: none; color: #fff; }
+.hdr-btn.accent:hover { background: #1557b0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 400; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3); }
+@keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes tout { to { opacity: 0; } }
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .cal-cell { min-height: 80px; }
+  .ppicker { flex-wrap: wrap; }
+  .form-actions { flex-wrap: wrap; }
+  .btn-save { flex: 100%; }
+  
+  .fab-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="gotoTabByName('calendar')">
+    <div class="logo-icon">📅</div>
+    SNS投稿マネージャー
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="hDate"></div>
+    <button class="hdr-btn" onclick="backupData()">⬇️ バックアップ</button>
+    <button class="hdr-btn accent" onclick="document.getElementById('restoreFile').click()">⬆️ データ復元</button>
+    <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab" onclick="gotoTab('today',this)">📌 今日の投稿</div>
+  <div class="tab active" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
+  <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
+  <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
+  <a href="https://spc-jp.github.io/note-mikke/" target="_blank" class="tab" style="text-decoration: none; margin-left: auto; display: flex; align-items: center; gap: 4px;">🔍 noteみっけ <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/note-rewrite/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">📝 Note Rewrite <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/note-generator/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">✍️ note-generator <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/gazou-kun/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">🖼️ 画像くん <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/apl-mikke/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">📱 アプリみっけ <span style="font-size: 10px;">↗</span></a>
+  <a href="https://spc-jp.github.io/sns-generator/" target="_blank" class="tab" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">✨ 投稿ジェネレーター <span style="font-size: 10px;">↗</span></a>
+</div>
+
+<!-- 今日の投稿 -->
+<div id="view-today" class="view">
+  <div class="today-hero">
+    <div>
+      <div class="today-title">今日の投稿</div>
+      <div class="today-sub" id="todayLabel"></div>
+    </div>
+    <div class="today-count" id="todayNum">0<span>件</span></div>
+  </div>
+  <div class="today-grid" id="todayList"></div>
+</div>
+
+<div id="view-calendar" class="view active">
+  <!-- ★ カレンダーのヘッダーに月・週・日切り替えボタンを追加 -->
+  <div class="cal-nav">
+    <div class="cal-nav-left">
+      <button class="nav-btn" onclick="navCal(-1)">‹</button>
+      <button class="nav-btn" onclick="navCal(1)">›</button>
+      <h2 id="calTitle"></h2>
+    </div>
+    <div class="cal-mode-toggle">
+      <button id="cmb-month" class="cal-mode-btn active" onclick="setCalMode('month')">月</button>
+      <button id="cmb-week" class="cal-mode-btn" onclick="setCalMode('week')">週</button>
+      <button id="cmb-day" class="cal-mode-btn" onclick="setCalMode('day')">日</button>
+    </div>
+  </div>
+  <div class="cal-grid-hd" id="calGridHd">
+    <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
+    <div class="cal-hd hd-thu">木</div><div class="cal-hd hd-fri">金</div><div class="cal-hd hd-sat">土</div><div class="cal-hd hd-sun">日</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div id="dayDetail" style="margin-top:20px;"><div class="dd-placeholder">📅 日付をクリックするとその日の投稿が表示されます</div></div>
+</div>
+
+<!-- ★ カレンダー用右クリックメニュー -->
+<div id="calContextMenu" class="context-menu" style="display:none;">
+  <div class="menu-item" onclick="handleMenu('edit')">✏️ 編集画面へ</div>
+  <div class="menu-item" onclick="handleMenu('duplicate')">📄 同じ日に複製する</div>
+  <div class="menu-item danger" onclick="handleMenu('delete')">🗑️ 削除する</div>
+</div>
+
+<div id="view-create" class="view">
+  <div id="editNotice" class="edit-notice">✏️ 編集モード中です</div>
+  
+  <div id="formError" style="display:none; color: white; background: var(--danger); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.3);"></div>
+
+  <div class="form-sec">
+    <label class="flabel">投稿先・掲載先</label>
+    <div class="ppicker" id="ppicker">
+      <button class="pbtn" data-p="X" onclick="toggleP('X')">𝕏 X</button>
+      <button class="pbtn" data-p="Threads" onclick="toggleP('Threads')">Threads</button>
+      <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
+      <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
+      <button class="pbtn" data-p="note" onclick="toggleP('note')">🟢 note</button>
+      <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">🟡 noteリライト</button>
+      <button class="pbtn" data-p="Medium" onclick="toggleP('Medium')">Ⓜ️ Medium</button>
+      <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
+      <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
+    </div>
+  </div>
+
+  <div class="source-box" id="sourceBox">
+    <div class="source-box-title" id="sourceBoxLabel">🟢 掲載情報</div>
+    
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">アプリ名</label>
+      <input type="text" id="fSourceTitle" placeholder="例：SNS投稿マネージャー">
+    </div>
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">アプリURL</label>
+      <input type="text" id="fAppUrl" placeholder="https://...">
+    </div>
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">キャッチ</label>
+      <input type="text" id="fCatchphrase" placeholder="例：AIツールで時短！中小企業のSNS運用術">
+    </div>
+    <div class="form-sec" style="margin-bottom:10px;">
+      <label class="flabel">note投稿URL販売</label>
+      <input type="text" id="fSourceUrl" placeholder="https://note.com/...">
+    </div>
+    
+    <div id="stripeUrlGroup" style="display:none; border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 4px;">
+      <div class="form-sec" style="margin-bottom:0;">
+        <label class="flabel" style="color:#6366f1;">💳 StripeURL</label>
+        <input type="text" id="fStripeSalesUrl" placeholder="https://buy.stripe.com/...">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-sec">
+    <label class="flabel">投稿テキスト <span style="font-size:10px;color:var(--muted);font-weight:400;">（SNSに投稿する告知文）</span></label>
+    <textarea id="fText" placeholder="投稿内容を入力...&#10;ハッシュタグもここに書いておくと便利です" oninput="updateCC()"></textarea>
+    <div class="char-cc" id="charCC">0 文字</div>
+  </div>
+  
+  <div class="form-row">
+    <div class="form-sec">
+      <label class="flabel">投稿予定日時</label>
+      <div style="display:flex; gap:10px;">
+        <input type="date" id="fDateDay" style="flex:1;">
+        <input type="time" id="fDateTime" style="flex:1;">
+      </div>
+    </div>
+    <div class="form-sec">
+      <label class="flabel">ステータス</label>
+      <select id="fStatus">
+        <option value="draft">📝 下書き</option>
+        <option value="scheduled">📅 投稿予定</option>
+        <option value="posted">✅ 投稿済み</option>
+        <option value="attract">📣 集客</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="form-sec">
+    <label class="flabel">メモ（自分だけ見えます）</label>
+    <input type="text" id="fMemo" placeholder="例：画像あり、ハッシュタグ確認済み">
+  </div>
+  
+  <div class="form-actions">
+    <button class="btn-save" onclick="savePost()">💾 保存する</button>
+    <button id="btnDeleteForm" class="btn-danger-form" onclick="deleteFromEdit()">🗑️ 削除</button>
+    <button class="btn-clear" onclick="clearForm(true)">クリア</button>
+  </div>
+</div>
+
+<div id="view-stock" class="view">
+  <div class="sfilter-row">
+    <button class="sfbtn on" data-f="all" onclick="setSF('all',this)">すべて</button>
+    <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
+    <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
+    <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
+    <button class="sfbtn" data-f="attract" onclick="setSF('attract',this)">📣 集客</button>
+    <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
+  </div>
+  <div class="stock-grid" id="stockList"></div>
+</div>
+
+<button class="fab-btn" id="fabBtn" onclick="createNewPost()"></button>
+
+<script>
+let posts = [];
+try {
+  posts = JSON.parse(localStorage.getItem('sns_mgr_v2') || '[]');
+} catch (e) {
+  console.warn('プレビュー環境のため、ブラウザの保存機能が制限されています。');
+}
+
+let selP = [];
+let editId = null;
+
+// ★ 新しいカレンダーの基準日とモード管理
+let baseDate = new Date();
+let calMode = 'month'; // 'month', 'week', 'day'
+let selDate = null;
+let sf = 'all';
+
+const save = () => {
+  try {
+    localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
+  } catch (e) {}
+};
+
+const WD = ['日','月','火','水','木','金','土'];
+const todayStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+};
+const pad = n => String(n).padStart(2,'0');
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtDt = d => {
+  if (!d) return '未設定';
+  const dt = new Date(d);
+  return `${dt.getMonth()+1}/${dt.getDate()} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+};
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2400);
+}
+
+function showError(msg) {
+  const el = document.getElementById('formError');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  window.scrollTo(0, 0); 
+  setTimeout(() => el.style.display = 'none', 4500);
+}
+
+function initDate() {
+  const d = new Date();
+  document.getElementById('hDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
+}
+
+function gotoTab(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab:not(a)').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if(el && !el.tagName.toLowerCase().includes('a')) el.classList.add('active');
+  
+  const fab = document.getElementById('fabBtn');
+  if (fab) {
+    fab.style.display = (name === 'create') ? 'none' : 'flex';
+  }
+
+  if (name === 'today') renderToday();
+  if (name === 'calendar') renderCalendar();
+  if (name === 'stock') renderStock();
+}
+
+function renderToday() {
+  const ts = todayStr();
+  const d = new Date();
+  document.getElementById('todayLabel').textContent = `${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
+
+  const todayPosts = posts.filter(p => p.date && p.date.startsWith(ts) && p.status !== 'posted');
+  const donePosts  = posts.filter(p => p.date && p.date.startsWith(ts) && p.status === 'posted');
+  document.getElementById('todayNum').innerHTML = `${todayPosts.length}<span>件</span>`;
+
+  const container = document.getElementById('todayList');
+  if (todayPosts.length + donePosts.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="ico">😴</div>
+      <p>今日の投稿予定はありません。<br><br>
+      <span class="empty-link" onclick="createNewPost()">「＋」ボタン</span>で
+      今日の日時をセットして<br>投稿内容を登録しておきましょう！</p>
+    </div>`;
+    return;
+  }
+
+  const all = [...todayPosts, ...donePosts].sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  container.innerHTML = all.map(p => {
+    const badges = p.platforms.map(pl => {
+      let label = pl;
+      if(pl === 'X') label = '𝕏 X';
+      else if(pl === 'Stripe') label = '💳 Stripe';
+      else if(pl === 'Instagram') label = '📷 IG';
+      else if(pl === 'note-re') label = '🟡 noteリライト';
+      else if(pl === 'note') label = '🟢 note';
+      else if(pl === 'Medium') label = 'Ⓜ️ Medium';
+      return `<span class="pbadge pbadge-${pl}">${label}</span>`;
+    }).join('');
+    const timeStr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
+    const done = p.status === 'posted';
+    
+    // ★ 今日の投稿画面にもステータスバッジを表示するように修正
+    const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
+    const [sc,sl] = stMap[p.status]||stMap.draft;
+
+    return `<div class="today-card ${done?'is-done':''}" id="tc-${p.id}">
+      <div class="card-top">
+        ${badges}
+        ${timeStr ? `<span class="post-time">🕐 ${timeStr}</span>` : ''}
+        <span class="spill ${sc}" style="margin-left:auto;">${sl}</span>
+      </div>
+      <div class="text-box" id="tb-${p.id}" onclick="flashCopy('${p.id}', this)">${esc(p.text)}</div>
+      ${srcHtml(p)}
+      ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
+      <div class="card-actions">
+        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
+        <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
+        ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
+        <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+        <button class="abtn danger" onclick="delPost('${p.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function gotoTabByName(name) {
+  const tabs = document.querySelectorAll('.tab:not(a)');
+  const names = ['today','calendar','create','stock'];
+  const idx = names.indexOf(name);
+  if (idx > -1 && tabs[idx]) {
+    gotoTab(name, tabs[idx]);
+  }
+}
+
+function createNewPost() {
+  clearForm(false);
+  gotoTabByName('create');
+  window.scrollTo(0, 0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
+}
+
+// 編集画面へ飛ぶ複製（旧来の挙動用）
+function duplicatePost(id) {
+  const p = posts.find(x => String(x.id) === String(id));
+  if (!p) return;
+  
+  editId = null; // 新規作成扱いにする
+  selP = [...p.platforms];
+  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
+  document.getElementById('fAppUrl').value = p.appUrl || '';
+  document.getElementById('fCatchphrase').value = p.catchphrase || '';
+  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
+  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
+  
+  document.getElementById('fText').value = p.text;
+  document.getElementById('fMemo').value = p.memo || '';
+  document.getElementById('fStatus').value = p.status;
+  
+  updatePbtns(); updateCC(); updateSourceBox();
+  setDatePickerValue(p.date || '');
+  
+  document.getElementById('editNotice').style.display = 'none';
+  document.getElementById('btnDeleteForm').style.display = 'none'; 
+  document.getElementById('formError').style.display = 'none';
+  
+  gotoTabByName('create');
+  window.scrollTo(0,0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
+  showToast('📄 投稿を複製しました。内容を編集して保存できます。');
+}
+
+// ★ カレンダー上で直接複製する関数
+function duplicatePostDirect(id) {
+  const p = posts.find(x => String(x.id) === String(id));
+  if(!p) return;
+  const newPost = JSON.parse(JSON.stringify(p)); 
+  newPost.id = Date.now().toString();
+  if(newPost.status === 'posted') newPost.status = 'scheduled'; // 投稿済みの場合は予定に戻す
+  newPost.createdAt = Date.now();
+  newPost.updatedAt = Date.now();
+  posts.unshift(newPost);
+  save();
+  renderCalendar();
+  if(selDate) renderDayDetail(selDate);
+  showToast('📄 同じ日に複製しました');
+}
+
+async function doCopy(id) {
+  const p = posts.find(x => String(x.id) === String(id));
+  if (!p) return false;
+  try { 
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(p.text); 
+      return true;
+    } else {
+      throw new Error('Clipboard API unavailable');
+    }
+  } catch (err) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = p.text;
+      ta.style.position = 'fixed';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      const res = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (res) return true;
+    } catch(e2) {}
+    showToast('手動でコピーしてください'); 
+    return false; 
+  }
+}
+
+async function flashCopy(id, el) {
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 800);
+  const ok = await doCopy(id);
+  if (ok) showToast('📋 コピーしました！貼り付けて投稿してください');
+}
+
+async function copyBtn(id, btn) {
+  const ok = await doCopy(id);
+  if (ok) {
+    btn.textContent = '✅ コピー完了！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 コピーする'; btn.classList.remove('copied'); }, 2500);
+  }
+}
+
+function markPosted(id) {
+  const p = posts.find(x => String(x.id) === String(id));
+  if (p) { p.status = 'posted'; p.updatedAt = Date.now(); }
+  save(); 
+  renderToday(); 
+  renderStock(); 
+  renderCalendar(); 
+  if (selDate) renderDayDetail(selDate); 
+  showToast('✅ 投稿済みにしました！');
+}
+
+function delPost(id) {
+  if (!confirm('この投稿を削除しますか？')) return;
+  // ★ 過去データ（数値ID）対策
+  posts = posts.filter(x => String(x.id) !== String(id));
+  save(); 
+  
+  renderToday(); 
+  renderStock(); 
+  renderCalendar(); 
+  
+  if (selDate) renderDayDetail(selDate); 
+  
+  showToast('🗑️ 削除しました');
+  
+  if (editId === id) {
+    clearForm(true); 
+    gotoTabByName('calendar');
+  }
+}
+
+function deleteFromEdit() {
+  if (editId) {
+    delPost(editId);
+  }
+}
+
+// ★ ダブルクリック等の判定用ヘルパー関数
+function editFromCalendar(ev, id) {
+  if (ev) {
+    ev.stopPropagation();
+  }
+  editPost(id);
+}
+
+function addFromCalendar(ev, ds) {
+  if (ev) {
+    ev.stopPropagation();
+  }
+  addForDate(ds);
+}
+
+function editPost(id) {
+  const p = posts.find(x => String(x.id) === String(id));
+  if (!p) return;
+  editId = String(id);
+  selP = [...p.platforms];
+  
+  document.getElementById('fSourceTitle').value = p.sourceTitle || '';
+  document.getElementById('fAppUrl').value = p.appUrl || '';
+  document.getElementById('fCatchphrase').value = p.catchphrase || '';
+  document.getElementById('fSourceUrl').value = p.sourceUrl || '';
+  document.getElementById('fStripeSalesUrl').value = p.stripeSalesUrl || '';
+  
+  document.getElementById('fText').value = p.text;
+  document.getElementById('fMemo').value = p.memo || '';
+  document.getElementById('fStatus').value = p.status;
+
+  updatePbtns(); updateCC(); updateSourceBox();
+  setDatePickerValue(p.date || '');
+  document.getElementById('editNotice').style.display = 'block';
+  document.getElementById('formError').style.display = 'none';
+  
+  document.getElementById('btnDeleteForm').style.display = 'block'; 
+  
+  gotoTabByName('create');
+  window.scrollTo(0,0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
+}
+
+// ★ カレンダーの右クリックメニュー処理
+let ctxTargetId = null;
+
+function showContextMenu(ev, id) {
+  const e = ev || window.event;
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  ctxTargetId = id;
+  const menu = document.getElementById('calContextMenu');
+  menu.style.display = 'block';
+  menu.style.left = (e.pageX || 0) + 'px';
+  menu.style.top = (e.pageY || 0) + 'px';
+}
+
+document.addEventListener('click', () => {
+  const menu = document.getElementById('calContextMenu');
+  if(menu) menu.style.display = 'none';
+});
+
+function handleMenu(action) {
+  if(!ctxTargetId) return;
+  const id = ctxTargetId;
+  if (action === 'edit') {
+    editPost(id);
+  } else if (action === 'duplicate') {
+    duplicatePostDirect(id);
+  } else if (action === 'delete') {
+    delPost(id);
+  }
+  ctxTargetId = null;
+}
+
+// ★ カレンダーのドラッグ＆ドロップ移動処理
+function dragStart(ev, id) {
+  ev.dataTransfer.setData("text/plain", id);
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drop(ev, ds) {
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text/plain");
+  const p = posts.find(x => String(x.id) === String(id));
+  if (p) {
+    let time = '09:00'; // デフォルト時間
+    if(p.date && p.date.includes('T')) {
+       time = p.date.split('T')[1];
+    }
+    p.date = `${ds}T${time}`;
+    save();
+    renderCalendar();
+    if(selDate === ds || selDate === p.date.slice(0,10)) renderDayDetail(selDate);
+    showToast('📅 日付を移動しました');
+  }
+}
+
+const JP_HOLIDAYS = {
+  '2025-01-01':'元日','2025-01-13':'成人の日','2025-02-11':'建国記念の日',
+  '2025-02-23':'天皇誕生日','2025-02-24':'天皇誕生日振替','2025-03-20':'春分の日',
+  '2025-04-29':'昭和の日','2025-05-03':'憲法記念日','2025-05-04':'みどりの日',
+  '2025-05-05':'こどもの日','2025-05-06':'こどもの日振替','2025-07-21':'海の日',
+  '2025-08-11':'山の日','2025-09-15':'敬老の日','2025-09-23':'秋分の日',
+  '2025-10-13':'スポーツの日','2025-11-03':'文化の日','2025-11-23':'勤労感謝の日',
+  '2025-11-24':'勤労感謝の日振替',
+  '2026-01-01':'元日','2026-01-12':'成人の日','2026-02-11':'建国記念の日',
+  '2026-02-23':'天皇誕生日','2026-03-20':'春分の日','2026-04-29':'昭和の日',
+  '2026-05-03':'憲法記念日','2026-05-04':'みどりの日','2026-05-05':'こどもの日',
+  '2026-05-06':'こどもの日振替','2026-07-20':'海の日','2026-08-11':'山の日',
+  '2026-09-21':'敬老の日','2026-09-22':'国民の休日','2026-09-23':'秋分の日',
+  '2026-10-12':'スポーツの日','2026-11-03':'文化の日','2026-11-23':'勤労感謝の日'
+};
+
+// ★ カレンダーモードの切り替え
+function setCalMode(mode) {
+  calMode = mode;
+  document.querySelectorAll('.cal-mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cmb-' + mode).classList.add('active');
+  renderCalendar();
+}
+
+// ★ カレンダーの基準日を移動
+function navCal(d) {
+  if (calMode === 'month') {
+    baseDate.setMonth(baseDate.getMonth() + d);
+  } else if (calMode === 'week') {
+    baseDate.setDate(baseDate.getDate() + d * 7);
+  } else if (calMode === 'day') {
+    baseDate.setDate(baseDate.getDate() + d);
+  }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const y = baseDate.getFullYear();
+  const m = baseDate.getMonth();
+  const d = baseDate.getDate();
+
+  const today = new Date();
+  const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+
+  let titleStr = '';
+  let daysArray = [];
+
+  // モード別の表示日を計算
+  if (calMode === 'month') {
+    titleStr = `${y}年 ${m+1}月`;
+    const rawFirst = new Date(y, m, 1).getDay(); 
+    const firstDay = (rawFirst + 6) % 7; 
+    const dim = new Date(y, m+1, 0).getDate();
+    const diPrev = new Date(y, m, 0).getDate();
+    let total = firstDay + dim;
+    if (total % 7) total += 7 - (total % 7);
+
+    for (let i = 0; i < total; i++) {
+      let dayNum, mm, yy, other = false;
+      if (i < firstDay) {
+        dayNum = diPrev - firstDay + i + 1; mm = m - 1; yy = y; other = true;
+      } else if (i >= firstDay + dim) {
+        dayNum = i - firstDay - dim + 1; mm = m + 1; yy = y; other = true;
+      } else {
+        dayNum = i - firstDay + 1; mm = m; yy = y;
+      }
+      let rm = mm, ry = yy;
+      if (rm < 0) { rm = 11; ry--; } 
+      if (rm > 11) { rm = 0; ry++; }
+      daysArray.push({ ds: `${ry}-${pad(rm+1)}-${pad(dayNum)}`, day: dayNum, other });
+    }
+  } else if (calMode === 'week') {
+    const currentDow = (baseDate.getDay() + 6) % 7; 
+    const startOfWeek = new Date(y, m, d - currentDow);
+    const endOfWeek = new Date(y, m, d - currentDow + 6);
+    
+    if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
+      titleStr = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth()+1}月`;
+    } else {
+      titleStr = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth()+1}月 - ${endOfWeek.getMonth()+1}月`;
+    }
+
+    for (let i = 0; i < 7; i++) {
+      const targetDt = new Date(y, m, d - currentDow + i);
+      daysArray.push({
+        ds: `${targetDt.getFullYear()}-${pad(targetDt.getMonth()+1)}-${pad(targetDt.getDate())}`,
+        day: targetDt.getDate(),
+        other: targetDt.getMonth() !== m
+      });
+    }
+  } else if (calMode === 'day') {
+    titleStr = `${y}年 ${m+1}月 ${d}日`;
+    daysArray.push({
+      ds: `${y}-${pad(m+1)}-${pad(d)}`,
+      day: d,
+      other: false
+    });
+  }
+
+  document.getElementById('calTitle').textContent = titleStr;
+
+  // 曜日ヘッダーの表示切り替え
+  const hd = document.getElementById('calGridHd');
+  const grid = document.getElementById('calGrid');
+  if (calMode === 'day') {
+    hd.style.display = 'none';
+    grid.style.gridTemplateColumns = '1fr';
+  } else {
+    hd.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+  }
+
+  let html = '';
+  for (let item of daysArray) {
+    const ds = item.ds;
+    const day = item.day;
+    const other = calMode === 'month' ? item.other : false;
+    const dow = new Date(ds).getDay(); 
+    const isSat = dow === 6;
+    const isSun = dow === 0;
+    const holName = JP_HOLIDAYS[ds] || '';
+    const isHol = !!holName;
+    const isToday = ds === tsToday;
+    const isSel = ds === selDate;
+
+    // 時間順にソートして取得
+    const dp = posts.filter(p => p.date && p.date.startsWith(ds))
+                    .sort((a,b) => (a.date||'').localeCompare(b.date||''));
+    
+    // モードによって表示件数を変える
+    let displayLimit = 4;
+    if (calMode === 'week') displayLimit = 10;
+    if (calMode === 'day') displayLimit = 50;
+
+    // ★ 表示順を「時間 + アイコン(投稿タイプ) + タイトル」に変更
+    const dots = dp.slice(0, displayLimit).map(p => {
+      const isNote = p.platforms.includes('note');
+      const isNoteRe = p.platforms.includes('note-re');
+      const isBase = p.platforms.includes('BASE');
+      const isStripe = p.platforms.includes('Stripe');
+      const isMedium = p.platforms.includes('Medium');
+      const isInstagram = p.platforms.includes('Instagram');
+      
+      let dotCls = 'x-src'; 
+      if (isNote && isStripe) dotCls = 'note-stripe-src'; 
+      else if (isNote && isBase) dotCls = 'pink-src'; 
+      else if (isStripe) dotCls = 'stripe-src'; 
+      else if (isBase) dotCls = 'base-src'; 
+      else if (isMedium) dotCls = 'medium-src';
+      else if (isNoteRe) dotCls = 'note-re-src';
+      else if (isNote) dotCls = 'note-src'; 
+      else if (isInstagram) dotCls = 'ig-src';
+      else if (p.platforms.includes('Facebook')) dotCls = 'fb-src';
+      else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
+      else if (p.platforms.includes('X')) dotCls = 'x-src';
+      
+      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
+      
+      // ★ ステータスによる視覚的変化をカレンダーのバーに追加
+      let opacityStyle = '';
+      let statusIcon = '';
+      if (p.status === 'posted') {
+        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; // 投稿済みは薄くして取り消し線
+        statusIcon = '✅ ';
+      } else if (p.status === 'attract') {
+        statusIcon = '📣 '; // 集客
+      } else if (p.status === 'draft') {
+        statusIcon = '📝 '; // 下書き
+        opacityStyle = 'border-style: dashed !important;'; 
+      }
+
+      const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
+      const displayTime = timeStr ? `${timeStr} ` : '';
+      const label = (p.sourceTitle || p.text).slice(0, 15); // 週/日モード用に文字数を少し多めに
+      
+      // ★ ondblclick で確実にイベントを止めて編集画面へ飛ぶように関数を変更
+      return `<div class="cal-dot ${dotCls}" style="${opacityStyle}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="ダブルクリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" ondblclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${statusIcon}${icon} ${label}</div>`;
+    }).join('');
+
+    const classes = [
+      other ? 'other-m' : '',
+      isToday ? 'is-today' : '',
+      isSel ? 'is-selected' : '',
+      isSat && !other ? 'is-sat' : '',
+      (isSun || isHol) && !other ? 'is-sun' : ''
+    ].filter(Boolean).join(' ');
+
+    const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
+    
+    let dayLabel = day;
+    if (calMode === 'day') {
+      const dowLabel = ['日','月','火','水','木','金','土'][dow];
+      dayLabel = `${day}日(${dowLabel})`;
+    }
+
+    let minHeightStyle = '';
+    if (calMode === 'day') minHeightStyle = 'min-height: 400px; padding: 12px;';
+    else if (calMode === 'week') minHeightStyle = 'min-height: 300px;';
+
+    html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" style="${minHeightStyle}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
+      <div class="cal-cell-header">
+        <div class="cal-day">${dayLabel}</div>
+        <div class="hol-name">${holTag}</div>
+        <div class="cal-add-btn" onclick="addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
+      </div>
+      ${dots}
+      ${dp.length > displayLimit ? `<div style="font-size:10px; color:var(--muted); text-align:center; margin-top:4px;">他 ${dp.length - displayLimit} 件</div>` : ''}
+    </div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+  if (selDate) renderDayDetail(selDate);
+}
+
+function pickDate(ds) {
+  selDate = ds;
+  renderCalendar();
+  renderDayDetail(ds);
+}
+
+function renderDayDetail(ds) {
+  const [y, m, d] = ds.split('-');
+  const dt = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+  const dow = dt.getDay();
+  const dowLabel = ['日','月','火','水','木','金','土'][dow];
+  const holName = JP_HOLIDAYS[ds] || '';
+  const holStr = holName ? ` 🎌${holName}` : '';
+  const label = `${parseInt(m, 10)}月${parseInt(d, 10)}日（${dowLabel}）${holStr}`;
+  const dp = posts.filter(p => p.date && p.date.startsWith(ds)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+
+  const cards = dp.length === 0
+    ? `<div class="dd-empty">この日の投稿はありません</div>`
+    : dp.map(p => {
+        const bs = p.platforms.map(pl => {
+          let badgeLabel = pl;
+          if (pl === 'X') badgeLabel = '𝕏';
+          else if (pl === 'Stripe') badgeLabel = '💳';
+          else if (pl === 'Instagram') badgeLabel = '📷';
+          else if (pl === 'note-re') badgeLabel = '🟡 リライト';
+          else if (pl === 'note') badgeLabel = '🟢 note';
+          else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
+          else badgeLabel = pl.slice(0,2);
+          return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
+        }).join('');
+        const tstr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
+        
+        return `<div class="dd-card">
+          <div class="dd-left">
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">${bs}</div>
+            ${tstr ? `<div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">${tstr}</div>` : ''}
+            <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':p.status==='attract'?'集客':'済み'}</div>
+          </div>
+          <div class="dd-content">
+            ${p.text ? `<div class="dd-text">${esc(p.text)}</div>` : ''}
+            ${srcHtml(p)}
+            <div class="dd-actions">
+              <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
+              <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
+              <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+              ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みにする</button>`:''}
+              <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️ 削除</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('dayDetail').innerHTML = `<div class="dd-title">
+    ${label}の投稿（${dp.length}件）
+    <span class="dd-add-link" onclick="addForDate('${ds}')">＋ 追加</span>
+  </div><div class="dd-cards-wrap">${cards}</div>`;
+}
+
+async function ddCopy(id, btn) {
+  await doCopy(id);
+  btn.textContent = '✅ コピー済み';
+  setTimeout(() => btn.textContent = '📋 コピー', 2200);
+}
+
+function addForDate(ds) {
+  clearForm();
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fDateTime').value = '09:00';
+  gotoTabByName('create');
+  window.scrollTo(0,0);
+  setTimeout(() => document.getElementById('fText').focus(), 100);
+}
+
+// ── フォーム ──
+function toggleP(p) {
+  const i = selP.indexOf(p);
+  if (i > -1) selP.splice(i, 1); else selP.push(p);
+  updatePbtns();
+  updateSourceBox();
+}
+function updatePbtns() {
+  document.querySelectorAll('.pbtn').forEach(b => {
+    const p = b.dataset.p;
+    b.className = 'pbtn' + (selP.includes(p) ? ` on-${p}` : '');
+  });
+}
+function updateSourceBox() {
+  const box = document.getElementById('sourceBox');
+  const lbl = document.getElementById('sourceBoxLabel');
+  const stripeGrp = document.getElementById('stripeUrlGroup');
+  
+  const hasNote = selP.includes('note');
+  const hasNoteRe = selP.includes('note-re');
+  const hasBase = selP.includes('BASE');
+  const hasStripe = selP.includes('Stripe');
+  const hasMedium = selP.includes('Medium');
+  
+  if (hasNote || hasBase || hasStripe || hasNoteRe || hasMedium) {
+    box.classList.add('show');
+    
+    // ★ Stripeが選ばれていれば専用URL欄を表示
+    stripeGrp.style.display = hasStripe ? 'block' : 'none';
+
+    if (hasNote && hasStripe) {
+      lbl.textContent = '🟢💳 掲載情報';
+    } else if (hasNote && hasBase) {
+      lbl.textContent = '🟢🛒 掲載情報';
+    } else if (hasStripe) {
+      lbl.textContent = '💳 Stripe 掲載情報';
+    } else if (hasBase) {
+      lbl.textContent = '🛒 BASE 掲載情報';
+    } else if (hasNoteRe) {
+      lbl.textContent = '🟡 noteリライト 掲載情報';
+    } else if (hasMedium) {
+      lbl.textContent = 'Ⓜ️ Medium 掲載情報';
+    } else {
+      lbl.textContent = '🟢 note 掲載情報';
+    }
+  } else {
+    box.classList.remove('show');
+  }
+}
+function updateCC() {
+  const len = document.getElementById('fText').value.length;
+  const el = document.getElementById('charCC');
+  el.textContent = `${len} 文字`;
+  el.className = 'char-cc' + (len > 200 ? ' warn' : '') + (len > 280 ? ' over' : '');
+}
+
+function savePost() {
+  try {
+    const text = document.getElementById('fText').value.trim();
+    
+    if (selP.length === 0) { 
+      showError('投稿先（Xやnoteなど）を1つ以上選択してください！'); 
+      return; 
+    }
+    
+    const srcTitle = document.getElementById('fSourceTitle').value.trim();
+    const snsOnly = selP.every(p => ['X','Threads','Facebook','Instagram'].includes(p));
+    
+    if (snsOnly && !text) { 
+      showError('投稿テキストを入力してください！'); 
+      return; 
+    }
+    if (!text && !srcTitle) { 
+      showError('投稿テキストまたはタイトルを入力してください！'); 
+      return; 
+    }
+
+    const dDay = document.getElementById('fDateDay').value;
+    const dTime = document.getElementById('fDateTime').value || '00:00';
+    const dVal = dDay ? `${dDay}T${dTime}` : '';
+
+    const post = {
+      id: editId || Date.now().toString(),
+      text, 
+      platforms: [...selP],
+      sourceTitle: srcTitle,
+      appUrl: document.getElementById('fAppUrl').value.trim(),
+      catchphrase: document.getElementById('fCatchphrase').value.trim(),
+      sourceUrl: document.getElementById('fSourceUrl').value.trim(),
+      stripeSalesUrl: document.getElementById('fStripeSalesUrl').value.trim(),
+      // ★ 過去データ（数値ID）対策
+      stripeThanksUrl: editId ? (posts.find(p=>String(p.id)===String(editId))?.stripeThanksUrl || '') : '', 
+      date: dVal,
+      memo: document.getElementById('fMemo').value.trim(),
+      status: document.getElementById('fStatus').value,
+      // ★ 過去データ（数値ID）対策
+      createdAt: editId ? (posts.find(p=>String(p.id)===String(editId))?.createdAt || Date.now()) : Date.now(),
+      updatedAt: Date.now()
+    };
+    
+    const isEdit = !!editId;
+    if (isEdit) { 
+      // ★ 過去データ（数値ID）が確実に上書きされるように文字列化して比較
+      const i = posts.findIndex(p=>String(p.id)===String(editId)); 
+      if(i > -1) {
+        posts[i] = post; 
+      } else {
+        posts.unshift(post);
+      }
+    } else {
+      posts.unshift(post);
+    }
+    
+    save(); 
+    
+    const savedDate = post.date; // 保存した日付を取得しておく
+    clearForm(true); 
+    showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
+    
+    if (savedDate) {
+      const dStr = savedDate.slice(0, 10); 
+      if (dStr) {
+        const [yy, mm, dd] = dStr.split('-');
+        baseDate = new Date(parseInt(yy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
+        selDate = dStr;
+        
+        gotoTabByName('calendar');
+        
+        setTimeout(() => {
+          const targetCell = document.getElementById(`cal-cell-${dStr}`);
+          if (targetCell) {
+            targetCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetCell.classList.add('flash-cell');
+            setTimeout(() => targetCell.classList.remove('flash-cell'), 1600); 
+          } else {
+             window.scrollTo(0, 0); 
+          }
+        }, 80);
+        
+        return;
+      }
+    }
+    
+    gotoTabByName('stock');
+    window.scrollTo(0, 0);
+  } catch (err) {
+    showError('保存中にエラーが発生しました。やり直してください。');
+  }
+}
+
+// ★ 日付と時間の入力欄に値をセットするヘルパー関数
+function setDatePickerValue(val) {
+  if (!val) {
+    document.getElementById('fDateDay').value = '';
+    document.getElementById('fDateTime').value = '';
+    return;
+  }
+  const ds = val.slice(0, 10);
+  const hs = val.slice(11, 13) || '09';
+  const ms = val.slice(14, 16) || '00';
+  
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
+}
+
+function clearForm(isAfterSave = false) {
+  document.getElementById('fText').value = '';
+  
+  const now = new Date();
+  const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const hs = pad(now.getHours());
+  const ms = pad(Math.floor(now.getMinutes()/5)*5);
+  
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
+  
+  document.getElementById('fMemo').value = '';
+  document.getElementById('fStatus').value = 'scheduled';
+  
+  document.getElementById('fSourceTitle').value = '';
+  document.getElementById('fAppUrl').value = '';
+  document.getElementById('fCatchphrase').value = '';
+  document.getElementById('fSourceUrl').value = '';
+  document.getElementById('fStripeSalesUrl').value = '';
+  
+  selP = ['X']; 
+  updatePbtns(); 
+  updateCC(); 
+  updateSourceBox();
+  
+  editId = null;
+  document.getElementById('editNotice').style.display = 'none';
+  
+  document.getElementById('btnDeleteForm').style.display = 'none'; 
+  
+  if(!isAfterSave) {
+    document.getElementById('formError').style.display = 'none';
+  }
+}
+
+// ★ 共通の「元ネタ・URL」表示ロジック
+function srcHtml(p) {
+  // いずれかの項目が入力されていれば表示
+  if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.appUrl && !p.catchphrase) return '';
+  
+  const hasNote = p.platforms.includes('note');
+  const hasNoteRe = p.platforms.includes('note-re');
+  const hasBase = p.platforms.includes('BASE');
+  const hasStripe = p.platforms.includes('Stripe');
+  const hasMedium = p.platforms.includes('Medium');
+  
+  let cls = 'card-source';
+  if (hasNote && hasStripe) cls += ' note-stripe';
+  else if (hasNote && hasBase) cls += ' note-base';
+  else if (hasStripe) cls += ' stripe-only';
+  else if (hasBase) cls += ' base-only';
+  else if (hasMedium) cls += ' medium-only';
+  else if (hasNoteRe) cls += ' note-re-only';
+  else cls += ' note-only'; // デフォルトは緑系
+
+  const iconStr = [];
+  if (hasNoteRe) iconStr.push('🟡');
+  if (hasNote) iconStr.push('🟢');
+  if (hasMedium) iconStr.push('Ⓜ️');
+  if (hasBase) iconStr.push('🛒');
+  if (hasStripe) iconStr.push('💳');
+  if (iconStr.length === 0) iconStr.push('🟢');
+
+  let html = `<div class="${cls}">`;
+  
+  // アプリ名 (旧タイトル)
+  if (p.sourceTitle) {
+    html += `<div class="card-source-title">${iconStr.join('')} ${esc(p.sourceTitle)}</div>`;
+  } else {
+    html += `<div class="card-source-title">${iconStr.join('')} 掲載情報</div>`;
+  }
+
+  // キャッチ
+  if (p.catchphrase) {
+    html += `<div style="margin-bottom:4px; font-weight:700; color:var(--cyan);">${esc(p.catchphrase)}</div>`;
+  }
+
+  // アプリURL
+  if (p.appUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">アプリ:</span> <a href="${esc(p.appUrl)}" target="_blank">${esc(p.appUrl)}</a></div>`;
+  }
+
+  // note投稿URL販売 (旧URL)
+  if (p.sourceUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">note/販売:</span> <a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a></div>`;
+  }
+  
+  // StripeURL
+  if (p.stripeSalesUrl) {
+    html += `<div style="margin-top:3px;"><span style="opacity:0.7;">Stripe:</span> <a href="${esc(p.stripeSalesUrl)}" target="_blank">${esc(p.stripeSalesUrl)}</a></div>`;
+  }
+  
+  html += `</div>`;
+  return html;
+}
+
+function setSF(f, btn) {
+  sf = f;
+  document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderStock();
+}
+
+function renderStock() {
+  const q = (document.getElementById('stockSearch')?.value || '').toLowerCase();
+  const fl = posts.filter(p => {
+    const mf = sf === 'all' || p.status === sf;
+    const ms = !q || p.text.toLowerCase().includes(q) || (p.memo||'').toLowerCase().includes(q);
+    return mf && ms;
+  }).sort((a,b) => {
+    if (a.date && b.date) return a.date.localeCompare(b.date);
+    if (a.date) return -1; if (b.date) return 1;
+    return b.createdAt - a.createdAt;
+  });
+
+  const c = document.getElementById('stockList');
+  if (fl.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
+    return;
+  }
+  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'], attract:['spill-attract','📣 集客'] };
+  c.innerHTML = fl.map(p => {
+    const bs = p.platforms.map(pl => {
+      let badgeLabel = pl;
+      if (pl === 'X') badgeLabel = '𝕏';
+      else if (pl === 'Stripe') badgeLabel = '💳';
+      else if (pl === 'Instagram') badgeLabel = '📷';
+      else if (pl === 'note-re') badgeLabel = '🟡 リライト';
+      else if (pl === 'note') badgeLabel = '🟢 note';
+      else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
+      else badgeLabel = pl.slice(0,2);
+      return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
+    }).join('');
+    const [sc,sl] = stMap[p.status]||stMap.draft;
+    return `<div class="stock-card">
+      <div class="sc-top">
+        ${bs}
+        <span class="spill ${sc}">${sl}</span>
+        <span class="sc-date">🕐 ${fmtDt(p.date)}</span>
+      </div>
+      <div class="sc-text">${esc(p.text)}</div>
+      ${srcHtml(p)}
+      ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
+      <div class="sc-actions">
+        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
+        <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
+        <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+        ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+        <button class="scbtn danger" onclick="delPost('${p.id}')">🗑️</button>
+        <span class="sc-chars">${p.text.length}文字</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function backupData() {
+  const data = { version: 2, exportedAt: new Date().toISOString(), posts };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = `sns_posts_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.json`;
+  a.click();
+  showToast('⬇️ バックアップを保存しました');
+}
+
+function restoreData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const imported = data.posts || data;
+      if (!Array.isArray(imported)) throw new Error('形式エラー');
+      if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。\nよろしいですか？`)) return;
+      posts = imported;
+      save();
+      renderToday(); renderStock();
+      if (document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
+      showToast(`✅ ${imported.length}件のデータを復元しました`);
+    } catch {
+      showToast('❌ ファイルの読み込みに失敗しました');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// INIT
+initDate();
+clearForm(); // フォームの初期化（削除ボタンも隠す）
+
+// ★ 初期画面を「カレンダー」に強制指定
+gotoTabByName('calendar');
+</script>
+</body>
+</html>
