@@ -148,10 +148,14 @@ header {
 
 
 /* ★ Googleカレンダー風 カレンダーグリッド */
-.cal-nav { display: flex; align-items: center; margin-bottom: 16px; gap: 16px; }
-#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.cal-nav-left { display: flex; align-items: center; gap: 8px; }
+#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; margin-left: 8px; }
 .nav-btn { font-size: 20px; color: #5f6368; background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
 .nav-btn:hover { background: #f1f3f4; }
+.cal-mode-toggle { display: flex; background: #f1f3f4; border-radius: 6px; padding: 4px; }
+.cal-mode-btn { border: none; background: transparent; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #5f6368; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+.cal-mode-btn.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 2px rgba(60,64,67,0.15); }
 
 .cal-grid-hd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; width: 100%; margin-bottom: 0; }
 .cal-hd { text-align: center; font-size: 13px; font-weight: 500; padding: 10px 0; color: #70757a; border-left: 1px solid transparent; }
@@ -203,7 +207,7 @@ header {
 .cal-cell-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; padding: 0 4px; }
 
 /* ★ 日付 (Google風の丸いアイコン) */
-.cal-day { font-size: 12px; font-family: 'Noto Sans JP', sans-serif; color: #3c4043; font-weight: 500; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; margin-bottom: 0; letter-spacing: 0; }
+.cal-day { font-size: 12px; font-family: 'Noto Sans JP', sans-serif; color: #3c4043; font-weight: 500; display: flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 4px; border-radius: 12px; margin-bottom: 0; letter-spacing: 0; }
 .cal-cell.is-today .cal-day { background: #1a73e8; color: #fff !important; font-weight: 700; }
 .cal-cell.is-sat .cal-day { color: #1a73e8; }
 .cal-cell.is-sun .cal-day { color: #d93025; }
@@ -505,12 +509,20 @@ select option { background: #fff; color: var(--white); }
 </div>
 
 <div id="view-calendar" class="view active">
+  <!-- ★ カレンダーのヘッダーに月・週・日切り替えボタンを追加 -->
   <div class="cal-nav">
-    <button class="nav-btn" onclick="chMonth(-1)">‹</button>
-    <h2 id="calTitle"></h2>
-    <button class="nav-btn" onclick="chMonth(1)">›</button>
+    <div class="cal-nav-left">
+      <button class="nav-btn" onclick="navCal(-1)">‹</button>
+      <button class="nav-btn" onclick="navCal(1)">›</button>
+      <h2 id="calTitle"></h2>
+    </div>
+    <div class="cal-mode-toggle">
+      <button id="cmb-month" class="cal-mode-btn active" onclick="setCalMode('month')">月</button>
+      <button id="cmb-week" class="cal-mode-btn" onclick="setCalMode('week')">週</button>
+      <button id="cmb-day" class="cal-mode-btn" onclick="setCalMode('day')">日</button>
+    </div>
   </div>
-  <div class="cal-grid-hd">
+  <div class="cal-grid-hd" id="calGridHd">
     <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
     <div class="cal-hd hd-thu">木</div><div class="cal-hd hd-fri">金</div><div class="cal-hd hd-sat">土</div><div class="cal-hd hd-sun">日</div>
   </div>
@@ -634,8 +646,10 @@ try {
 
 let selP = [];
 let editId = null;
-let cY = new Date().getFullYear();
-let cM = new Date().getMonth();
+
+// ★ 新しいカレンダーの基準日とモード管理
+let baseDate = new Date();
+let calMode = 'month'; // 'month', 'week', 'day'
 let selDate = null;
 let sf = 'all';
 
@@ -986,34 +1000,107 @@ const JP_HOLIDAYS = {
   '2026-10-12':'スポーツの日','2026-11-03':'文化の日','2026-11-23':'勤労感謝の日'
 };
 
+// ★ カレンダーモードの切り替え
+function setCalMode(mode) {
+  calMode = mode;
+  document.querySelectorAll('.cal-mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cmb-' + mode).classList.add('active');
+  renderCalendar();
+}
+
+// ★ カレンダーの基準日を移動
+function navCal(d) {
+  if (calMode === 'month') {
+    baseDate.setMonth(baseDate.getMonth() + d);
+  } else if (calMode === 'week') {
+    baseDate.setDate(baseDate.getDate() + d * 7);
+  } else if (calMode === 'day') {
+    baseDate.setDate(baseDate.getDate() + d);
+  }
+  renderCalendar();
+}
+
 function renderCalendar() {
-  document.getElementById('calTitle').textContent = `${cY}年 ${cM+1}月`;
+  const y = baseDate.getFullYear();
+  const m = baseDate.getMonth();
+  const d = baseDate.getDate();
+
   const today = new Date();
   const tsToday = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
 
-  const rawFirst = new Date(cY, cM, 1).getDay(); 
-  const firstDay = (rawFirst + 6) % 7; 
-  const dim = new Date(cY, cM+1, 0).getDate();
-  const diPrev = new Date(cY, cM, 0).getDate();
-  let total = firstDay + dim;
-  if (total % 7) total += 7 - (total % 7);
+  let titleStr = '';
+  let daysArray = [];
 
-  let html = '';
-  for (let i = 0; i < total; i++) {
-    let day, m, y, other = false;
-    if (i < firstDay) {
-      day = diPrev - firstDay + i + 1; m = cM - 1; y = cY; other = true;
-    } else if (i >= firstDay + dim) {
-      day = i - firstDay - dim + 1; m = cM + 1; y = cY; other = true;
+  // モード別の表示日を計算
+  if (calMode === 'month') {
+    titleStr = `${y}年 ${m+1}月`;
+    const rawFirst = new Date(y, m, 1).getDay(); 
+    const firstDay = (rawFirst + 6) % 7; 
+    const dim = new Date(y, m+1, 0).getDate();
+    const diPrev = new Date(y, m, 0).getDate();
+    let total = firstDay + dim;
+    if (total % 7) total += 7 - (total % 7);
+
+    for (let i = 0; i < total; i++) {
+      let dayNum, mm, yy, other = false;
+      if (i < firstDay) {
+        dayNum = diPrev - firstDay + i + 1; mm = m - 1; yy = y; other = true;
+      } else if (i >= firstDay + dim) {
+        dayNum = i - firstDay - dim + 1; mm = m + 1; yy = y; other = true;
+      } else {
+        dayNum = i - firstDay + 1; mm = m; yy = y;
+      }
+      let rm = mm, ry = yy;
+      if (rm < 0) { rm = 11; ry--; } 
+      if (rm > 11) { rm = 0; ry++; }
+      daysArray.push({ ds: `${ry}-${pad(rm+1)}-${pad(dayNum)}`, day: dayNum, other });
+    }
+  } else if (calMode === 'week') {
+    const currentDow = (baseDate.getDay() + 6) % 7; 
+    const startOfWeek = new Date(y, m, d - currentDow);
+    const endOfWeek = new Date(y, m, d - currentDow + 6);
+    
+    if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
+      titleStr = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth()+1}月`;
     } else {
-      day = i - firstDay + 1; m = cM; y = cY;
+      titleStr = `${startOfWeek.getFullYear()}年 ${startOfWeek.getMonth()+1}月 - ${endOfWeek.getMonth()+1}月`;
     }
 
-    let rm = m, ry = y;
-    if (rm < 0) { rm = 11; ry = y - 1; }
-    if (rm > 11) { rm = 0; ry = y + 1; }
+    for (let i = 0; i < 7; i++) {
+      const targetDt = new Date(y, m, d - currentDow + i);
+      daysArray.push({
+        ds: `${targetDt.getFullYear()}-${pad(targetDt.getMonth()+1)}-${pad(targetDt.getDate())}`,
+        day: targetDt.getDate(),
+        other: targetDt.getMonth() !== m
+      });
+    }
+  } else if (calMode === 'day') {
+    titleStr = `${y}年 ${m+1}月 ${d}日`;
+    daysArray.push({
+      ds: `${y}-${pad(m+1)}-${pad(d)}`,
+      day: d,
+      other: false
+    });
+  }
 
-    const ds = `${ry}-${pad(rm+1)}-${pad(day)}`;
+  document.getElementById('calTitle').textContent = titleStr;
+
+  // 曜日ヘッダーの表示切り替え
+  const hd = document.getElementById('calGridHd');
+  const grid = document.getElementById('calGrid');
+  if (calMode === 'day') {
+    hd.style.display = 'none';
+    grid.style.gridTemplateColumns = '1fr';
+  } else {
+    hd.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+  }
+
+  let html = '';
+  for (let item of daysArray) {
+    const ds = item.ds;
+    const day = item.day;
+    const other = calMode === 'month' ? item.other : false;
     const dow = new Date(ds).getDay(); 
     const isSat = dow === 6;
     const isSun = dow === 0;
@@ -1022,10 +1109,17 @@ function renderCalendar() {
     const isToday = ds === tsToday;
     const isSel = ds === selDate;
 
-    const dp = posts.filter(p => p.date && p.date.startsWith(ds));
+    // 時間順にソートして取得
+    const dp = posts.filter(p => p.date && p.date.startsWith(ds))
+                    .sort((a,b) => (a.date||'').localeCompare(b.date||''));
     
+    // モードによって表示件数を変える
+    let displayLimit = 4;
+    if (calMode === 'week') displayLimit = 10;
+    if (calMode === 'day') displayLimit = 50;
+
     // ★ 表示順を「時間 + アイコン(投稿タイプ) + タイトル」に変更
-    const dots = dp.slice(0, 4).map(p => {
+    const dots = dp.slice(0, displayLimit).map(p => {
       const isNote = p.platforms.includes('note');
       const isNoteRe = p.platforms.includes('note-re');
       const isBase = p.platforms.includes('BASE');
@@ -1050,7 +1144,7 @@ function renderCalendar() {
       
       const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
       const displayTime = timeStr ? `${timeStr} ` : '';
-      const label = (p.sourceTitle || p.text).slice(0, 9);
+      const label = (p.sourceTitle || p.text).slice(0, 15); // 週/日モード用に文字数を少し多めに
       
       return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="左クリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" onclick="event.stopPropagation(); editPost('${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
     }).join('');
@@ -1064,25 +1158,29 @@ function renderCalendar() {
     ].filter(Boolean).join(' ');
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
+    
+    let dayLabel = day;
+    if (calMode === 'day') {
+      const dowLabel = ['日','月','火','水','木','金','土'][dow];
+      dayLabel = `${day}日(${dowLabel})`;
+    }
 
-    html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
+    let minHeightStyle = '';
+    if (calMode === 'day') minHeightStyle = 'min-height: 400px; padding: 12px;';
+    else if (calMode === 'week') minHeightStyle = 'min-height: 300px;';
+
+    html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" style="${minHeightStyle}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
       <div class="cal-cell-header">
-        <div class="cal-day">${day}</div>
+        <div class="cal-day">${dayLabel}</div>
         <div class="hol-name">${holTag}</div>
         <div class="cal-add-btn" onclick="event.stopPropagation(); addForDate('${ds}')" title="この日に新規作成">＋</div>
       </div>
       ${dots}
+      ${dp.length > displayLimit ? `<div style="font-size:10px; color:var(--muted); text-align:center; margin-top:4px;">他 ${dp.length - displayLimit} 件</div>` : ''}
     </div>`;
   }
   document.getElementById('calGrid').innerHTML = html;
   if (selDate) renderDayDetail(selDate);
-}
-
-function chMonth(d) {
-  cM += d;
-  if (cM > 11) { cM = 0; cY++; }
-  if (cM < 0) { cM = 11; cY--; }
-  renderCalendar();
 }
 
 function pickDate(ds) {
@@ -1272,8 +1370,7 @@ function savePost() {
       const dStr = savedDate.slice(0, 10); 
       if (dStr) {
         const [yy, mm, dd] = dStr.split('-');
-        cY = parseInt(yy, 10);
-        cM = parseInt(mm, 10) - 1;
+        baseDate = new Date(parseInt(yy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
         selDate = dStr;
         
         gotoTabByName('calendar');
@@ -1298,21 +1395,6 @@ function savePost() {
   } catch (err) {
     showError('保存中にエラーが発生しました。やり直してください。');
   }
-}
-
-// ★ 日付と時間の入力欄に値をセットするヘルパー関数
-function setDatePickerValue(val) {
-  if (!val) {
-    document.getElementById('fDateDay').value = '';
-    document.getElementById('fDateTime').value = '';
-    return;
-  }
-  const ds = val.slice(0, 10);
-  const hs = val.slice(11, 13) || '09';
-  const ms = val.slice(14, 16) || '00';
-  
-  document.getElementById('fDateDay').value = ds;
-  document.getElementById('fDateTime').value = `${hs}:${ms}`;
 }
 
 function clearForm(isAfterSave = false) {
