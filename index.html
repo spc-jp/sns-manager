@@ -292,7 +292,7 @@ header {
 .dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
 .dd-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .dd-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
-.dd-actions { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.dd-actions { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; }
 .smbtn { padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
 .smbtn:hover { background: #f1f3f4; color: var(--white); }
 .smbtn.danger:hover { color: #d93025; background: #fce8e6; border-color: transparent; }
@@ -1289,7 +1289,7 @@ function renderDayDetail(ds) {
             <div class="spill spill-${p.status}" style="font-size:10px;padding:2px 7px;margin-top:2px;">${p.status==='draft'?'下書き':p.status==='scheduled'?'予定':p.status==='attract'?'集客':'済み'}</div>
           </div>
           <div class="dd-content">
-            <div class="dd-text">${esc(p.text)}</div>
+            ${p.text ? `<div class="dd-text">${esc(p.text)}</div>` : ''}
             ${srcHtml(p)}
             <div class="dd-actions">
               <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
