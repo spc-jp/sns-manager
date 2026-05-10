@@ -228,6 +228,8 @@ header {
   transition: filter 0.2s; 
   position: relative; z-index: 10; 
   display: block; 
+  user-select: none; /* テキスト選択を防ぎドラッグしやすくする */
+  -webkit-user-select: none;
 }
 .cal-dot:active { cursor: grabbing; }
 
@@ -944,7 +946,7 @@ function deleteFromEdit() {
   }
 }
 
-// ★ クリックエラーを回避するためのヘルパー関数
+// ★ ダブルクリック等の判定用ヘルパー関数
 function editFromCalendar(ev, id) {
   if (ev) {
     ev.stopPropagation();
@@ -1209,8 +1211,8 @@ function renderCalendar() {
       const displayTime = timeStr ? `${timeStr} ` : '';
       const label = (p.sourceTitle || p.text).slice(0, 15); // 週/日モード用に文字数を少し多めに
       
-      // ★ onclickで確実にイベントを止めて編集画面へ飛ぶように関数を変更
-      return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="左クリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" onclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
+      // ★ ondblclick で確実にイベントを止めて編集画面へ飛ぶように関数を変更
+      return `<div class="cal-dot ${dotCls}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="ダブルクリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" ondblclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${icon} ${label}</div>`;
     }).join('');
 
     const classes = [
