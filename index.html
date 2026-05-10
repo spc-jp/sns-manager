@@ -918,7 +918,11 @@ async function copyBtn(id, btn) {
 function markPosted(id) {
   const p = posts.find(x => x.id === id);
   if (p) { p.status = 'posted'; p.updatedAt = Date.now(); }
-  save(); renderToday(); renderStock();
+  save(); 
+  renderToday(); 
+  renderStock(); 
+  renderCalendar(); 
+  if (selDate) renderDayDetail(selDate); 
   showToast('✅ 投稿済みにしました！');
 }
 
