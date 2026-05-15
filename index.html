@@ -602,7 +602,8 @@ select option { background: #fff; color: var(--white); }
       <label class="flabel">投稿予定日時</label>
       <div style="display:flex; gap:10px;">
         <input type="date" id="fDateDay" style="flex:1;">
-        <input type="time" id="fDateTime" style="flex:1;">
+        <!-- ★ step="900" を設定し、15分刻みで入力しやすくしました -->
+        <input type="time" id="fDateTime" style="flex:1;" step="900">
       </div>
     </div>
     <div class="form-sec">
@@ -1493,7 +1494,9 @@ function clearForm(isAfterSave = false) {
   const now = new Date();
   const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   const hs = pad(now.getHours());
-  const ms = pad(Math.floor(now.getMinutes()/5)*5);
+  
+  // ★ 初期値を15分刻み（00, 15, 30, 45）に丸めるように修正
+  const ms = pad(Math.floor(now.getMinutes() / 15) * 15);
   
   document.getElementById('fDateDay').value = ds;
   document.getElementById('fDateTime').value = `${hs}:${ms}`;
