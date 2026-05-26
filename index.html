@@ -49,7 +49,8 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-.view { display: none; padding: 20px 28px; width: 100%; max-width: 100%; margin: 0; }
+/* ★ max-width: 100% に変更し、全画面表示に対応 */
+.view { display: none; padding: 20px 28px; width: 100%; max-width: 100%; margin: 0 auto; }
 .view.active { display: block; }
 
 /* TODAY */
@@ -99,7 +100,6 @@ header {
 .pbadge-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; }
 
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: #f1f3f4; color: #5f6368; border: 1px solid #dadce0; }
 
 .text-box {
   font-size: 14px;
@@ -146,38 +146,21 @@ header {
 .empty-state p { font-size: 14px; line-height: 1.9; }
 .empty-link { color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 500; }
 
-/* ★ Googleカレンダー風 カレンダーグリッド */
+/* ★ カレンダーヘッダーとテーマ入力欄 */
 .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-.cal-nav-left { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
-#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; margin-left: 8px; white-space: nowrap; }
+.cal-nav-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; margin-left: 8px; }
+#monthTheme { 
+  margin-left: 16px; padding: 6px 14px; border: 1px solid transparent; border-radius: 20px; 
+  background: #f1f3f4; outline: none; font-size: 14px; color: #3c4043; 
+  width: 300px; max-width: 100%; transition: all 0.2s; font-family: 'Noto Sans JP', sans-serif;
+}
+#monthTheme:focus { border-color: var(--cyan); background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+#monthTheme::placeholder { color: #9aa0a6; }
+
 .nav-btn { font-size: 20px; color: #5f6368; background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
 .nav-btn:hover { background: #f1f3f4; }
-
-/* ★ 今月のテーマ用入力枠 */
-.theme-input {
-  flex: 1;
-  min-width: 200px;
-  max-width: 400px;
-  margin-left: 12px;
-  padding: 8px 12px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: #f1f3f4;
-  font-size: 14px;
-  color: #3c4043;
-  font-family: 'Noto Sans JP', sans-serif;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-.theme-input:hover { background: #e8eaed; }
-.theme-input:focus {
-  background: #fff;
-  border-color: var(--cyan);
-  box-shadow: 0 1px 3px rgba(60,64,67,0.1);
-  outline: none;
-}
-
-.cal-mode-toggle { display: flex; background: #f1f3f4; border-radius: 6px; padding: 4px; margin-left: auto; }
+.cal-mode-toggle { display: flex; background: #f1f3f4; border-radius: 6px; padding: 4px; }
 .cal-mode-btn { border: none; background: transparent; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #5f6368; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
 .cal-mode-btn.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 2px rgba(60,64,67,0.15); }
 
@@ -266,11 +249,11 @@ header {
 /* ★ 販売系（note, BASE, Stripe, Medium）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
 .cal-dot.note-re-src { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
-.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Medium */
+.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } 
 .cal-dot.base-src { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; } 
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
-.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } /* note+base等 */
-.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } /* note+stripe等 */
+.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } 
+.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } 
 
 /* ★ コンテキストメニュー（右クリックで表示） */
 .context-menu {
@@ -299,6 +282,7 @@ header {
 .menu-item.danger { color: #d93025; border-top: 1px solid var(--border-light); margin-top: 4px; padding-top: 12px; }
 .menu-item.danger:hover { background: #fce8e6; }
 
+
 .day-detail {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -324,7 +308,6 @@ header {
 .today-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
 .today-grid .today-card { margin-bottom: 0; }
 /* ネタ作成 */
-#view-create > * { max-width: 660px; }
 /* ネタ一覧 */
 .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 14px; }
 .stock-grid .stock-card { margin-bottom: 0; }
@@ -332,9 +315,8 @@ header {
 /* フォーム */
 .form-sec { margin-bottom: 16px; }
 .flabel { display: block; font-size: 12px; font-weight: 500; color: #3c4043; margin-bottom: 7px; }
-input[type=text], input[type=date], input[type=time], textarea, select { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; padding: 10px 13px; outline: none; transition: border-color 0.2s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.01); }
+input[type=text], input[type=date], textarea, select { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; padding: 10px 13px; outline: none; transition: border-color 0.2s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.01); }
 input:focus, textarea:focus, select:focus { border-color: var(--cyan); border-width: 2px; padding: 9px 12px; }
-input[type=datetime-local] { color-scheme: light; }
 textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
 select option { background: #fff; color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -360,7 +342,7 @@ select option { background: #fff; color: var(--white); }
 .pbtn.on-Facebook { color: #1877f2 !important; font-weight: 700 !important; }
 .pbtn.on-Instagram { color: #e1306c !important; font-weight: 700 !important; }
 
-/* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
+/* ★ 販売系バッジ（白背景・色枠・色文字） */
 .pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
 .pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
@@ -435,12 +417,16 @@ select option { background: #fff; color: var(--white); }
 }
 
 .edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: #fef3c7; border-radius: 6px; margin-bottom: 14px; border: 1px solid #fde68a; display: none; }
+
+/* ステータスフィルター（すべて、下書きなど） */
 .sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
 .sfbtn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.18s; }
 .sfbtn.on { background: #e8f0fe; border-color: transparent; color: #1a73e8; font-weight: 700; }
 .sfbtn:hover:not(.on) { background: #f1f3f4; color: var(--white); }
 .sf-srch { margin-left: auto; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 8px 12px; width: 180px; outline: none; }
 .sf-srch:focus { border-color: var(--cyan); border-width: 2px; padding: 7px 11px; }
+
+/* 各種カード */
 .stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; animation: fadeIn 0.25s ease; transition: box-shadow 0.18s, border-color 0.18s; }
 .stock-card:hover { box-shadow: var(--shadow); }
 .sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
@@ -473,51 +459,6 @@ select option { background: #fff; color: var(--white); }
 .hdr-btn:hover { background: #f1f3f4; color: var(--white); }
 .hdr-btn.accent { background: #1a73e8; border: none; color: #fff; }
 .hdr-btn.accent:hover { background: #1557b0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
-
-/* カスタム日付ピッカー */
-.date-picker-wrap { position: relative; }
-.date-picker-btn {
-  width: 100%; padding: 10px 13px; background: #fff;
-  border: 1px solid var(--border); border-radius: 4px;
-  color: var(--white); font-family: 'Noto Sans JP', sans-serif;
-  font-size: 14px; text-align: left; cursor: pointer;
-  transition: border-color 0.2s;
-}
-.date-picker-btn:hover, .date-picker-btn.open { border-color: var(--cyan); border-width: 2px; padding: 9px 12px; }
-.date-picker-panel {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 500;
-  background: #fff; border: 1px solid var(--border);
-  border-radius: 8px; padding: 16px; width: 310px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  animation: fadeIn 0.18s ease;
-}
-.dp-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-weight: 500; font-size: 14px; color: var(--white); }
-.dp-cal-nav button { width: 28px; height: 28px; border: none; background: transparent; border-radius: 50%; cursor: pointer; font-size: 15px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.dp-cal-nav button:hover { background: #f1f3f4; }
-.dp-cal-hd { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
-.dp-cal-hd span { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 4px 0; }
-.dp-cal-hd .sat { color: #1a73e8; }
-.dp-cal-hd .sun { color: #d93025; }
-.dp-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.dp-day {
-  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-size: 12px; font-family: 'DM Mono', monospace;
-  cursor: pointer; color: var(--white); transition: all 0.15s;
-  border: 1px solid transparent;
-}
-.dp-day:hover { background: #f1f3f4; }
-.dp-day.other { color: #dadce0; pointer-events: none; }
-.dp-day.today { color: #1a73e8; font-weight: 700; background: #e8f0fe; }
-.dp-day.selected { background: #1a73e8; color: #fff !important; font-weight: 700; }
-.dp-day.sat { color: #1a73e8; }
-.dp-day.sun { color: #d93025; }
-.dp-time-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-.dp-time-label { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
-.dp-time-row select { width: auto; flex: 1; padding: 7px 8px; font-size: 13px; border-radius: 4px; }
-.dp-ok-btn { flex: 1; padding: 8px; background: #1a73e8; border: none; border-radius: 4px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-.dp-ok-btn:hover { background: #1557b0; }
-.dp-clear-btn { padding: 8px 14px; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.dp-clear-btn:hover { background: #f1f3f4; color: var(--white); }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 400; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3); }
 @keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -581,15 +522,14 @@ select option { background: #fff; color: var(--white); }
 </div>
 
 <div id="view-calendar" class="view active">
+  <!-- ★ カレンダーのヘッダーに月・週・日切り替えボタンとテーマ入力欄を追加 -->
   <div class="cal-nav">
-    <div class="cal-nav-left">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <button class="nav-btn" onclick="navCal(-1)">‹</button>
-        <button class="nav-btn" onclick="navCal(1)">›</button>
-        <h2 id="calTitle"></h2>
-      </div>
+    <div class="cal-nav-left" style="display:flex; align-items:center; gap:8px;">
+      <button class="nav-btn" onclick="navCal(-1)">‹</button>
+      <button class="nav-btn" onclick="navCal(1)">›</button>
+      <h2 id="calTitle"></h2>
       <!-- ★ 月ごとのテーマ入力欄 -->
-      <input type="text" id="monthTheme" class="theme-input" placeholder="🎯 今月のテーマ・やる事を入力... (自動保存)" onchange="saveTheme()" onkeyup="saveTheme()">
+      <input type="text" id="monthTheme" placeholder="🎯 今月のテーマ・やる事..." onchange="saveTheme(this.value)">
     </div>
     <div class="cal-mode-toggle">
       <button id="cmb-month" class="cal-mode-btn active" onclick="setCalMode('month')">月</button>
@@ -669,9 +609,12 @@ select option { background: #fff; color: var(--white); }
   <div class="form-row">
     <div class="form-sec">
       <label class="flabel">投稿予定日時</label>
-      <div style="display:flex; gap:10px;">
-        <input type="date" id="fDateDay" style="flex:1;">
-        <input type="time" id="fDateTime" style="flex:1;" step="900">
+      <div style="display:flex; gap:6px; align-items: center;">
+        <input type="date" id="fDateDay" style="flex:2; border: 1px solid var(--border); padding: 10px; border-radius: 4px;">
+        <!-- ★ 15分刻みドロップダウン式に変更 -->
+        <select id="fHour" style="flex:1; padding: 10px 4px; border: 1px solid var(--border); border-radius: 4px; outline:none;"></select>
+        <span style="font-weight:bold; color:var(--muted);">:</span>
+        <select id="fMinute" style="flex:1; padding: 10px 4px; border: 1px solid var(--border); border-radius: 4px; outline:none;"></select>
       </div>
     </div>
     <div class="form-sec">
@@ -713,7 +656,7 @@ select option { background: #fff; color: var(--white); }
 
 <script>
 let posts = [];
-let monthlyThemes = {};
+let monthlyThemes = {}; // ★ テーマ管理用
 
 try {
   posts = JSON.parse(localStorage.getItem('sns_mgr_v2') || '[]');
@@ -731,11 +674,20 @@ let selDate = null;
 let sf = 'all';
 
 const save = () => {
-  try { localStorage.setItem('sns_mgr_v2', JSON.stringify(posts)); } catch (e) {}
+  try {
+    localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
+    localStorage.setItem('sns_mgr_themes', JSON.stringify(monthlyThemes));
+  } catch (e) {}
 };
-const saveThemes = () => {
-  try { localStorage.setItem('sns_mgr_themes', JSON.stringify(monthlyThemes)); } catch(e) {}
-};
+
+// ★ テーマの保存処理
+function saveTheme(val) {
+  const y = baseDate.getFullYear();
+  const m = baseDate.getMonth();
+  const key = `${y}-${pad(m+1)}`;
+  monthlyThemes[key] = val;
+  save();
+}
 
 const WD = ['日','月','火','水','木','金','土'];
 const todayStr = () => {
@@ -770,6 +722,15 @@ function initDate() {
   document.getElementById('hDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
 }
 
+// ★ ドロップダウン時間の初期化
+function initTimeSelects() {
+  const hSel = document.getElementById('fHour');
+  const mSel = document.getElementById('fMinute');
+  if(!hSel || !mSel) return;
+  hSel.innerHTML = Array.from({length:24},(_,i)=>`<option value="${pad(i)}">${pad(i)}時</option>`).join('');
+  mSel.innerHTML = ['00','15','30','45'].map(m=>`<option value="${m}">${m}分</option>`).join('');
+}
+
 function gotoTab(name, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab:not(a)').forEach(t => t.classList.remove('active'));
@@ -784,13 +745,6 @@ function gotoTab(name, el) {
   if (name === 'today') renderToday();
   if (name === 'calendar') renderCalendar();
   if (name === 'stock') renderStock();
-}
-
-// ★ 月ごとのテーマを保存する関数
-function saveTheme() {
-  const key = `${baseDate.getFullYear()}-${pad(baseDate.getMonth() + 1)}`;
-  monthlyThemes[key] = document.getElementById('monthTheme').value;
-  saveThemes();
 }
 
 function renderToday() {
@@ -875,7 +829,7 @@ function duplicatePost(id) {
   const p = posts.find(x => String(x.id) === String(id));
   if (!p) return;
   
-  editId = null;
+  editId = null; 
   selP = [...p.platforms];
   document.getElementById('fSourceTitle').value = p.sourceTitle || '';
   document.getElementById('fAppUrl').value = p.appUrl || '';
@@ -905,7 +859,7 @@ function duplicatePostDirect(id) {
   if(!p) return;
   const newPost = JSON.parse(JSON.stringify(p)); 
   newPost.id = Date.now().toString();
-  if(newPost.status === 'posted') newPost.status = 'scheduled';
+  if(newPost.status === 'posted') newPost.status = 'scheduled'; 
   newPost.createdAt = Date.now();
   newPost.updatedAt = Date.now();
   posts.unshift(newPost);
@@ -999,16 +953,12 @@ function deleteFromEdit() {
 }
 
 function editFromCalendar(ev, id) {
-  if (ev) {
-    ev.stopPropagation();
-  }
+  if (ev) ev.stopPropagation();
   editPost(id);
 }
 
 function addFromCalendar(ev, ds) {
-  if (ev) {
-    ev.stopPropagation();
-  }
+  if (ev) ev.stopPropagation();
   addForDate(ds);
 }
 
@@ -1086,7 +1036,7 @@ function drop(ev, ds) {
   const id = ev.dataTransfer.getData("text/plain");
   const p = posts.find(x => String(x.id) === String(id));
   if (p) {
-    let time = '09:00';
+    let time = '09:00'; 
     if(p.date && p.date.includes('T')) {
        time = p.date.split('T')[1];
     }
@@ -1143,6 +1093,13 @@ function renderCalendar() {
   let titleStr = '';
   let daysArray = [];
 
+  // ★ 月テーマの復元
+  const monthKey = `${y}-${pad(m+1)}`;
+  const themeEl = document.getElementById('monthTheme');
+  if (themeEl) {
+    themeEl.value = monthlyThemes[monthKey] || '';
+  }
+
   if (calMode === 'month') {
     titleStr = `${y}年 ${m+1}月`;
     const rawFirst = new Date(y, m, 1).getDay(); 
@@ -1195,13 +1152,6 @@ function renderCalendar() {
   }
 
   document.getElementById('calTitle').textContent = titleStr;
-  
-  // ★ カレンダーを更新したらその月のテーマをテキストボックスに反映させる
-  const currentMonthKey = `${y}-${pad(m+1)}`;
-  const themeInputEl = document.getElementById('monthTheme');
-  if(themeInputEl) {
-      themeInputEl.value = monthlyThemes[currentMonthKey] || '';
-  }
 
   const hd = document.getElementById('calGridHd');
   const grid = document.getElementById('calGrid');
@@ -1284,7 +1234,6 @@ function renderCalendar() {
     ].filter(Boolean).join(' ');
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
-    const todayBadge = isToday ? `<span style="font-size:10px; background:var(--cyan); color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px; font-weight:700;">今日</span>` : '';
     
     let dayLabel = day;
     if (calMode === 'day') {
@@ -1298,9 +1247,9 @@ function renderCalendar() {
 
     html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" style="${minHeightStyle}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
       <div class="cal-cell-header">
-        <div class="cal-day">${dayLabel}${todayBadge}</div>
+        <div class="cal-day">${dayLabel}</div>
         <div class="hol-name">${holTag}</div>
-        <div class="cal-add-btn" onclick="event.stopPropagation(); addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
+        <div class="cal-add-btn" onclick="addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
       </div>
       ${dots}
       ${dp.length > displayLimit ? `<div style="font-size:10px; color:var(--muted); text-align:center; margin-top:4px;">他 ${dp.length - displayLimit} 件</div>` : ''}
@@ -1382,19 +1331,13 @@ async function ddCopy(id, btn) {
 
 function addForDate(ds) {
   clearForm();
-  document.getElementById('fDateDay').value = ds;
-  
-  // 指定された日の場合、時間は現在時刻に近い15分刻みを入れる
-  const now = new Date();
-  const hs = pad(now.getHours());
-  const ms = pad(Math.floor(now.getMinutes()/5)*5);
-  document.getElementById('fDateTime').value = `${hs}:${ms}`;
-  
+  setDatePickerValue(ds + 'T09:00');
   gotoTabByName('create');
   window.scrollTo(0,0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
+// ── フォーム ──
 function toggleP(p) {
   const i = selP.indexOf(p);
   if (i > -1) selP.splice(i, 1); else selP.push(p);
@@ -1420,24 +1363,15 @@ function updateSourceBox() {
   
   if (hasNote || hasBase || hasStripe || hasNoteRe || hasMedium) {
     box.classList.add('show');
-    
     stripeGrp.style.display = hasStripe ? 'block' : 'none';
 
-    if (hasNote && hasStripe) {
-      lbl.textContent = '🟢💳 掲載情報';
-    } else if (hasNote && hasBase) {
-      lbl.textContent = '🟢🛒 掲載情報';
-    } else if (hasStripe) {
-      lbl.textContent = '💳 Stripe 掲載情報';
-    } else if (hasBase) {
-      lbl.textContent = '🛒 BASE 掲載情報';
-    } else if (hasNoteRe) {
-      lbl.textContent = '🟡 noteリライト 掲載情報';
-    } else if (hasMedium) {
-      lbl.textContent = 'Ⓜ️ Medium 掲載情報';
-    } else {
-      lbl.textContent = '🟢 note 掲載情報';
-    }
+    if (hasNote && hasStripe) lbl.textContent = '🟢💳 掲載情報';
+    else if (hasNote && hasBase) lbl.textContent = '🟢🛒 掲載情報';
+    else if (hasStripe) lbl.textContent = '💳 Stripe 掲載情報';
+    else if (hasBase) lbl.textContent = '🛒 BASE 掲載情報';
+    else if (hasNoteRe) lbl.textContent = '🟡 noteリライト 掲載情報';
+    else if (hasMedium) lbl.textContent = 'Ⓜ️ Medium 掲載情報';
+    else lbl.textContent = '🟢 note 掲載情報';
   } else {
     box.classList.remove('show');
   }
@@ -1471,8 +1405,9 @@ function savePost() {
     }
 
     const dDay = document.getElementById('fDateDay').value;
-    const dTime = document.getElementById('fDateTime').value || '00:00';
-    const dVal = dDay ? `${dDay}T${dTime}` : '';
+    const hVal = document.getElementById('fHour').value || '09';
+    const mVal = document.getElementById('fMinute').value || '00';
+    const dVal = dDay ? `${dDay}T${hVal}:${mVal}` : '';
 
     const post = {
       id: editId || Date.now().toString(),
@@ -1540,18 +1475,26 @@ function savePost() {
   }
 }
 
+// ★ 日付と時間の入力欄に値をセットする関数
 function setDatePickerValue(val) {
   if (!val) {
     document.getElementById('fDateDay').value = '';
-    document.getElementById('fDateTime').value = '';
+    document.getElementById('fHour').value = '09';
+    document.getElementById('fMinute').value = '00';
     return;
   }
   const ds = val.slice(0, 10);
   const hs = val.slice(11, 13) || '09';
-  const ms = val.slice(14, 16) || '00';
+  const rawMin = val.slice(14, 16) || '00';
+  
+  // ★ 15分刻みに丸める
+  const ms = ['00','15','30','45'].reduce((a, b) => Math.abs(parseInt(b) - parseInt(rawMin)) < Math.abs(parseInt(a) - parseInt(rawMin)) ? b : a, '00');
   
   document.getElementById('fDateDay').value = ds;
-  document.getElementById('fDateTime').value = `${hs}:${ms}`;
+  const hSel = document.getElementById('fHour');
+  const mSel = document.getElementById('fMinute');
+  if(hSel) hSel.value = hs;
+  if(mSel) mSel.value = ms;
 }
 
 function clearForm(isAfterSave = false) {
@@ -1560,10 +1503,13 @@ function clearForm(isAfterSave = false) {
   const now = new Date();
   const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   const hs = pad(now.getHours());
-  const ms = pad(Math.floor(now.getMinutes()/5)*5);
+  const ms = pad(Math.floor(now.getMinutes()/15)*15);
   
   document.getElementById('fDateDay').value = ds;
-  document.getElementById('fDateTime').value = `${hs}:${ms}`;
+  const hSel = document.getElementById('fHour');
+  const mSel = document.getElementById('fMinute');
+  if(hSel) hSel.value = hs;
+  if(mSel) mSel.value = ms;
   
   document.getElementById('fMemo').value = '';
   document.getElementById('fStatus').value = 'scheduled';
@@ -1581,14 +1527,13 @@ function clearForm(isAfterSave = false) {
   
   editId = null;
   document.getElementById('editNotice').style.display = 'none';
-  
   document.getElementById('btnDeleteForm').style.display = 'none'; 
-  
   if(!isAfterSave) {
     document.getElementById('formError').style.display = 'none';
   }
 }
 
+// ★ 共通の「元ネタ・URL」表示ロジック
 function srcHtml(p) {
   if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.appUrl && !p.catchphrase) return '';
   
@@ -1605,7 +1550,7 @@ function srcHtml(p) {
   else if (hasBase) cls += ' base-only';
   else if (hasMedium) cls += ' medium-only';
   else if (hasNoteRe) cls += ' note-re-only';
-  else cls += ' note-only'; 
+  else cls += ' note-only';
 
   const iconStr = [];
   if (hasNoteRe) iconStr.push('🟡');
@@ -1626,15 +1571,19 @@ function srcHtml(p) {
   if (p.catchphrase) {
     html += `<div style="margin-bottom:4px; font-weight:700; color:var(--cyan);">${esc(p.catchphrase)}</div>`;
   }
+
   if (p.appUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">アプリ:</span> <a href="${esc(p.appUrl)}" target="_blank">${esc(p.appUrl)}</a></div>`;
   }
+
   if (p.sourceUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">note/販売:</span> <a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a></div>`;
   }
+  
   if (p.stripeSalesUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">Stripe:</span> <a href="${esc(p.stripeSalesUrl)}" target="_blank">${esc(p.stripeSalesUrl)}</a></div>`;
   }
+  
   html += `</div>`;
   return html;
 }
@@ -1704,7 +1653,7 @@ function renderStock() {
 }
 
 function backupData() {
-  const data = { version: 2, exportedAt: new Date().toISOString(), posts, themes: monthlyThemes };
+  const data = { version: 3, exportedAt: new Date().toISOString(), posts, monthlyThemes };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1721,16 +1670,11 @@ function restoreData(e) {
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      const imported = data.posts || data; // 古い形式(配列のみ)への互換性
+      const imported = data.posts || data;
       if (!Array.isArray(imported)) throw new Error('形式エラー');
       if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。\nよろしいですか？`)) return;
-      
       posts = imported;
-      if(data.themes) {
-        monthlyThemes = data.themes;
-        saveThemes();
-      }
-      
+      if (data.monthlyThemes) monthlyThemes = data.monthlyThemes;
       save();
       renderToday(); renderStock();
       if (document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
@@ -1745,7 +1689,8 @@ function restoreData(e) {
 
 // INIT
 initDate();
-clearForm(); // ここで「現在日時」と「X」が初期セットされる
+initTimeSelects();
+clearForm(); // フォームの初期化（削除ボタンも隠す）
 
 // ★ 初期画面を「カレンダー」に強制指定
 gotoTabByName('calendar');
