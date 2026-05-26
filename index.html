@@ -49,7 +49,7 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-.view { display: none; padding: 20px 28px; width: 100%; max-width: 100%; margin: 0 auto; }
+.view { display: none; padding: 20px 28px; width: 100%; max-width: 1200px; margin: 0 auto; }
 .view.active { display: block; }
 
 /* TODAY */
@@ -99,6 +99,7 @@ header {
 .pbadge-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; }
 
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+.done-pill { margin-left: auto; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: #f1f3f4; color: #5f6368; border: 1px solid #dadce0; }
 
 .text-box {
   font-size: 14px;
@@ -145,14 +146,38 @@ header {
 .empty-state p { font-size: 14px; line-height: 1.9; }
 .empty-link { color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 500; }
 
-
 /* ★ Googleカレンダー風 カレンダーグリッド */
 .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-.cal-nav-left { display: flex; align-items: center; gap: 8px; }
-#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; margin-left: 8px; }
+.cal-nav-left { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+#calTitle { font-size: 22px; font-weight: 400; color: #3c4043; margin: 0; margin-left: 8px; white-space: nowrap; }
 .nav-btn { font-size: 20px; color: #5f6368; background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
 .nav-btn:hover { background: #f1f3f4; }
-.cal-mode-toggle { display: flex; background: #f1f3f4; border-radius: 6px; padding: 4px; }
+
+/* ★ 今月のテーマ用入力枠 */
+.theme-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 400px;
+  margin-left: 12px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #f1f3f4;
+  font-size: 14px;
+  color: #3c4043;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.theme-input:hover { background: #e8eaed; }
+.theme-input:focus {
+  background: #fff;
+  border-color: var(--cyan);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.1);
+  outline: none;
+}
+
+.cal-mode-toggle { display: flex; background: #f1f3f4; border-radius: 6px; padding: 4px; margin-left: auto; }
 .cal-mode-btn { border: none; background: transparent; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #5f6368; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
 .cal-mode-btn.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 2px rgba(60,64,67,0.15); }
 
@@ -274,7 +299,6 @@ header {
 .menu-item.danger { color: #d93025; border-top: 1px solid var(--border-light); margin-top: 4px; padding-top: 12px; }
 .menu-item.danger:hover { background: #fce8e6; }
 
-
 .day-detail {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -308,8 +332,9 @@ header {
 /* フォーム */
 .form-sec { margin-bottom: 16px; }
 .flabel { display: block; font-size: 12px; font-weight: 500; color: #3c4043; margin-bottom: 7px; }
-input[type=text], input[type=date], textarea, select { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; padding: 10px 13px; outline: none; transition: border-color 0.2s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.01); }
+input[type=text], input[type=date], input[type=time], textarea, select { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; padding: 10px 13px; outline: none; transition: border-color 0.2s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.01); }
 input:focus, textarea:focus, select:focus { border-color: var(--cyan); border-width: 2px; padding: 9px 12px; }
+input[type=datetime-local] { color-scheme: light; }
 textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
 select option { background: #fff; color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -335,7 +360,7 @@ select option { background: #fff; color: var(--white); }
 .pbtn.on-Facebook { color: #1877f2 !important; font-weight: 700 !important; }
 .pbtn.on-Instagram { color: #e1306c !important; font-weight: 700 !important; }
 
-/* ★ 販売系バッジ（白背景・色枠・色文字） */
+/* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
 .pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
 .pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
@@ -410,16 +435,12 @@ select option { background: #fff; color: var(--white); }
 }
 
 .edit-notice { font-size: 12px; color: #b45309; padding: 9px 14px; background: #fef3c7; border-radius: 6px; margin-bottom: 14px; border: 1px solid #fde68a; display: none; }
-
-/* ステータスフィルター（すべて、下書きなど） */
 .sfilter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
 .sfbtn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.18s; }
 .sfbtn.on { background: #e8f0fe; border-color: transparent; color: #1a73e8; font-weight: 700; }
 .sfbtn:hover:not(.on) { background: #f1f3f4; color: var(--white); }
 .sf-srch { margin-left: auto; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; padding: 8px 12px; width: 180px; outline: none; }
 .sf-srch:focus { border-color: var(--cyan); border-width: 2px; padding: 7px 11px; }
-
-/* 各種カード */
 .stock-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; animation: fadeIn 0.25s ease; transition: box-shadow 0.18s, border-color 0.18s; }
 .stock-card:hover { box-shadow: var(--shadow); }
 .sc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
@@ -452,6 +473,51 @@ select option { background: #fff; color: var(--white); }
 .hdr-btn:hover { background: #f1f3f4; color: var(--white); }
 .hdr-btn.accent { background: #1a73e8; border: none; color: #fff; }
 .hdr-btn.accent:hover { background: #1557b0; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
+
+/* カスタム日付ピッカー */
+.date-picker-wrap { position: relative; }
+.date-picker-btn {
+  width: 100%; padding: 10px 13px; background: #fff;
+  border: 1px solid var(--border); border-radius: 4px;
+  color: var(--white); font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px; text-align: left; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.date-picker-btn:hover, .date-picker-btn.open { border-color: var(--cyan); border-width: 2px; padding: 9px 12px; }
+.date-picker-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 500;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; width: 310px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  animation: fadeIn 0.18s ease;
+}
+.dp-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-weight: 500; font-size: 14px; color: var(--white); }
+.dp-cal-nav button { width: 28px; height: 28px; border: none; background: transparent; border-radius: 50%; cursor: pointer; font-size: 15px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.dp-cal-nav button:hover { background: #f1f3f4; }
+.dp-cal-hd { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
+.dp-cal-hd span { text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); padding: 4px 0; }
+.dp-cal-hd .sat { color: #1a73e8; }
+.dp-cal-hd .sun { color: #d93025; }
+.dp-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.dp-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 12px; font-family: 'DM Mono', monospace;
+  cursor: pointer; color: var(--white); transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.dp-day:hover { background: #f1f3f4; }
+.dp-day.other { color: #dadce0; pointer-events: none; }
+.dp-day.today { color: #1a73e8; font-weight: 700; background: #e8f0fe; }
+.dp-day.selected { background: #1a73e8; color: #fff !important; font-weight: 700; }
+.dp-day.sat { color: #1a73e8; }
+.dp-day.sun { color: #d93025; }
+.dp-time-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dp-time-label { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.dp-time-row select { width: auto; flex: 1; padding: 7px 8px; font-size: 13px; border-radius: 4px; }
+.dp-ok-btn { flex: 1; padding: 8px; background: #1a73e8; border: none; border-radius: 4px; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.dp-ok-btn:hover { background: #1557b0; }
+.dp-clear-btn { padding: 8px 14px; background: #fff; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.dp-clear-btn:hover { background: #f1f3f4; color: var(--white); }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 400; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3); }
 @keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -515,12 +581,15 @@ select option { background: #fff; color: var(--white); }
 </div>
 
 <div id="view-calendar" class="view active">
-  <!-- ★ カレンダーのヘッダーに月・週・日切り替えボタンを追加 -->
   <div class="cal-nav">
     <div class="cal-nav-left">
-      <button class="nav-btn" onclick="navCal(-1)">‹</button>
-      <button class="nav-btn" onclick="navCal(1)">›</button>
-      <h2 id="calTitle"></h2>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="nav-btn" onclick="navCal(-1)">‹</button>
+        <button class="nav-btn" onclick="navCal(1)">›</button>
+        <h2 id="calTitle"></h2>
+      </div>
+      <!-- ★ 月ごとのテーマ入力欄 -->
+      <input type="text" id="monthTheme" class="theme-input" placeholder="🎯 今月のテーマ・やる事を入力... (自動保存)" onchange="saveTheme()" onkeyup="saveTheme()">
     </div>
     <div class="cal-mode-toggle">
       <button id="cmb-month" class="cal-mode-btn active" onclick="setCalMode('month')">月</button>
@@ -600,11 +669,9 @@ select option { background: #fff; color: var(--white); }
   <div class="form-row">
     <div class="form-sec">
       <label class="flabel">投稿予定日時</label>
-      <div style="display:flex; gap:6px; align-items: center;">
-        <input type="date" id="fDateDay" style="flex:2;">
-        <select id="fHour" style="flex:1; padding:10px 4px;"></select>
-        <span>:</span>
-        <select id="fMinute" style="flex:1; padding:10px 4px;"></select>
+      <div style="display:flex; gap:10px;">
+        <input type="date" id="fDateDay" style="flex:1;">
+        <input type="time" id="fDateTime" style="flex:1;" step="900">
       </div>
     </div>
     <div class="form-sec">
@@ -646,8 +713,11 @@ select option { background: #fff; color: var(--white); }
 
 <script>
 let posts = [];
+let monthlyThemes = {};
+
 try {
   posts = JSON.parse(localStorage.getItem('sns_mgr_v2') || '[]');
+  monthlyThemes = JSON.parse(localStorage.getItem('sns_mgr_themes') || '{}');
 } catch (e) {
   console.warn('プレビュー環境のため、ブラウザの保存機能が制限されています。');
 }
@@ -655,16 +725,16 @@ try {
 let selP = [];
 let editId = null;
 
-// ★ 新しいカレンダーの基準日とモード管理
 let baseDate = new Date();
 let calMode = 'month'; // 'month', 'week', 'day'
 let selDate = null;
 let sf = 'all';
 
 const save = () => {
-  try {
-    localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
-  } catch (e) {}
+  try { localStorage.setItem('sns_mgr_v2', JSON.stringify(posts)); } catch (e) {}
+};
+const saveThemes = () => {
+  try { localStorage.setItem('sns_mgr_themes', JSON.stringify(monthlyThemes)); } catch(e) {}
 };
 
 const WD = ['日','月','火','水','木','金','土'];
@@ -700,14 +770,6 @@ function initDate() {
   document.getElementById('hDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
 }
 
-function initTimeSelects() {
-  const hSel = document.getElementById('fHour');
-  const mSel = document.getElementById('fMinute');
-  if(!hSel || !mSel) return;
-  hSel.innerHTML = Array.from({length:24},(_,i)=>`<option value="${pad(i)}">${pad(i)}時</option>`).join('');
-  mSel.innerHTML = ['00','15','30','45'].map(m=>`<option value="${m}">${m}分</option>`).join('');
-}
-
 function gotoTab(name, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab:not(a)').forEach(t => t.classList.remove('active'));
@@ -722,6 +784,13 @@ function gotoTab(name, el) {
   if (name === 'today') renderToday();
   if (name === 'calendar') renderCalendar();
   if (name === 'stock') renderStock();
+}
+
+// ★ 月ごとのテーマを保存する関数
+function saveTheme() {
+  const key = `${baseDate.getFullYear()}-${pad(baseDate.getMonth() + 1)}`;
+  monthlyThemes[key] = document.getElementById('monthTheme').value;
+  saveThemes();
 }
 
 function renderToday() {
@@ -759,11 +828,9 @@ function renderToday() {
     const timeStr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
     const done = p.status === 'posted';
     
-    // ★ 今日の投稿画面にもステータスバッジを表示するように修正
     const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'] };
     const [sc,sl] = stMap[p.status]||stMap.draft;
     
-    // ★ アクションボタンのテキストを状況に応じて変更
     let actionBtnLabel = '✅ 完了にする';
     if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
     if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
@@ -804,12 +871,11 @@ function createNewPost() {
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
-// 編集画面へ飛ぶ複製（旧来の挙動用）
 function duplicatePost(id) {
   const p = posts.find(x => String(x.id) === String(id));
   if (!p) return;
   
-  editId = null; // 新規作成扱いにする
+  editId = null;
   selP = [...p.platforms];
   document.getElementById('fSourceTitle').value = p.sourceTitle || '';
   document.getElementById('fAppUrl').value = p.appUrl || '';
@@ -834,13 +900,12 @@ function duplicatePost(id) {
   showToast('📄 投稿を複製しました。内容を編集して保存できます。');
 }
 
-// ★ カレンダー上で直接複製する関数
 function duplicatePostDirect(id) {
   const p = posts.find(x => String(x.id) === String(id));
   if(!p) return;
   const newPost = JSON.parse(JSON.stringify(p)); 
   newPost.id = Date.now().toString();
-  if(newPost.status === 'posted') newPost.status = 'scheduled'; // 投稿済みの場合は予定に戻す
+  if(newPost.status === 'posted') newPost.status = 'scheduled';
   newPost.createdAt = Date.now();
   newPost.updatedAt = Date.now();
   posts.unshift(newPost);
@@ -893,7 +958,6 @@ async function copyBtn(id, btn) {
   }
 }
 
-// ★ 投稿を「完了（posted）」にする処理。トースト表示も変更
 function markPosted(id) {
   const p = posts.find(x => String(x.id) === String(id));
   if (p) { 
@@ -911,7 +975,6 @@ function markPosted(id) {
 
 function delPost(id) {
   if (!confirm('この投稿を削除しますか？')) return;
-  // ★ 過去データ（数値ID）対策
   posts = posts.filter(x => String(x.id) !== String(id));
   save(); 
   
@@ -935,7 +998,6 @@ function deleteFromEdit() {
   }
 }
 
-// ★ ダブルクリック等の判定用ヘルパー関数
 function editFromCalendar(ev, id) {
   if (ev) {
     ev.stopPropagation();
@@ -978,7 +1040,6 @@ function editPost(id) {
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
-// ★ カレンダーの右クリックメニュー処理
 let ctxTargetId = null;
 
 function showContextMenu(ev, id) {
@@ -1012,7 +1073,6 @@ function handleMenu(action) {
   ctxTargetId = null;
 }
 
-// ★ カレンダーのドラッグ＆ドロップ移動処理
 function dragStart(ev, id) {
   ev.dataTransfer.setData("text/plain", id);
 }
@@ -1026,7 +1086,7 @@ function drop(ev, ds) {
   const id = ev.dataTransfer.getData("text/plain");
   const p = posts.find(x => String(x.id) === String(id));
   if (p) {
-    let time = '09:00'; // デフォルト時間
+    let time = '09:00';
     if(p.date && p.date.includes('T')) {
        time = p.date.split('T')[1];
     }
@@ -1054,7 +1114,6 @@ const JP_HOLIDAYS = {
   '2026-10-12':'スポーツの日','2026-11-03':'文化の日','2026-11-23':'勤労感謝の日'
 };
 
-// ★ カレンダーモードの切り替え
 function setCalMode(mode) {
   calMode = mode;
   document.querySelectorAll('.cal-mode-btn').forEach(b => b.classList.remove('active'));
@@ -1062,7 +1121,6 @@ function setCalMode(mode) {
   renderCalendar();
 }
 
-// ★ カレンダーの基準日を移動
 function navCal(d) {
   if (calMode === 'month') {
     baseDate.setMonth(baseDate.getMonth() + d);
@@ -1085,7 +1143,6 @@ function renderCalendar() {
   let titleStr = '';
   let daysArray = [];
 
-  // モード別の表示日を計算
   if (calMode === 'month') {
     titleStr = `${y}年 ${m+1}月`;
     const rawFirst = new Date(y, m, 1).getDay(); 
@@ -1138,8 +1195,14 @@ function renderCalendar() {
   }
 
   document.getElementById('calTitle').textContent = titleStr;
+  
+  // ★ カレンダーを更新したらその月のテーマをテキストボックスに反映させる
+  const currentMonthKey = `${y}-${pad(m+1)}`;
+  const themeInputEl = document.getElementById('monthTheme');
+  if(themeInputEl) {
+      themeInputEl.value = monthlyThemes[currentMonthKey] || '';
+  }
 
-  // 曜日ヘッダーの表示切り替え
   const hd = document.getElementById('calGridHd');
   const grid = document.getElementById('calGrid');
   if (calMode === 'day') {
@@ -1163,16 +1226,13 @@ function renderCalendar() {
     const isToday = ds === tsToday;
     const isSel = ds === selDate;
 
-    // 時間順にソートして取得
     const dp = posts.filter(p => p.date && p.date.startsWith(ds))
                     .sort((a,b) => (a.date||'').localeCompare(b.date||''));
     
-    // モードによって表示件数を変える
     let displayLimit = 4;
     if (calMode === 'week') displayLimit = 10;
     if (calMode === 'day') displayLimit = 50;
 
-    // ★ 表示順を「時間 + アイコン(投稿タイプ) + タイトル」に変更
     const dots = dp.slice(0, displayLimit).map(p => {
       const isNote = p.platforms.includes('note');
       const isNoteRe = p.platforms.includes('note-re');
@@ -1196,24 +1256,22 @@ function renderCalendar() {
       
       const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
       
-      // ★ ステータスによる視覚的変化をカレンダーのバーに追加
       let opacityStyle = '';
       let statusIcon = '';
       if (p.status === 'posted') {
-        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; // 投稿済みは薄くして取り消し線
+        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; 
         statusIcon = '✅ ';
       } else if (p.status === 'attract') {
-        statusIcon = '📣 '; // 集客
+        statusIcon = '📣 '; 
       } else if (p.status === 'draft') {
-        statusIcon = '📝 '; // 下書き
+        statusIcon = '📝 '; 
         opacityStyle = 'border-style: dashed !important;'; 
       }
 
       const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
       const displayTime = timeStr ? `${timeStr} ` : '';
-      const label = (p.sourceTitle || p.text).slice(0, 15); // 週/日モード用に文字数を少し多めに
+      const label = (p.sourceTitle || p.text).slice(0, 15); 
       
-      // ★ ondblclick で確実にイベントを止めて編集画面へ飛ぶように関数を変更
       return `<div class="cal-dot ${dotCls}" style="${opacityStyle}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="ダブルクリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" ondblclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${statusIcon}${icon} ${label}</div>`;
     }).join('');
 
@@ -1226,6 +1284,7 @@ function renderCalendar() {
     ].filter(Boolean).join(' ');
 
     const holTag = isHol && !other ? `<span class="hol-name">${holName}</span>` : '';
+    const todayBadge = isToday ? `<span style="font-size:10px; background:var(--cyan); color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px; font-weight:700;">今日</span>` : '';
     
     let dayLabel = day;
     if (calMode === 'day') {
@@ -1239,9 +1298,9 @@ function renderCalendar() {
 
     html += `<div id="cal-cell-${ds}" class="cal-cell ${classes}" style="${minHeightStyle}" onclick="pickDate('${ds}')" ondragover="allowDrop(event)" ondrop="drop(event, '${ds}')">
       <div class="cal-cell-header">
-        <div class="cal-day">${dayLabel}</div>
+        <div class="cal-day">${dayLabel}${todayBadge}</div>
         <div class="hol-name">${holTag}</div>
-        <div class="cal-add-btn" onclick="addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
+        <div class="cal-add-btn" onclick="event.stopPropagation(); addFromCalendar(event, '${ds}')" title="この日に新規作成">＋</div>
       </div>
       ${dots}
       ${dp.length > displayLimit ? `<div style="font-size:10px; color:var(--muted); text-align:center; margin-top:4px;">他 ${dp.length - displayLimit} 件</div>` : ''}
@@ -1283,12 +1342,10 @@ function renderDayDetail(ds) {
         }).join('');
         const tstr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
         
-        // ★ アクションボタンのテキストを状況に応じて変更
         let actionBtnLabel = '✅ 完了にする';
         if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
         if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
         
-        // ★ 現在のステータスをはっきり表示
         const statusText = p.status==='draft'?'📝 下書き':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':'✅ 完了';
         
         return `<div class="dd-card">
@@ -1326,14 +1383,18 @@ async function ddCopy(id, btn) {
 function addForDate(ds) {
   clearForm();
   document.getElementById('fDateDay').value = ds;
-  document.getElementById('fHour').value = '09';
-  document.getElementById('fMinute').value = '00';
+  
+  // 指定された日の場合、時間は現在時刻に近い15分刻みを入れる
+  const now = new Date();
+  const hs = pad(now.getHours());
+  const ms = pad(Math.floor(now.getMinutes()/5)*5);
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
+  
   gotoTabByName('create');
   window.scrollTo(0,0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
 }
 
-// ── フォーム ──
 function toggleP(p) {
   const i = selP.indexOf(p);
   if (i > -1) selP.splice(i, 1); else selP.push(p);
@@ -1360,7 +1421,6 @@ function updateSourceBox() {
   if (hasNote || hasBase || hasStripe || hasNoteRe || hasMedium) {
     box.classList.add('show');
     
-    // ★ Stripeが選ばれていれば専用URL欄を表示
     stripeGrp.style.display = hasStripe ? 'block' : 'none';
 
     if (hasNote && hasStripe) {
@@ -1411,9 +1471,8 @@ function savePost() {
     }
 
     const dDay = document.getElementById('fDateDay').value;
-    const h = document.getElementById('fHour').value || '09';
-    const m = document.getElementById('fMinute').value || '00';
-    const dVal = dDay ? `${dDay}T${h}:${m}` : '';
+    const dTime = document.getElementById('fDateTime').value || '00:00';
+    const dVal = dDay ? `${dDay}T${dTime}` : '';
 
     const post = {
       id: editId || Date.now().toString(),
@@ -1424,19 +1483,16 @@ function savePost() {
       catchphrase: document.getElementById('fCatchphrase').value.trim(),
       sourceUrl: document.getElementById('fSourceUrl').value.trim(),
       stripeSalesUrl: document.getElementById('fStripeSalesUrl').value.trim(),
-      // ★ 過去データ（数値ID）対策
       stripeThanksUrl: editId ? (posts.find(p=>String(p.id)===String(editId))?.stripeThanksUrl || '') : '', 
       date: dVal,
       memo: document.getElementById('fMemo').value.trim(),
       status: document.getElementById('fStatus').value,
-      // ★ 過去データ（数値ID）対策
       createdAt: editId ? (posts.find(p=>String(p.id)===String(editId))?.createdAt || Date.now()) : Date.now(),
       updatedAt: Date.now()
     };
     
     const isEdit = !!editId;
     if (isEdit) { 
-      // ★ 過去データ（数値ID）が確実に上書きされるように文字列化して比較
       const i = posts.findIndex(p=>String(p.id)===String(editId)); 
       if(i > -1) {
         posts[i] = post; 
@@ -1449,7 +1505,7 @@ function savePost() {
     
     save(); 
     
-    const savedDate = post.date; // 保存した日付を取得しておく
+    const savedDate = post.date; 
     clearForm(true); 
     showToast(isEdit ? '✅ 更新しました！' : '💾 保存しました！');
     
@@ -1484,12 +1540,10 @@ function savePost() {
   }
 }
 
-// ★ 日付と時間の入力欄に値をセットするヘルパー関数
 function setDatePickerValue(val) {
   if (!val) {
     document.getElementById('fDateDay').value = '';
-    document.getElementById('fHour').value = '09';
-    document.getElementById('fMinute').value = '00';
+    document.getElementById('fDateTime').value = '';
     return;
   }
   const ds = val.slice(0, 10);
@@ -1497,11 +1551,7 @@ function setDatePickerValue(val) {
   const ms = val.slice(14, 16) || '00';
   
   document.getElementById('fDateDay').value = ds;
-  document.getElementById('fHour').value = hs;
-  
-  const mInt = parseInt(ms, 10) || 0;
-  const nearestMin = pad(Math.floor(mInt / 15) * 15);
-  document.getElementById('fMinute').value = nearestMin;
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
 }
 
 function clearForm(isAfterSave = false) {
@@ -1510,13 +1560,10 @@ function clearForm(isAfterSave = false) {
   const now = new Date();
   const ds = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   const hs = pad(now.getHours());
-  
-  // ★ 初期値を15分刻み（00, 15, 30, 45）に丸めるように修正
-  const ms = pad(Math.floor(now.getMinutes() / 15) * 15);
+  const ms = pad(Math.floor(now.getMinutes()/5)*5);
   
   document.getElementById('fDateDay').value = ds;
-  document.getElementById('fHour').value = hs;
-  document.getElementById('fMinute').value = ms;
+  document.getElementById('fDateTime').value = `${hs}:${ms}`;
   
   document.getElementById('fMemo').value = '';
   document.getElementById('fStatus').value = 'scheduled';
@@ -1542,9 +1589,7 @@ function clearForm(isAfterSave = false) {
   }
 }
 
-// ★ 共通の「元ネタ・URL」表示ロジック
 function srcHtml(p) {
-  // いずれかの項目が入力されていれば表示
   if (!p.sourceTitle && !p.sourceUrl && !p.stripeSalesUrl && !p.appUrl && !p.catchphrase) return '';
   
   const hasNote = p.platforms.includes('note');
@@ -1560,7 +1605,7 @@ function srcHtml(p) {
   else if (hasBase) cls += ' base-only';
   else if (hasMedium) cls += ' medium-only';
   else if (hasNoteRe) cls += ' note-re-only';
-  else cls += ' note-only'; // デフォルトは緑系
+  else cls += ' note-only'; 
 
   const iconStr = [];
   if (hasNoteRe) iconStr.push('🟡');
@@ -1572,33 +1617,24 @@ function srcHtml(p) {
 
   let html = `<div class="${cls}">`;
   
-  // アプリ名 (旧タイトル)
   if (p.sourceTitle) {
     html += `<div class="card-source-title">${iconStr.join('')} ${esc(p.sourceTitle)}</div>`;
   } else {
     html += `<div class="card-source-title">${iconStr.join('')} 掲載情報</div>`;
   }
 
-  // キャッチ
   if (p.catchphrase) {
     html += `<div style="margin-bottom:4px; font-weight:700; color:var(--cyan);">${esc(p.catchphrase)}</div>`;
   }
-
-  // アプリURL
   if (p.appUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">アプリ:</span> <a href="${esc(p.appUrl)}" target="_blank">${esc(p.appUrl)}</a></div>`;
   }
-
-  // note投稿URL販売 (旧URL)
   if (p.sourceUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">note/販売:</span> <a href="${esc(p.sourceUrl)}" target="_blank">${esc(p.sourceUrl)}</a></div>`;
   }
-  
-  // StripeURL
   if (p.stripeSalesUrl) {
     html += `<div style="margin-top:3px;"><span style="opacity:0.7;">Stripe:</span> <a href="${esc(p.stripeSalesUrl)}" target="_blank">${esc(p.stripeSalesUrl)}</a></div>`;
   }
-  
   html += `</div>`;
   return html;
 }
@@ -1642,7 +1678,6 @@ function renderStock() {
     }).join('');
     const [sc,sl] = stMap[p.status]||stMap.draft;
     
-    // ★ アクションボタンのテキストを状況に応じて変更
     let actionBtnLabel = '✅ 完了にする';
     if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
     if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
@@ -1669,7 +1704,7 @@ function renderStock() {
 }
 
 function backupData() {
-  const data = { version: 2, exportedAt: new Date().toISOString(), posts };
+  const data = { version: 2, exportedAt: new Date().toISOString(), posts, themes: monthlyThemes };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1686,10 +1721,16 @@ function restoreData(e) {
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      const imported = data.posts || data;
+      const imported = data.posts || data; // 古い形式(配列のみ)への互換性
       if (!Array.isArray(imported)) throw new Error('形式エラー');
       if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。\nよろしいですか？`)) return;
+      
       posts = imported;
+      if(data.themes) {
+        monthlyThemes = data.themes;
+        saveThemes();
+      }
+      
       save();
       renderToday(); renderStock();
       if (document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
@@ -1704,8 +1745,7 @@ function restoreData(e) {
 
 // INIT
 initDate();
-initTimeSelects();
-clearForm(); // フォームの初期化（削除ボタンも隠す）
+clearForm(); // ここで「現在日時」と「X」が初期セットされる
 
 // ★ 初期画面を「カレンダー」に強制指定
 gotoTabByName('calendar');
