@@ -253,11 +253,11 @@ header {
 /* ★ 販売系（note, BASE, Stripe, Medium）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
 .cal-dot.note-re-src { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
-.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } 
+.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Medium */
 .cal-dot.base-src { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; } 
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
-.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } 
-.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } 
+.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } /* note+base等 */
+.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } /* note+stripe等 */
 
 /* ★ コンテキストメニュー（右クリックで表示） */
 .context-menu {
@@ -348,7 +348,9 @@ select option { background: #fff; color: var(--white); }
 .pbtn.on-YouTube { color: #ff0000 !important; font-weight: 700 !important; }
 .pbtn.on-TikTok { color: #000000 !important; font-weight: 700 !important; }
 
-/* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
+/* ★ 販売系バッジ（白背景・色枠・色文字） */
+.pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
+.pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
 .pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
 .pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
@@ -1184,9 +1186,11 @@ function renderCalendar() {
     const isToday = ds === tsToday;
     const isSel = ds === selDate;
 
+    // 時間順にソートして取得
     const dp = posts.filter(p => p.date && p.date.startsWith(ds))
                     .sort((a,b) => (a.date||'').localeCompare(b.date||''));
     
+    // モードによって表示件数を変える
     let displayLimit = 4;
     if (calMode === 'week') displayLimit = 10;
     if (calMode === 'day') displayLimit = 50;
@@ -1216,9 +1220,22 @@ function renderCalendar() {
       
       const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms.includes('YouTube') ? '▶️' : p.platforms.includes('TikTok') ? '🎵' : p.platforms[0]?.charAt(0)||'';
       
+      /* ★ 欠落していたステータス表示の装飾を復活 */
+      let opacityStyle = '';
+      let statusIcon = '';
+      if (p.status === 'posted') {
+        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; // 投稿済みは薄くして取り消し線
+        statusIcon = '✅ ';
+      } else if (p.status === 'attract') {
+        statusIcon = '📣 '; // 集客
+      } else if (p.status === 'draft') {
+        statusIcon = '📝 '; // 下書き
+        opacityStyle = 'border-style: dashed !important;'; 
+      }
+
       const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
       const displayTime = timeStr ? `${timeStr} ` : '';
-      const label = (p.sourceTitle || p.text).slice(0, 15); 
+      const label = (p.sourceTitle || p.text).slice(0, 15);
       
       return `<div class="cal-dot ${dotCls}" style="${opacityStyle}" draggable="true" ondragstart="dragStart(event, '${p.id}')" title="ダブルクリックで編集 / 右クリックでメニュー: ${esc(p.sourceTitle || p.text)}" ondblclick="editFromCalendar(event, '${p.id}')" oncontextmenu="showContextMenu(event, '${p.id}')">${displayTime}${statusIcon}${icon} ${label}</div>`;
     }).join('');
@@ -1331,7 +1348,9 @@ async function ddCopy(id, btn) {
 
 function addForDate(ds) {
   clearForm();
-  setDatePickerValue(ds + 'T09:00');
+  document.getElementById('fDateDay').value = ds;
+  document.getElementById('fHour').value = '09';
+  document.getElementById('fMinute').value = '00';
   gotoTabByName('create');
   window.scrollTo(0,0);
   setTimeout(() => document.getElementById('fText').focus(), 100);
