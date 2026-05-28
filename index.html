@@ -91,6 +91,8 @@ header {
 .pbadge-Threads { background: transparent !important; border: none !important; color: #202124 !important; padding: 0 !important; font-size: 13px !important; }
 .pbadge-Facebook { background: transparent !important; border: none !important; color: #1877f2 !important; padding: 0 !important; font-size: 13px !important; }
 .pbadge-Instagram { background: transparent !important; border: none !important; color: #e1306c !important; padding: 0 !important; font-size: 13px !important; }
+.pbadge-YouTube { background: transparent !important; border: none !important; color: #ff0000 !important; padding: 0 !important; font-size: 13px !important; }
+.pbadge-TikTok { background: transparent !important; border: none !important; color: #000000 !important; padding: 0 !important; font-size: 13px !important; }
 
 /* ★ 販売系バッジ（白背景・枠・色文字） */
 .pbadge-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; }
@@ -245,6 +247,8 @@ header {
 .cal-dot.threads-src { background: transparent !important; color: #202124 !important; border: none !important; padding-left: 2px !important; } 
 .cal-dot.fb-src { background: transparent !important; color: #1877f2 !important; border: none !important; padding-left: 2px !important; } 
 .cal-dot.ig-src { background: transparent !important; color: #e1306c !important; border: none !important; padding-left: 2px !important; } 
+.cal-dot.youtube-src { background: transparent !important; color: #ff0000 !important; border: none !important; padding-left: 2px !important; } 
+.cal-dot.tiktok-src { background: transparent !important; color: #000000 !important; border: none !important; padding-left: 2px !important; } 
 
 /* ★ 販売系（note, BASE, Stripe, Medium）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
@@ -327,13 +331,13 @@ select option { background: #fff; color: var(--white); }
 .pbtn:hover { background: #f1f3f4; }
 
 /* ★ フォームボタン：集客系は未選択・選択時ともに背景なし・枠なし */
-.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"], .pbtn[data-p="Instagram"] {
+.pbtn[data-p="X"], .pbtn[data-p="Threads"], .pbtn[data-p="Facebook"], .pbtn[data-p="Instagram"], .pbtn[data-p="YouTube"], .pbtn[data-p="TikTok"] {
   border-color: transparent !important;
   background-color: transparent !important;
   box-shadow: none !important;
 }
 /* 未選択時はグレーの細文字 */
-.pbtn[data-p="X"]:not([class*="on-"]), .pbtn[data-p="Threads"]:not([class*="on-"]), .pbtn[data-p="Facebook"]:not([class*="on-"]), .pbtn[data-p="Instagram"]:not([class*="on-"]) { 
+.pbtn[data-p="X"]:not([class*="on-"]), .pbtn[data-p="Threads"]:not([class*="on-"]), .pbtn[data-p="Facebook"]:not([class*="on-"]), .pbtn[data-p="Instagram"]:not([class*="on-"]), .pbtn[data-p="YouTube"]:not([class*="on-"]), .pbtn[data-p="TikTok"]:not([class*="on-"]) { 
   color: #9aa0a6 !important; font-weight: 500 !important; 
 }
 /* 選択時は色付き太文字 */
@@ -341,10 +345,10 @@ select option { background: #fff; color: var(--white); }
 .pbtn.on-Threads { color: #202124 !important; font-weight: 700 !important; }
 .pbtn.on-Facebook { color: #1877f2 !important; font-weight: 700 !important; }
 .pbtn.on-Instagram { color: #e1306c !important; font-weight: 700 !important; }
+.pbtn.on-YouTube { color: #ff0000 !important; font-weight: 700 !important; }
+.pbtn.on-TikTok { color: #000000 !important; font-weight: 700 !important; }
 
-/* ★ 販売系バッジ（白背景・色枠・色文字） */
-.pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
-.pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
+/* ★ フォームボタン：販売系は選択時に白背景・色枠・色文字 */
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
 .pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
 .pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
@@ -564,6 +568,8 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Threads" onclick="toggleP('Threads')">Threads</button>
       <button class="pbtn" data-p="Facebook" onclick="toggleP('Facebook')">Facebook</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📷 Instagram</button>
+      <button class="pbtn" data-p="YouTube" onclick="toggleP('YouTube')">▶️ YouTube</button>
+      <button class="pbtn" data-p="TikTok" onclick="toggleP('TikTok')">🎵 TikTok</button>
       <button class="pbtn" data-p="note" onclick="toggleP('note')">🟢 note</button>
       <button class="pbtn" data-p="note-re" onclick="toggleP('note-re')">🟡 noteリライト</button>
       <button class="pbtn" data-p="Medium" onclick="toggleP('Medium')">Ⓜ️ Medium</button>
@@ -601,7 +607,7 @@ select option { background: #fff; color: var(--white); }
   </div>
 
   <div class="form-sec">
-    <label class="flabel">投稿テキスト <span style="font-size:10px;color:var(--muted);font-weight:400;">（SNSに投稿する告知文）</span></label>
+    <label class="flabel">投稿タイトル、キャプション <span style="font-size:10px;color:var(--muted);font-weight:400;">（SNSに投稿する告知文）</span></label>
     <textarea id="fText" placeholder="投稿内容を入力...&#10;ハッシュタグもここに書いておくと便利です" oninput="updateCC()"></textarea>
     <div class="char-cc" id="charCC">0 文字</div>
   </div>
@@ -774,6 +780,8 @@ function renderToday() {
       if(pl === 'X') label = '𝕏 X';
       else if(pl === 'Stripe') label = '💳 Stripe';
       else if(pl === 'Instagram') label = '📷 IG';
+      else if(pl === 'YouTube') label = '▶️ YT';
+      else if(pl === 'TikTok') label = '🎵 TK';
       else if(pl === 'note-re') label = '🟡 noteリライト';
       else if(pl === 'note') label = '🟢 note';
       else if(pl === 'Medium') label = 'Ⓜ️ Medium';
@@ -1200,24 +1208,14 @@ function renderCalendar() {
       else if (isNoteRe) dotCls = 'note-re-src';
       else if (isNote) dotCls = 'note-src'; 
       else if (isInstagram) dotCls = 'ig-src';
+      else if (p.platforms.includes('YouTube')) dotCls = 'youtube-src';
+      else if (p.platforms.includes('TikTok')) dotCls = 'tiktok-src';
       else if (p.platforms.includes('Facebook')) dotCls = 'fb-src';
       else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
       else if (p.platforms.includes('X')) dotCls = 'x-src';
       
-      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms[0]?.charAt(0)||'';
+      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms.includes('YouTube') ? '▶️' : p.platforms.includes('TikTok') ? '🎵' : p.platforms[0]?.charAt(0)||'';
       
-      let opacityStyle = '';
-      let statusIcon = '';
-      if (p.status === 'posted') {
-        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; 
-        statusIcon = '✅ ';
-      } else if (p.status === 'attract') {
-        statusIcon = '📣 '; 
-      } else if (p.status === 'draft') {
-        statusIcon = '📝 '; 
-        opacityStyle = 'border-style: dashed !important;'; 
-      }
-
       const timeStr = p.date && p.date.includes('T') ? p.date.split('T')[1] : '';
       const displayTime = timeStr ? `${timeStr} ` : '';
       const label = (p.sourceTitle || p.text).slice(0, 15); 
@@ -1283,6 +1281,8 @@ function renderDayDetail(ds) {
           if (pl === 'X') badgeLabel = '𝕏';
           else if (pl === 'Stripe') badgeLabel = '💳';
           else if (pl === 'Instagram') badgeLabel = '📷';
+          else if (pl === 'YouTube') badgeLabel = '▶️';
+          else if (pl === 'TikTok') badgeLabel = '🎵';
           else if (pl === 'note-re') badgeLabel = '🟡 リライト';
           else if (pl === 'note') badgeLabel = '🟢 note';
           else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
@@ -1393,10 +1393,10 @@ function savePost() {
     }
     
     const srcTitle = document.getElementById('fSourceTitle').value.trim();
-    const snsOnly = selP.every(p => ['X','Threads','Facebook','Instagram'].includes(p));
+    const snsOnly = selP.every(p => ['X','Threads','Facebook','Instagram','YouTube','TikTok'].includes(p));
     
     if (snsOnly && !text) { 
-      showError('投稿テキストを入力してください！'); 
+      showError('投稿タイトル、キャプションを入力してください！'); 
       return; 
     }
     if (!text && !srcTitle) { 
@@ -1619,6 +1619,8 @@ function renderStock() {
       if (pl === 'X') badgeLabel = '𝕏';
       else if (pl === 'Stripe') badgeLabel = '💳';
       else if (pl === 'Instagram') badgeLabel = '📷';
+      else if (pl === 'YouTube') badgeLabel = '▶️';
+      else if (pl === 'TikTok') badgeLabel = '🎵';
       else if (pl === 'note-re') badgeLabel = '🟡 リライト';
       else if (pl === 'note') badgeLabel = '🟢 note';
       else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
