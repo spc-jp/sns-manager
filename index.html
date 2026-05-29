@@ -49,7 +49,6 @@ header {
 .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 .tab:hover:not(.active) { color: var(--white); }
 
-/* ★ max-width: 100% に変更し、全画面表示に対応 */
 .view { display: none; padding: 20px 28px; width: 100%; max-width: 100%; margin: 0 auto; }
 .view.active { display: block; }
 
@@ -94,12 +93,13 @@ header {
 .pbadge-YouTube { background: transparent !important; border: none !important; color: #ff0000 !important; padding: 0 !important; font-size: 13px !important; }
 .pbadge-TikTok { background: transparent !important; border: none !important; color: #000000 !important; padding: 0 !important; font-size: 13px !important; }
 
-/* ★ 販売系バッジ（白背景・枠・色文字） */
+/* ★ 販売系・タスク系バッジ（白背景・枠・色文字） */
 .pbadge-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; }
 .pbadge-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
-.pbadge-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Mediumバッジ */
+.pbadge-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } 
 .pbadge-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; }
 .pbadge-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; }
+.pbadge-ToDo { background: #fff !important; border: 1px solid #475569 !important; color: #475569 !important; } /* ToDoバッジ */
 
 .post-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
 
@@ -250,14 +250,15 @@ header {
 .cal-dot.youtube-src { background: transparent !important; color: #ff0000 !important; border: none !important; padding-left: 2px !important; } 
 .cal-dot.tiktok-src { background: transparent !important; color: #000000 !important; border: none !important; padding-left: 2px !important; } 
 
-/* ★ 販売系（note, BASE, Stripe, Medium）：白背景、色枠、色文字 */
+/* ★ 販売系・タスク系（note, BASE, Stripe, Medium, ToDo）：白背景、色枠、色文字 */
 .cal-dot.note-src { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; } 
 .cal-dot.note-re-src { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; } 
-.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } /* Medium */
+.cal-dot.medium-src { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; } 
 .cal-dot.base-src { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; } 
 .cal-dot.stripe-src { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; } 
-.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } /* note+base等 */
-.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } /* note+stripe等 */
+.cal-dot.pink-src { background: #fff !important; border: 1px solid #d93025 !important; color: #d93025 !important; } 
+.cal-dot.note-stripe-src { background: #fff !important; border: 1px solid #009688 !important; color: #009688 !important; } 
+.cal-dot.todo-src { background: #fff !important; border: 1px solid #64748b !important; color: #475569 !important; } /* ToDo用のドット */
 
 /* ★ コンテキストメニュー（右クリックで表示） */
 .context-menu {
@@ -348,12 +349,13 @@ select option { background: #fff; color: var(--white); }
 .pbtn.on-YouTube { color: #ff0000 !important; font-weight: 700 !important; }
 .pbtn.on-TikTok { color: #000000 !important; font-weight: 700 !important; }
 
-/* ★ 販売系バッジ（白背景・色枠・色文字） */
+/* ★ 販売・タスク系バッジ（白背景・色枠・色文字） */
 .pbtn.on-note { background: #fff !important; border: 1px solid #34a853 !important; color: #34a853 !important; font-weight: 700 !important; }
 .pbtn.on-note-re { background: #fff !important; border: 1px solid #eab308 !important; color: #ca8a04 !important; font-weight: 700 !important; }
 .pbtn.on-Medium { background: #fff !important; border: 1px solid #292929 !important; color: #292929 !important; font-weight: 700 !important; }
 .pbtn.on-BASE { background: #fff !important; border: 1px solid #f9ab00 !important; color: #f9ab00 !important; font-weight: 700 !important; }
 .pbtn.on-Stripe { background: #fff !important; border: 1px solid #8e24aa !important; color: #8e24aa !important; font-weight: 700 !important; }
+.pbtn.on-ToDo { background: rgba(100, 116, 139, 0.1) !important; border: 1px solid #64748b !important; color: #475569 !important; font-weight: 700 !important; } /* ToDoボタン */
 
 .char-cc { text-align: right; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 4px; }
 .char-cc.warn { color: var(--draft); }
@@ -378,6 +380,7 @@ select option { background: #fff; color: var(--white); }
 .card-source.stripe-only { background: #e0e7ff; border-left: 3px solid #6366f1; }
 .card-source.note-base { background: #fce7f3; border-left: 3px solid #f472b6; }
 .card-source.note-stripe { background: #ccfbf1; border-left: 3px solid #0d9488; }
+.card-source.todo-only { background: #f8fafc; border-left: 3px solid #64748b; } /* ToDo詳細色 */
 
 /* ネタ作成のボタンエリア */
 .form-actions { display: flex; gap: 10px; margin-top: 20px; }
@@ -441,7 +444,6 @@ select option { background: #fff; color: var(--white); }
 .spill-scheduled { background: #e8f0fe; color: #1a73e8; }
 .spill-posted { background: #e6f4ea; color: #137333; }
 .spill-attract { background: #e0e7ff; color: #4338ca; } /* 集客用バッジ */
-.spill-dev { background: #f3e8ff; color: #6b21a8; } /* 開発・修正用バッジ */
 .sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .sc-memo { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
@@ -565,7 +567,8 @@ select option { background: #fff; color: var(--white); }
   <div id="formError" style="display:none; color: white; background: var(--danger); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.3);"></div>
 
   <div class="form-sec">
-    <label class="flabel">投稿先・掲載先</label>
+    <!-- ★ ラベル変更 -->
+    <label class="flabel">投稿先・掲載先・タスク</label>
     <div class="ppicker" id="ppicker">
       <button class="pbtn" data-p="X" onclick="toggleP('X')">𝕏 X</button>
       <button class="pbtn" data-p="Threads" onclick="toggleP('Threads')">Threads</button>
@@ -578,6 +581,8 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="Medium" onclick="toggleP('Medium')">Ⓜ️ Medium</button>
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Stripe" onclick="toggleP('Stripe')">💳 Stripe</button>
+      <!-- ★ ToDo追加 -->
+      <button class="pbtn" data-p="ToDo" onclick="toggleP('ToDo')">⏰ やること</button>
     </div>
   </div>
 
@@ -585,8 +590,9 @@ select option { background: #fff; color: var(--white); }
     <div class="source-box-title" id="sourceBoxLabel">🟢 掲載情報</div>
     
     <div class="form-sec" style="margin-bottom:10px;">
-      <label class="flabel">アプリ名</label>
-      <input type="text" id="fSourceTitle" placeholder="例：SNS投稿マネージャー">
+      <!-- ★ プレースホルダー調整 -->
+      <label class="flabel">アプリ名 / やること内容</label>
+      <input type="text" id="fSourceTitle" placeholder="例：SNS投稿マネージャー / 〇〇の準備">
     </div>
     <div class="form-sec" style="margin-bottom:10px;">
       <label class="flabel">アプリURL</label>
@@ -610,7 +616,7 @@ select option { background: #fff; color: var(--white); }
   </div>
 
   <div class="form-sec">
-    <label class="flabel">投稿タイトル、キャプション <span style="font-size:10px;color:var(--muted);font-weight:400;">（SNSに投稿する告知文）</span></label>
+    <label class="flabel">投稿テキスト <span style="font-size:10px;color:var(--muted);font-weight:400;">（SNSに投稿する告知文）</span></label>
     <textarea id="fText" placeholder="投稿内容を入力...&#10;ハッシュタグもここに書いておくと便利です" oninput="updateCC()"></textarea>
     <div class="char-cc" id="charCC">0 文字</div>
   </div>
@@ -620,7 +626,7 @@ select option { background: #fff; color: var(--white); }
       <label class="flabel">投稿予定日時</label>
       <div style="display:flex; gap:6px; align-items: center;">
         <input type="date" id="fDateDay" style="flex:2; border: 1px solid var(--border); padding: 10px; border-radius: 4px;">
-        <!-- ★ 15分刻みドロップダウン式に変更 -->
+        <!-- ★ 15分刻みドロップダウン式 -->
         <select id="fHour" style="flex:1; padding: 10px 4px; border: 1px solid var(--border); border-radius: 4px; outline:none;"></select>
         <span style="font-weight:bold; color:var(--muted);">:</span>
         <select id="fMinute" style="flex:1; padding: 10px 4px; border: 1px solid var(--border); border-radius: 4px; outline:none;"></select>
@@ -633,7 +639,6 @@ select option { background: #fff; color: var(--white); }
         <option value="scheduled">📅 投稿予定</option>
         <option value="posted">✅ 投稿済み</option>
         <option value="attract">📣 集客</option>
-        <option value="dev">🛠️ アプリ開発・修正</option>
       </select>
     </div>
   </div>
@@ -657,7 +662,6 @@ select option { background: #fff; color: var(--white); }
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
     <button class="sfbtn" data-f="attract" onclick="setSF('attract',this)">📣 集客</button>
-    <button class="sfbtn" data-f="dev" onclick="setSF('dev',this)">🛠️ 開発</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
   <div class="stock-grid" id="stockList"></div>
@@ -790,20 +794,20 @@ function renderToday() {
       else if(pl === 'note-re') label = '🟡 noteリライト';
       else if(pl === 'note') label = '🟢 note';
       else if(pl === 'Medium') label = 'Ⓜ️ Medium';
+      else if(pl === 'ToDo') label = '⏰ やること'; // ★ ToDoバッジ追加
       return `<span class="pbadge pbadge-${pl}">${label}</span>`;
     }).join('');
     const timeStr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
     const done = p.status === 'posted';
     
     // ★ 今日の投稿画面にもステータスバッジを表示するように修正
-    const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
+    const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'] };
     const [sc,sl] = stMap[p.status]||stMap.draft;
     
     // ★ アクションボタンのテキストを状況に応じて変更
     let actionBtnLabel = '✅ 完了にする';
     if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
     if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
-    if (p.status === 'dev') actionBtnLabel = '✅ 開発完了にする';
 
     return `<div class="today-card ${done?'is-done':''}" id="tc-${p.id}">
       <div class="card-top">
@@ -1208,6 +1212,7 @@ function renderCalendar() {
       const isStripe = p.platforms.includes('Stripe');
       const isMedium = p.platforms.includes('Medium');
       const isInstagram = p.platforms.includes('Instagram');
+      const isToDo = p.platforms.includes('ToDo'); // ★ ToDo判定
       
       let dotCls = 'x-src'; 
       if (isNote && isStripe) dotCls = 'note-stripe-src'; 
@@ -1217,6 +1222,7 @@ function renderCalendar() {
       else if (isMedium) dotCls = 'medium-src';
       else if (isNoteRe) dotCls = 'note-re-src';
       else if (isNote) dotCls = 'note-src'; 
+      else if (isToDo) dotCls = 'todo-src'; // ★ ToDo色
       else if (isInstagram) dotCls = 'ig-src';
       else if (p.platforms.includes('YouTube')) dotCls = 'youtube-src';
       else if (p.platforms.includes('TikTok')) dotCls = 'tiktok-src';
@@ -1224,20 +1230,18 @@ function renderCalendar() {
       else if (p.platforms.includes('Threads')) dotCls = 'threads-src';
       else if (p.platforms.includes('X')) dotCls = 'x-src';
       
-      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isInstagram ? '📷' : p.platforms.includes('YouTube') ? '▶️' : p.platforms.includes('TikTok') ? '🎵' : p.platforms[0]?.charAt(0)||'';
+      // ★ ToDoアイコン追加
+      const icon = (isNote && isStripe) ? '🟢💳' : (isNote && isBase) ? '🟢🛒' : isStripe ? '💳' : isBase ? '🛒' : isMedium ? 'Ⓜ️' : isNoteRe ? '🟡' : isNote ? '🟢' : isToDo ? '⏰' : isInstagram ? '📷' : p.platforms.includes('YouTube') ? '▶️' : p.platforms.includes('TikTok') ? '🎵' : p.platforms[0]?.charAt(0)||'';
       
-      // ★ ステータスによる視覚的変化をカレンダーのバーに追加
       let opacityStyle = '';
       let statusIcon = '';
       if (p.status === 'posted') {
-        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; // 投稿済みは薄くして取り消し線
+        opacityStyle = 'opacity: 0.4; text-decoration: line-through;'; 
         statusIcon = '✅ ';
       } else if (p.status === 'attract') {
-        statusIcon = '📣 '; // 集客
-      } else if (p.status === 'dev') {
-        statusIcon = '🛠️ '; // 開発
+        statusIcon = '📣 '; 
       } else if (p.status === 'draft') {
-        statusIcon = '📝 '; // 再投稿準備
+        statusIcon = '📝 '; 
         opacityStyle = 'border-style: dashed !important;'; 
       }
 
@@ -1311,19 +1315,17 @@ function renderDayDetail(ds) {
           else if (pl === 'note-re') badgeLabel = '🟡 リライト';
           else if (pl === 'note') badgeLabel = '🟢 note';
           else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
+          else if (pl === 'ToDo') badgeLabel = '⏰ やること'; // ★ ToDo追加
           else badgeLabel = pl.slice(0,2);
           return `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${badgeLabel}</span>`;
         }).join('');
         const tstr = p.date && p.date.includes('T') ? p.date.slice(11,16) : '';
         
-        // ★ アクションボタンのテキストを状況に応じて変更
         let actionBtnLabel = '✅ 完了にする';
         if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
         if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
-        if (p.status === 'dev') actionBtnLabel = '✅ 開発完了にする';
         
-        // ★ 現在のステータスをはっきり表示
-        const statusText = p.status==='draft'?'📝 再投稿準備':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':p.status==='dev'?'🛠️ 開発':'✅ 完了';
+        const statusText = p.status==='draft'?'📝 再投稿準備':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':'✅ 完了';
         
         return `<div class="dd-card">
           <div class="dd-left">
@@ -1390,18 +1392,31 @@ function updateSourceBox() {
   const hasBase = selP.includes('BASE');
   const hasStripe = selP.includes('Stripe');
   const hasMedium = selP.includes('Medium');
+  const hasToDo = selP.includes('ToDo'); // ★ ToDo判定追加
   
-  if (hasNote || hasBase || hasStripe || hasNoteRe || hasMedium) {
+  if (hasNote || hasBase || hasStripe || hasNoteRe || hasMedium || hasToDo) {
     box.classList.add('show');
+    
     stripeGrp.style.display = hasStripe ? 'block' : 'none';
 
-    if (hasNote && hasStripe) lbl.textContent = '🟢💳 掲載情報';
-    else if (hasNote && hasBase) lbl.textContent = '🟢🛒 掲載情報';
-    else if (hasStripe) lbl.textContent = '💳 Stripe 掲載情報';
-    else if (hasBase) lbl.textContent = '🛒 BASE 掲載情報';
-    else if (hasNoteRe) lbl.textContent = '🟡 noteリライト 掲載情報';
-    else if (hasMedium) lbl.textContent = 'Ⓜ️ Medium 掲載情報';
-    else lbl.textContent = '🟢 note 掲載情報';
+    if (hasNote && hasStripe) {
+      lbl.textContent = '🟢💳 掲載情報';
+    } else if (hasNote && hasBase) {
+      lbl.textContent = '🟢🛒 掲載情報';
+    } else if (hasStripe) {
+      lbl.textContent = '💳 Stripe 掲載情報';
+    } else if (hasBase) {
+      lbl.textContent = '🛒 BASE 掲載情報';
+    } else if (hasNoteRe) {
+      lbl.textContent = '🟡 noteリライト 掲載情報';
+    } else if (hasMedium) {
+      lbl.textContent = 'Ⓜ️ Medium 掲載情報';
+    } else if (hasToDo) { // ★ ToDo時の表示
+      lbl.textContent = '⏰ タスク・やること詳細';
+      box.style.borderColor = 'rgba(100, 116, 139, 0.4)';
+    } else {
+      lbl.textContent = '🟢 note 掲載情報';
+    }
   } else {
     box.classList.remove('show');
   }
@@ -1517,7 +1532,6 @@ function setDatePickerValue(val) {
   const hs = val.slice(11, 13) || '09';
   const rawMin = val.slice(14, 16) || '00';
   
-  // ★ 15分刻みに丸める
   const ms = ['00','15','30','45'].reduce((a, b) => Math.abs(parseInt(b) - parseInt(rawMin)) < Math.abs(parseInt(a) - parseInt(rawMin)) ? b : a, '00');
   
   document.getElementById('fDateDay').value = ds;
@@ -1572,6 +1586,7 @@ function srcHtml(p) {
   const hasBase = p.platforms.includes('BASE');
   const hasStripe = p.platforms.includes('Stripe');
   const hasMedium = p.platforms.includes('Medium');
+  const hasToDo = p.platforms.includes('ToDo'); // ★ ToDo判定
   
   let cls = 'card-source';
   if (hasNote && hasStripe) cls += ' note-stripe';
@@ -1580,6 +1595,7 @@ function srcHtml(p) {
   else if (hasBase) cls += ' base-only';
   else if (hasMedium) cls += ' medium-only';
   else if (hasNoteRe) cls += ' note-re-only';
+  else if (hasToDo) cls += ' todo-only'; // ★ ToDo色
   else cls += ' note-only';
 
   const iconStr = [];
@@ -1588,6 +1604,7 @@ function srcHtml(p) {
   if (hasMedium) iconStr.push('Ⓜ️');
   if (hasBase) iconStr.push('🛒');
   if (hasStripe) iconStr.push('💳');
+  if (hasToDo) iconStr.push('⏰'); // ★ ToDoアイコン
   if (iconStr.length === 0) iconStr.push('🟢');
 
   let html = `<div class="${cls}">`;
@@ -1642,7 +1659,7 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
+  const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'] };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => {
       let badgeLabel = pl;
@@ -1654,16 +1671,15 @@ function renderStock() {
       else if (pl === 'note-re') badgeLabel = '🟡 リライト';
       else if (pl === 'note') badgeLabel = '🟢 note';
       else if (pl === 'Medium') badgeLabel = 'Ⓜ️';
+      else if (pl === 'ToDo') badgeLabel = '⏰ やること'; // ★ ToDoバッジ
       else badgeLabel = pl.slice(0,2);
       return `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${badgeLabel}</span>`;
     }).join('');
     const [sc,sl] = stMap[p.status]||stMap.draft;
     
-    // ★ アクションボタンのテキストを状況に応じて変更
     let actionBtnLabel = '✅ 完了にする';
     if (p.status === 'scheduled') actionBtnLabel = '✅ 投稿済みにする';
     if (p.status === 'attract') actionBtnLabel = '✅ 集客完了にする';
-    if (p.status === 'dev') actionBtnLabel = '✅ 開発完了にする';
     
     return `<div class="stock-card">
       <div class="sc-top">
