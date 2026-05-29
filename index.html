@@ -629,7 +629,7 @@ select option { background: #fff; color: var(--white); }
     <div class="form-sec">
       <label class="flabel">ステータス</label>
       <select id="fStatus">
-        <option value="draft">📝 下書き</option>
+        <option value="draft">📝 再投稿準備</option>
         <option value="scheduled">📅 投稿予定</option>
         <option value="posted">✅ 投稿済み</option>
         <option value="attract">📣 集客</option>
@@ -653,7 +653,7 @@ select option { background: #fff; color: var(--white); }
 <div id="view-stock" class="view">
   <div class="sfilter-row">
     <button class="sfbtn on" data-f="all" onclick="setSF('all',this)">すべて</button>
-    <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
+    <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 再投稿準備</button>
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
     <button class="sfbtn" data-f="attract" onclick="setSF('attract',this)">📣 集客</button>
@@ -796,7 +796,7 @@ function renderToday() {
     const done = p.status === 'posted';
     
     // ★ 今日の投稿画面にもステータスバッジを表示するように修正
-    const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
+    const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
     const [sc,sl] = stMap[p.status]||stMap.draft;
     
     // ★ アクションボタンのテキストを状況に応じて変更
@@ -1237,7 +1237,7 @@ function renderCalendar() {
       } else if (p.status === 'dev') {
         statusIcon = '🛠️ '; // 開発
       } else if (p.status === 'draft') {
-        statusIcon = '📝 '; // 下書き
+        statusIcon = '📝 '; // 再投稿準備
         opacityStyle = 'border-style: dashed !important;'; 
       }
 
@@ -1323,7 +1323,7 @@ function renderDayDetail(ds) {
         if (p.status === 'dev') actionBtnLabel = '✅ 開発完了にする';
         
         // ★ 現在のステータスをはっきり表示
-        const statusText = p.status==='draft'?'📝 下書き':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':p.status==='dev'?'🛠️ 開発':'✅ 完了';
+        const statusText = p.status==='draft'?'📝 再投稿準備':p.status==='scheduled'?'📅 予定':p.status==='attract'?'📣 集客':p.status==='dev'?'🛠️ 開発':'✅ 完了';
         
         return `<div class="dd-card">
           <div class="dd-left">
@@ -1642,7 +1642,7 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
+  const stMap = { draft:['spill-draft','📝 再投稿準備'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 完了'], attract:['spill-attract','📣 集客'], dev:['spill-dev','🛠️ 開発・修正'] };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => {
       let badgeLabel = pl;
