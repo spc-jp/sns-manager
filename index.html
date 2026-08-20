@@ -215,8 +215,19 @@ header {
 .cal-dot.plt-Instagram { background: #fce7f3; color: #be185d; border-left-color: #ec4899; }
 /* YouTube → 赤 */
 .cal-dot.plt-YouTube   { background: #fee2e2; color: #b91c1c; border-left-color: #ef4444; }
-/* 投稿済みは少し薄く */
+/* 投稿済みは薄く */
 .cal-dot.is-posted   { opacity: 0.45; }
+/* 集客投稿は黄色・太枠で目立たせる */
+.cal-dot.is-promo {
+  background: #fef9c3;
+  color: #854d0e;
+  border-left: 3px solid #eab308;
+  border-top: 1.5px solid #eab308;
+  border-right: 1.5px solid #eab308;
+  border-bottom: 1.5px solid #eab308;
+  font-weight: 800;
+  box-shadow: 0 1px 4px rgba(234,179,8,0.3);
+}
 
 .day-detail {
   background: var(--panel);
@@ -303,6 +314,7 @@ select option { background: #fff; color: var(--white); }
 .spill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
 .spill-draft { background: rgba(245,158,11,0.12); color: #b45309; border: 1px solid rgba(245,158,11,0.3); }
 .spill-scheduled { background: rgba(0,184,169,0.12); color: var(--cyan); border: 1px solid rgba(0,184,169,0.3); }
+.spill-promo { background: #fef9c3; color: #854d0e; border: 1px solid #eab308; font-weight: 800; }
 .spill-posted { background: rgba(154,175,196,0.15); color: var(--posted); border: 1px solid rgba(154,175,196,0.3); }
 .sc-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .sc-text { font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -506,6 +518,7 @@ select option { background: #fff; color: var(--white); }
       <select id="fStatus">
         <option value="draft">📝 下書き</option>
         <option value="scheduled">📅 投稿予定</option>
+        <option value="promo">📣 集客投稿</option>
         <option value="posted">✅ 投稿済み</option>
       </select>
     </div>
@@ -524,6 +537,7 @@ select option { background: #fff; color: var(--white); }
     <button class="sfbtn on" data-f="all" onclick="setSF('all',this)">すべて</button>
     <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
+    <button class="sfbtn" data-f="promo" onclick="setSF('promo',this)">📣 集客投稿</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
@@ -753,7 +767,7 @@ function renderCalendar() {
         if (dotLines.length >= 5) break;
         const icon = PLT_ICON[plt] || plt.charAt(0);
         const label = (p.sourceTitle || p.text).slice(0, 9);
-        const postedCls = p.status === 'posted' ? ' is-posted' : '';
+        const postedCls = p.status === 'posted' ? ' is-posted' : p.status === 'promo' ? ' is-promo' : '';
         const timePart = p.date ? p.date.slice(11,16) : '';
         dotLines.push(
           `<div class="cal-dot plt-${plt}${postedCls}">${icon} ${timePart} ${label}</div>`
@@ -961,7 +975,12 @@ function renderStock() {
     c.innerHTML = `<div class="empty-state"><div class="ico">📭</div><p>投稿がありません</p></div>`;
     return;
   }
-  const stMap = { draft:['spill-draft','📝 下書き'], scheduled:['spill-scheduled','📅 予定'], posted:['spill-posted','✅ 済み'] };
+  const stMap = {
+    draft:     ['spill-draft',     '📝 下書き'],
+    scheduled: ['spill-scheduled', '📅 予定'],
+    promo:     ['spill-promo',     '📣 集客投稿'],
+    posted:    ['spill-posted',    '✅ 済み']
+  };
   c.innerHTML = fl.map(p => {
     const bs = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}" style="font-size:10px;">${pl==='X'?'𝕏':pl.slice(0,2)}</span>`).join('');
     const [sc,sl] = stMap[p.status]||stMap.draft;
