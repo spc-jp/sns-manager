@@ -190,8 +190,19 @@ header {
   position: relative;
   border-left: 3px solid transparent;
 }
-/* note → メイン：明るいグリーン */
-.cal-dot.plt-note    { background: #dcfce7; color: #16a34a; border-left-color: #22c55e; }
+/* note → メイン：全周枠・濃いグリーン・シャドウで最も目立たせる */
+.cal-dot.plt-note {
+  background: #bbf7d0;
+  color: #15803d;
+  border-left: 3px solid #16a34a;
+  border-top: 1.5px solid #22c55e;
+  border-right: 1.5px solid #22c55e;
+  border-bottom: 1.5px solid #22c55e;
+  font-weight: 800;
+  font-size: 11px;
+  box-shadow: 0 1px 5px rgba(34,197,94,0.35);
+  letter-spacing: 0.02em;
+}
 /* X → 空色 */
 .cal-dot.plt-X       { background: #e0f2fe; color: #0369a1; border-left-color: #0ea5e9; }
 /* Threads → 紫 */
