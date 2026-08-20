@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SNS投稿マネージャー</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -139,6 +140,65 @@ header {
 
 
 /* PC カレンダー：全幅縦並び */
+/* CAL NAV 改善 */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 20px;
+  box-shadow: var(--shadow);
+  width: fit-content;
+}
+.cal-nav h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  min-width: 160px;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+.nav-btn {
+  width: 46px;
+  height: 46px;
+  background: #f4f7fb;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s;
+  font-weight: 700;
+  line-height: 1;
+}
+.nav-btn:hover {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,184,169,0.35);
+  transform: scale(1.1);
+}
+.nav-today-btn {
+  padding: 9px 18px;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,184,169,0.25);
+}
+.nav-today-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 .cal-grid-hd, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
 .cal-grid-hd { margin-bottom: 8px; }
 .cal-hd { text-align: center; font-size: 15px; font-weight: 700; padding: 10px 0; letter-spacing: 0.04em; }
@@ -157,7 +217,7 @@ header {
   box-shadow: var(--shadow);
 }
 .cal-cell:hover { border-color: var(--cyan); box-shadow: var(--shadow-hover); }
-.cal-cell.is-today { border-color: var(--cyan); border-width: 2px; background: rgba(0,184,169,0.07); }
+.cal-cell.is-today { border-color: #00b8a9; border-width: 4px; background: rgba(0,184,169,0.07); box-shadow: 0 0 0 2px rgba(0,184,169,0.2); }
 .cal-cell.is-selected { border-color: var(--blue); border-width: 2px; background: rgba(0,144,224,0.07); }
 .cal-cell.other-m { opacity: 0.35; pointer-events: none; box-shadow: none; }
 
@@ -435,9 +495,10 @@ select option { background: #fff; color: var(--white); }
 <!-- カレンダー -->
 <div id="view-calendar" class="view">
   <div class="cal-nav">
-    <button class="nav-btn" onclick="chMonth(-1)">‹</button>
+    <button class="nav-btn" onclick="chMonth(-1)">←</button>
     <h2 id="calTitle"></h2>
-    <button class="nav-btn" onclick="chMonth(1)">›</button>
+    <button class="nav-btn" onclick="chMonth(1)">→</button>
+    <button class="nav-today-btn" onclick="goToday()">今月</button>
   </div>
   <div class="cal-grid-hd">
     <div class="cal-hd hd-mon">月</div><div class="cal-hd hd-tue">火</div><div class="cal-hd hd-wed">水</div>
@@ -801,6 +862,15 @@ function chMonth(d) {
   if (cM > 11) { cM = 0; cY++; }
   if (cM < 0) { cM = 11; cY--; }
   renderCalendar();
+}
+function goToday() {
+  const now = new Date();
+  cY = now.getFullYear();
+  cM = now.getMonth();
+  selDate = null;
+  renderCalendar();
+  document.getElementById('dayDetail').innerHTML =
+    '<div class="dd-placeholder">📅 日付をクリックするとその日の投稿が表示されます</div>';
 }
 
 function pickDate(ds) {
