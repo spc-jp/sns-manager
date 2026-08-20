@@ -232,7 +232,19 @@ header {
 .dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #f7fafd; border: 1px solid var(--border); border-radius: 9px; transition: box-shadow 0.2s, border-color 0.2s; flex: 1 1 360px; }
 .dd-card:hover { border-color: var(--cyan); box-shadow: var(--shadow); }
 .dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
-.dd-text { flex: 1; font-size: 13px; line-height: 1.7; color: var(--white); white-space: pre-wrap; word-break: break-word; }
+.dd-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--white);
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  min-width: 0;
+}
 .dd-actions { display: flex; flex-direction: column; gap: 5px; }
 .smbtn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
 .smbtn:hover { border-color: var(--cyan); color: var(--cyan); }
