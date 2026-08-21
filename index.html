@@ -299,6 +299,20 @@ header {
 .dd-cards-wrap { display: flex; flex-wrap: wrap; gap: 14px; }
 .dd-title { font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .dd-add-link { font-size: 12px; color: var(--cyan); cursor: pointer; text-decoration: underline; font-weight: 400; }
+.dd-add-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,184,169,0.3);
+}
+.dd-add-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
 .dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #f7fafd; border: 1px solid var(--border); border-radius: 9px; transition: box-shadow 0.2s, border-color 0.2s; flex: 1 1 360px; }
 .dd-card:hover { border-color: var(--cyan); box-shadow: var(--shadow); }
@@ -461,7 +475,7 @@ select option { background: #fff; color: var(--white); }
 <body>
 
 <header>
-  <div class="logo">
+  <div class="logo" onclick="gotoTab('calendar', document.querySelectorAll('.tab')[1])" style="cursor:pointer;" title="カレンダーへ">
     <div class="logo-icon">📅</div>
     SNS投稿マネージャー
   </div>
@@ -474,14 +488,14 @@ select option { background: #fff; color: var(--white); }
 </header>
 
 <div class="tab-bar">
-  <div class="tab active" onclick="gotoTab('today',this)">📌 今日の投稿</div>
-  <div class="tab" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
+  <div class="tab" onclick="gotoTab('today',this)">📌 今日の投稿</div>
+  <div class="tab active" onclick="gotoTab('calendar',this)">📅 カレンダー</div>
   <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
   <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
 </div>
 
 <!-- 今日の投稿 -->
-<div id="view-today" class="view active">
+<div id="view-today" class="view">
   <div class="today-hero">
     <div>
       <div class="today-title">今日の投稿</div>
@@ -493,7 +507,7 @@ select option { background: #fff; color: var(--white); }
 </div>
 
 <!-- カレンダー -->
-<div id="view-calendar" class="view">
+<div id="view-calendar" class="view active">
   <div class="cal-nav">
     <button class="nav-btn" onclick="chMonth(-1)">←</button>
     <h2 id="calTitle"></h2>
@@ -691,9 +705,10 @@ function renderToday() {
       ${srcHtml(p)}
       ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
       <div class="card-actions">
-        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピーする</button>
+        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 文章コピー</button>
         ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
         <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+        <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         <button class="abtn danger" onclick="delPost('${p.id}')">🗑️</button>
       </div>
     </div>`;
@@ -890,7 +905,10 @@ function renderDayDetail(ds) {
 
 
   const cards = dp.length === 0
-    ? `<div class="dd-empty">この日の投稿はありません</div>`
+    ? `<div class="dd-empty">この日の投稿はありません</div>
+       <div style="text-align:center;margin-top:14px;">
+         <button class="dd-add-btn" onclick="addForDate('${ds}')">＋ この日に新規作成</button>
+       </div>`
     : dp.map(p => {
         const bs = p.platforms.map(pl => `<span class="pbadge pbadge-${pl}" style="font-size:10px;padding:2px 7px;">${pl==='X'?'𝕏':pl.slice(0,2)}</span>`).join('');
         const tstr = p.date ? p.date.slice(11,16) : '';
@@ -903,9 +921,10 @@ function renderDayDetail(ds) {
           <div class="dd-text">${esc(p.text)}</div>
           ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(0,0,0,0.2);border-radius:5px;border-left:3px solid ${p.platforms.includes('BASE')?'#e8380d':'#3dc06c'}">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
           <div class="dd-actions">
-            <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
-            <button class="smbtn" onclick="editPost('${p.id}')">✏️</button>
-            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅</button>`:''}
+            <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 文章コピー</button>
+            <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+            <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️</button>
           </div>
         </div>`;
@@ -913,7 +932,7 @@ function renderDayDetail(ds) {
 
   document.getElementById('dayDetail').innerHTML = `<div class="dd-title">
     ${label}の投稿（${dp.length}件）
-    <span class="dd-add-link" onclick="addForDate('${ds}')">＋ 追加</span>
+    <button class="dd-add-btn" onclick="addForDate('${ds}')">＋ この日に新規作成</button>
   </div><div class="dd-cards-wrap">${cards}</div>`;
 }
 
@@ -1021,7 +1040,36 @@ function srcHtml(p) {
   return `<div class="${cls}">${icon} ${esc(p.sourceTitle||'')}${url}</div>`;
 }
 
-// ── ネタ一覧 ──
+// 複製
+function duplicatePost(id) {
+  const orig = posts.find(x => x.id === id);
+  if (!orig) return;
+  const dup = {
+    ...orig,
+    id: Date.now().toString(),
+    status: 'draft',
+    date: '',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  posts.unshift(dup);
+  save();
+  // フォームに複製内容をセットしてネタ作成タブへ
+  editId = null;
+  selP = [...dup.platforms];
+  document.getElementById('fText').value = dup.text;
+  document.getElementById('fDate').value = '';
+  document.getElementById('fMemo').value = dup.memo || '';
+  document.getElementById('fStatus').value = 'draft';
+  document.getElementById('fSourceTitle').value = dup.sourceTitle || '';
+  document.getElementById('fSourceUrl').value = dup.sourceUrl || '';
+  dpSelDate = null;
+  document.getElementById('datePickerLabel').textContent = '📅 日付・時間を選択';
+  updatePbtns(); updateCC(); updateSourceBox();
+  document.getElementById('editNotice').style.display = 'none';
+  gotoTabByName('create');
+  showToast('📄 複製しました。日時を設定して保存してください');
+}
 function setSF(f, btn) {
   sf = f;
   document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('on'));
@@ -1064,9 +1112,10 @@ function renderStock() {
       ${srcHtml(p)}
       ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
       <div class="sc-actions">
-        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
+        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 文章コピー</button>
         <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+        <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
         <button class="scbtn danger" onclick="delPost('${p.id}')">🗑️</button>
         <span class="sc-chars">${p.text.length}文字</span>
       </div>
@@ -1082,7 +1131,7 @@ async function scCopy(id, btn) {
 
 // INIT
 initDate();
-renderToday();
+renderCalendar();
 initDatePicker();
 
 // ── カスタム日付ピッカー ──
