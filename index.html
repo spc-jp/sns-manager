@@ -1162,6 +1162,8 @@ async function scCopy(id, btn) {
 // INIT
 initDate();
 renderCalendar();
+renderToday();
+renderStock();
 initDatePicker();
 
 // ── カスタム日付ピッカー ──
@@ -1290,24 +1292,56 @@ function backupData() {
 function restoreData(e) {
   const file = e.target.files[0];
   if (!file) return;
+
+  // .json 以外は弾く
+  if (!file.name.endsWith('.json')) {
+    showToast('❌ JSONファイルを選んでください');
+    e.target.value = '';
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = ev => {
+    let imported = null;
     try {
-      const data = JSON.parse(ev.target.result);
-      const imported = data.posts || data;
-      if (!Array.isArray(imported)) throw new Error('形式エラー');
-      if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。\nよろしいですか？`)) return;
-      posts = imported;
-      save();
-      renderToday(); renderStock();
-      if (document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
-      showToast(`✅ ${imported.length}件のデータを復元しました`);
+      const raw = JSON.parse(ev.target.result);
+      // { posts: [...] } 形式と [ ... ] 形式の両方に対応
+      imported = Array.isArray(raw) ? raw : (Array.isArray(raw.posts) ? raw.posts : null);
     } catch {
-      showToast('❌ ファイルの読み込みに失敗しました');
+      showToast('❌ JSONの読み込みに失敗しました。ファイルが壊れている可能性があります');
+      e.target.value = '';
+      return;
     }
+
+    if (!imported) {
+      showToast('❌ データ形式が正しくありません');
+      e.target.value = '';
+      return;
+    }
+
+    if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。よろしいですか？`)) {
+      e.target.value = '';
+      return;
+    }
+
+    posts = imported;
+    save();
+
+    // 全ビューを再描画
+    renderCalendar();
+    renderToday();
+    renderStock();
+
+    showToast(`✅ ${imported.length}件のデータを復元しました`);
     e.target.value = '';
   };
-  reader.readAsText(file);
+
+  reader.onerror = () => {
+    showToast('❌ ファイルの読み取りに失敗しました');
+    e.target.value = '';
+  };
+
+  reader.readAsText(file, 'utf-8');
 }
 </script>
 </body>
