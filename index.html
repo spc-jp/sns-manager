@@ -844,10 +844,16 @@ function renderCalendar() {
     const isSel = ds === selDate;
 
     const dp = posts.filter(p => p.date && p.date.startsWith(ds));
-    // プラットフォームごとに1行ずつ表示（最大5行）
+    // note含む投稿を先頭に、それ以外は時間順
+    const sortedDp = [...dp].sort((a, b) => {
+      const aN = a.platforms.includes('note') ? 0 : 1;
+      const bN = b.platforms.includes('note') ? 0 : 1;
+      if (aN !== bN) return aN - bN;
+      return (a.date || '').localeCompare(b.date || '');
+    });
     const PLT_ICON = { note:'📝', X:'𝕏', Threads:'T', Facebook:'F', BASE:'🛒', Instagram:'📸', YouTube:'▶️' };
     let dotLines = [];
-    for (const p of dp) {
+    for (const p of sortedDp) {
       for (const plt of p.platforms) {
         if (dotLines.length >= 5) break;
         const icon = PLT_ICON[plt] || plt.charAt(0);
