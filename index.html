@@ -630,6 +630,8 @@ let sf = 'all';
 let dpYear = new Date().getFullYear();
 let dpMonth = new Date().getMonth();
 let dpSelDate = null;
+let fromCalendar = false;   // カレンダーから来たか
+let returnToDate = null;    // 戻り先の日付
 
 const save = () => localStorage.setItem('sns_mgr_v2', JSON.stringify(posts));
 const WD = ['日','月','火','水','木','金','土'];
@@ -759,7 +761,12 @@ function delPost(id) {
   showToast('🗑️ 削除しました');
 }
 
-function editPost(id) {
+// カレンダーから編集（保存後カレンダーに戻る）
+function editPostFromCal(id, ds) {
+  fromCalendar = true;
+  returnToDate = ds;
+  editPost(id);
+}
   const p = posts.find(x => x.id === id);
   if (!p) return;
   editId = id;
@@ -922,7 +929,7 @@ function renderDayDetail(ds) {
           ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(0,0,0,0.2);border-radius:5px;border-left:3px solid ${p.platforms.includes('BASE')?'#e8380d':'#3dc06c'}">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
           <div class="dd-actions">
             <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
-            <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
+            <button class="smbtn" onclick="editPostFromCal('${p.id}','${ds}')">✏️ 編集</button>
             ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>`:''}
             <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️</button>
@@ -943,7 +950,10 @@ async function ddCopy(id, btn) {
 }
 
 function addForDate(ds) {
+  fromCalendar = true;
+  returnToDate = ds;
   document.getElementById('fDate').value = ds + 'T09:00';
+  setDatePickerValue(ds + 'T09:00');
   gotoTabByName('create');
 }
 
@@ -1009,10 +1019,26 @@ function savePost() {
   };
   if (editId) { const i = posts.findIndex(p=>p.id===editId); if(i>-1) posts[i]=post; }
   else posts.unshift(post);
+
+  // フラグを先に保存（clearFormでリセットされる前に）
+  const calFlag = fromCalendar;
+  const calDate = returnToDate;
+  const wasEdit = !!editId;
+
   save(); clearForm();
-  showToast(editId ? '✅ 更新しました！' : '💾 保存しました！');
-  editId = null;
-  gotoTabByName('today');
+  showToast(wasEdit ? '✅ 更新しました！' : '💾 保存しました！');
+
+  if (calFlag && calDate) {
+    const dt = new Date(calDate);
+    cY = dt.getFullYear();
+    cM = dt.getMonth();
+    selDate = calDate;
+    gotoTabByName('calendar');
+    renderCalendar();
+    renderDayDetail(calDate);
+  } else {
+    gotoTabByName('today');
+  }
 }
 function clearForm() {
   document.getElementById('fText').value = '';
@@ -1025,6 +1051,8 @@ function clearForm() {
   document.getElementById('fSourceUrl').value = '';
   selP = []; updatePbtns(); updateCC(); updateSourceBox();
   editId = null;
+  fromCalendar = false;
+  returnToDate = null;
   document.getElementById('editNotice').style.display = 'none';
 }
 
