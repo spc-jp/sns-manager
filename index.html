@@ -1036,16 +1036,12 @@ function savePost() {
   save(); clearForm();
   showToast(wasEdit ? '✅ 更新しました！' : '💾 保存しました！');
 
+  // カレンダーから来た場合のみカレンダーの日付情報を更新（タブは移動しない）
   if (calFlag && calDate) {
     const dt = new Date(calDate);
     cY = dt.getFullYear();
     cM = dt.getMonth();
     selDate = calDate;
-    gotoTabByName('calendar');
-    renderCalendar();
-    renderDayDetail(calDate);
-  } else {
-    gotoTabByName('today');
   }
 }
 function clearForm() {
