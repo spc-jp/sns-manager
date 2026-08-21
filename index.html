@@ -1072,35 +1072,25 @@ function srcHtml(p) {
   return `<div class="${cls}">${icon} ${esc(p.sourceTitle||'')}${url}</div>`;
 }
 
-// 複製
+// 複製：フォームに内容をセットするだけ（保存はしない）
 function duplicatePost(id) {
   const orig = posts.find(x => x.id === id);
   if (!orig) return;
-  const dup = {
-    ...orig,
-    id: Date.now().toString(),
-    status: 'draft',
-    date: '',
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
-  posts.unshift(dup);
-  save();
-  // フォームに複製内容をセットしてネタ作成タブへ
-  editId = null;
-  selP = [...dup.platforms];
-  document.getElementById('fText').value = dup.text;
+
+  editId = null; // 新規として扱う
+  selP = [...orig.platforms];
+  document.getElementById('fText').value = orig.text;
   document.getElementById('fDate').value = '';
-  document.getElementById('fMemo').value = dup.memo || '';
+  document.getElementById('fMemo').value = orig.memo || '';
   document.getElementById('fStatus').value = 'draft';
-  document.getElementById('fSourceTitle').value = dup.sourceTitle || '';
-  document.getElementById('fSourceUrl').value = dup.sourceUrl || '';
+  document.getElementById('fSourceTitle').value = orig.sourceTitle || '';
+  document.getElementById('fSourceUrl').value = orig.sourceUrl || '';
   dpSelDate = null;
   document.getElementById('datePickerLabel').textContent = '📅 日付・時間を選択';
-  updatePbtns(); updateCC(); updateSourceBox();
   document.getElementById('editNotice').style.display = 'none';
+  updatePbtns(); updateCC(); updateSourceBox();
   gotoTabByName('create');
-  showToast('📄 複製しました。日時を設定して保存してください');
+  showToast('📄 複製しました。内容を変更して保存してください');
 }
 function setSF(f, btn) {
   sf = f;
