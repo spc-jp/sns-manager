@@ -314,7 +314,7 @@ header {
 }
 .dd-add-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 .dd-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
-.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #f7fafd; border: 1px solid var(--border); border-radius: 9px; transition: box-shadow 0.2s, border-color 0.2s; flex: 1 1 360px; }
+.dd-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #fff; border: 1px solid var(--border); border-radius: 9px; transition: box-shadow 0.2s, border-color 0.2s; flex: 1 1 360px; }
 .dd-card:hover { border-color: var(--cyan); box-shadow: var(--shadow); }
 .dd-left { min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
 .dd-text {
@@ -857,7 +857,7 @@ function renderCalendar() {
       for (const plt of p.platforms) {
         if (dotLines.length >= 5) break;
         const icon = PLT_ICON[plt] || plt.charAt(0);
-        const label = (p.sourceTitle || p.text).slice(0, 9);
+        const label = (p.sourceTitle || p.text).slice(0, 15);
         const postedCls = p.status === 'posted' ? ' is-posted' : p.status === 'promo' ? ' is-promo' : '';
         const timePart = p.date ? p.date.slice(11,16) : '';
         dotLines.push(
