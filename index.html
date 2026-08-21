@@ -705,7 +705,7 @@ function renderToday() {
       ${srcHtml(p)}
       ${p.memo ? `<div class="memo-line">💬 ${esc(p.memo)}</div>` : ''}
       <div class="card-actions">
-        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 文章コピー</button>
+        <button class="abtn primary" onclick="copyBtn('${p.id}', this)">📋 コピー</button>
         ${!done ? `<button class="abtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>` : ''}
         <button class="abtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         <button class="abtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
@@ -921,9 +921,9 @@ function renderDayDetail(ds) {
           <div class="dd-text">${esc(p.text)}</div>
           ${p.sourceTitle||p.sourceUrl ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:5px 8px;background:rgba(0,0,0,0.2);border-radius:5px;border-left:3px solid ${p.platforms.includes('BASE')?'#e8380d':'#3dc06c'}">${p.platforms.includes('BASE')?'🛒':'📝'} ${esc(p.sourceTitle||'')}${p.sourceUrl?`<br><a href="${esc(p.sourceUrl)}" target="_blank" style="color:var(--cyan);font-size:10px;">${esc(p.sourceUrl)}</a>`:''}</div>` : ''}
           <div class="dd-actions">
-            <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 文章コピー</button>
+            <button class="smbtn" onclick="ddCopy('${p.id}',this)">📋 コピー</button>
             <button class="smbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
-            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
+            ${p.status!=='posted'?`<button class="smbtn" onclick="markPosted('${p.id}')">✅ 投稿済みに</button>`:''}
             <button class="smbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
             <button class="smbtn danger" onclick="delPost('${p.id}')">🗑️</button>
           </div>
@@ -1112,7 +1112,7 @@ function renderStock() {
       ${srcHtml(p)}
       ${p.memo ? `<div class="sc-memo">💬 ${esc(p.memo)}</div>` : ''}
       <div class="sc-actions">
-        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 文章コピー</button>
+        <button class="scbtn" onclick="scCopy('${p.id}',this)">📋 コピー</button>
         <button class="scbtn" onclick="editPost('${p.id}')">✏️ 編集</button>
         ${p.status!=='posted'?`<button class="scbtn" onclick="markPosted('${p.id}')">✅ 投稿済み</button>`:''}
         <button class="scbtn" onclick="duplicatePost('${p.id}')">📄 複製</button>
