@@ -767,6 +767,8 @@ function editPostFromCal(id, ds) {
   returnToDate = ds;
   editPost(id);
 }
+
+function editPost(id) {
   const p = posts.find(x => x.id === id);
   if (!p) return;
   editId = id;
