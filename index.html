@@ -460,6 +460,11 @@ select option { background: #fff; color: var(--white); }
 .dp-ok-btn:hover { opacity: 0.88; }
 .dp-clear-btn { padding: 8px 14px; background: #f4f7fb; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
 .dp-clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+/* 日付表示行 */
+.dp-date-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.dp-date-label { font-size: 15px; font-weight: 700; color: var(--white); }
+.dp-toggle-cal { padding: 4px 10px; background: #f4f7fb; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); font-size: 11px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dp-toggle-cal:hover { border-color: var(--cyan); color: var(--cyan); }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--cyan); color: #fff; padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 700; z-index: 9999; animation: tin 0.3s ease, tout 0.3s ease 1.9s forwards; pointer-events: none; box-shadow: 0 4px 16px rgba(0,184,169,0.4); }
 @keyframes tin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -565,15 +570,24 @@ select option { background: #fff; color: var(--white); }
           <span id="datePickerLabel">📅 日付・時間を選択</span>
         </button>
         <div class="date-picker-panel" id="datePickerPanel" style="display:none;">
-          <div class="dp-cal-nav">
-            <button type="button" onclick="dpChangeMonth(-1)">‹</button>
-            <span id="dpCalTitle"></span>
-            <button type="button" onclick="dpChangeMonth(1)">›</button>
+          <!-- 日付表示 + 変更トグル -->
+          <div class="dp-date-row">
+            <span class="dp-date-label" id="dpDateLabel">📅 日付未設定</span>
+            <button type="button" class="dp-toggle-cal" onclick="toggleDpCal()">日付変更 ▾</button>
           </div>
-          <div class="dp-cal-hd">
-            <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span><span class="sun">日</span>
+          <!-- カレンダーグリッド（デフォルト非表示） -->
+          <div id="dpCalArea" style="display:none;">
+            <div class="dp-cal-nav">
+              <button type="button" onclick="dpChangeMonth(-1)">‹</button>
+              <span id="dpCalTitle"></span>
+              <button type="button" onclick="dpChangeMonth(1)">›</button>
+            </div>
+            <div class="dp-cal-hd">
+              <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span><span class="sun">日</span>
+            </div>
+            <div class="dp-cal-grid" id="dpCalGrid"></div>
           </div>
-          <div class="dp-cal-grid" id="dpCalGrid"></div>
+          <!-- 時間選択（常に表示） -->
           <div class="dp-time-row">
             <label class="dp-time-label">🕐 時間</label>
             <select id="dpHour" onchange="updateDatePickerLabel()"></select>
@@ -1181,6 +1195,16 @@ function toggleDatePicker() {
   if (!isOpen) renderDpCal();
 }
 
+// カレンダーグリッドの表示/非表示切り替え
+function toggleDpCal() {
+  const area = document.getElementById('dpCalArea');
+  const btn = document.querySelector('.dp-toggle-cal');
+  const isOpen = area.style.display !== 'none';
+  area.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? '日付変更 ▾' : '日付変更 ▴';
+  if (!isOpen) renderDpCal();
+}
+
 function closeDatePicker() {
   document.getElementById('datePickerPanel').style.display = 'none';
   document.querySelector('.date-picker-btn').classList.remove('open');
@@ -1236,6 +1260,11 @@ function dpPickDay(ds) {
   dpSelDate = ds;
   renderDpCal();
   updateDatePickerLabel();
+  // 日付選択後、グリッドを自動で閉じる
+  const area = document.getElementById('dpCalArea');
+  const btn = document.querySelector('.dp-toggle-cal');
+  if (area) area.style.display = 'none';
+  if (btn) btn.textContent = '日付変更 ▾';
 }
 
 function updateDatePickerLabel() {
@@ -1244,7 +1273,11 @@ function updateDatePickerLabel() {
   const m = document.getElementById('dpMin').value;
   const [y, mo, d] = dpSelDate.split('-');
   const dow = ['日','月','火','水','木','金','土'][new Date(dpSelDate).getDay()];
-  document.getElementById('datePickerLabel').textContent = `📅 ${parseInt(mo)}月${parseInt(d)}日（${dow}） ${h}:${m}`;
+  const labelText = `📅 ${parseInt(mo)}月${parseInt(d)}日（${dow}） ${h}:${m}`;
+  document.getElementById('datePickerLabel').textContent = labelText;
+  // パネル内の日付表示も更新
+  const dpDateLbl = document.getElementById('dpDateLabel');
+  if (dpDateLbl) dpDateLbl.textContent = `📅 ${parseInt(mo)}月${parseInt(d)}日（${dow}）`;
   document.getElementById('fDate').value = `${dpSelDate}T${h}:${m}`;
 }
 
@@ -1261,6 +1294,11 @@ function setDatePickerValue(val) {
   document.getElementById('dpHour').value = h;
   document.getElementById('dpMin').value = m;
   updateDatePickerLabel();
+  // カレンダーグリッドは閉じておく
+  const area = document.getElementById('dpCalArea');
+  const btn = document.querySelector('.dp-toggle-cal');
+  if (area) area.style.display = 'none';
+  if (btn) btn.textContent = '日付変更 ▾';
 }
 
 // パネル外クリックで閉じる
