@@ -1095,8 +1095,14 @@ function duplicatePost(id) {
   if (!orig) return;
 
   editId = null;
-  fromCalendar = false;  // 複製後はカレンダーに戻らない
-  returnToDate = null;
+  // 複製元に日付がある場合は保存後にその日のカレンダーに戻る
+  if (orig.date) {
+    fromCalendar = true;
+    returnToDate = orig.date.slice(0, 10);
+  } else {
+    fromCalendar = false;
+    returnToDate = null;
+  }
 
   selP = [...orig.platforms];
   document.getElementById('fText').value = orig.text;
