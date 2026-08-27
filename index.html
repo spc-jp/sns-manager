@@ -433,7 +433,7 @@ select option { background: #fff; color: var(--white); }
 .task-add-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 
 /* カンバン */
-.kanban-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+.kanban-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: start; }
 .kanban-col { background: #f4f7fb; border-radius: 14px; padding: 14px; border: 1px solid var(--border); }
 .kanban-col-header {
   display: flex; align-items: center; gap: 8px;
@@ -447,8 +447,10 @@ select option { background: #fff; color: var(--white); }
   padding: 1px 8px; color: var(--muted);
 }
 
+.kanban-priority { border-top: 3px solid #f59e0b; }
 .kanban-todo { border-top: 3px solid #9aafc4; }
 .kanban-doing { border-top: 3px solid var(--cyan); }
+.kanban-review { border-top: 3px solid #a855f7; }
 .kanban-done { border-top: 3px solid #22c55e; }
 
 .kanban-cards { display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
@@ -750,8 +752,16 @@ select option { background: #fff; color: var(--white); }
     </div>
   </div>
 
-  <!-- カンバン3列 -->
+  <!-- カンバン5列 -->
   <div class="kanban-wrap">
+    <div class="kanban-col kanban-priority">
+      <div class="kanban-col-header">
+        <span class="kanban-col-icon">⭐</span>優先
+        <span class="kanban-count" id="cnt-priority">0</span>
+      </div>
+      <div class="kanban-cards" id="col-priority"></div>
+      <button class="kanban-add-btn" onclick="openTaskModal(null,'priority')">＋ 追加</button>
+    </div>
     <div class="kanban-col kanban-todo">
       <div class="kanban-col-header">
         <span class="kanban-col-icon">⬜</span>未着手
@@ -767,6 +777,14 @@ select option { background: #fff; color: var(--white); }
       </div>
       <div class="kanban-cards" id="col-doing"></div>
       <button class="kanban-add-btn" onclick="openTaskModal(null,'doing')">＋ 追加</button>
+    </div>
+    <div class="kanban-col kanban-review">
+      <div class="kanban-col-header">
+        <span class="kanban-col-icon">🔍</span>確認中
+        <span class="kanban-count" id="cnt-review">0</span>
+      </div>
+      <div class="kanban-cards" id="col-review"></div>
+      <button class="kanban-add-btn" onclick="openTaskModal(null,'review')">＋ 追加</button>
     </div>
     <div class="kanban-col kanban-done">
       <div class="kanban-col-header">
@@ -796,8 +814,10 @@ select option { background: #fff; color: var(--white); }
       <div class="task-modal-sec">
         <label class="task-modal-label">ステータス</label>
         <select id="tmStatus">
+          <option value="priority">⭐ 優先</option>
           <option value="todo">⬜ 未着手</option>
           <option value="doing">🔵 進行中</option>
+          <option value="review">🔍 確認中</option>
           <option value="done">✅ 完了</option>
         </select>
       </div>
@@ -1407,7 +1427,7 @@ function renderKanban() {
   // フィルター
   const filtered = activeCat === 'all' ? tasks : tasks.filter(t => t.category === activeCat);
 
-  const statuses = ['todo', 'doing', 'done'];
+  const statuses = ['priority', 'todo', 'doing', 'review', 'done'];
   statuses.forEach(st => {
     const cards = filtered.filter(t => t.status === st);
     document.getElementById('cnt-' + st).textContent = cards.length;
