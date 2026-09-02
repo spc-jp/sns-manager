@@ -271,10 +271,24 @@ header {
 .cal-dot.plt-Facebook{ background: #dbeafe; color: #1d4ed8; border-left-color: #3b82f6; }
 /* BASE → オレンジ */
 .cal-dot.plt-BASE    { background: #ffedd5; color: #c2410c; border-left-color: #f97316; }
+/* アフィリエイト投稿 */
+.spill-affiliate { background: rgba(234,179,8,0.12); color: #b45309; border: 1px solid rgba(234,179,8,0.3); font-weight: 800; }
+
+/* Amazon・楽天バッジ */
+.pbadge-Amazon  { background: rgba(255,153,0,0.12); color: #c05000; border: 1px solid rgba(255,153,0,0.3); }
+.pbadge-Rakuten { background: rgba(191,0,0,0.1); color: #bf0000; border: 1px solid rgba(191,0,0,0.25); }
+
+/* Amazon・楽天ピッカーボタン */
+.pbtn.on-Amazon  { border-color: #c05000; color: #c05000; background: rgba(255,153,0,0.08); }
+.pbtn.on-Rakuten { border-color: #bf0000; color: #bf0000; background: rgba(191,0,0,0.07); }
+
 /* Instagram → ピンク */
-.cal-dot.plt-Instagram { background: #fce7f3; color: #be185d; border-left-color: #ec4899; }
+.cal-dot.plt-Instagram { background: #fce7f3; color: #be185d; border-left: 3px solid #ec4899; }
 /* YouTube → 赤 */
-.cal-dot.plt-YouTube   { background: #fee2e2; color: #b91c1c; border-left-color: #ef4444; }
+.cal-dot.plt-YouTube   { background: #fee2e2; color: #b91c1c; border-left: 3px solid #ef4444; }
+/* Amazon・楽天カレンダードット */
+.cal-dot.plt-Amazon  { background: rgba(255,153,0,0.18); color: #c05000; border-left: 3px solid #ff9900; }
+.cal-dot.plt-Rakuten { background: rgba(191,0,0,0.12); color: #bf0000; border-left: 3px solid #bf0000; }
 /* 投稿済みは薄く */
 .cal-dot.is-posted   { }
 /* 集客投稿は黄色・太枠で目立たせる */
@@ -648,6 +662,8 @@ select option { background: #fff; color: var(--white); }
       <button class="pbtn" data-p="BASE" onclick="toggleP('BASE')">🛒 BASE</button>
       <button class="pbtn" data-p="Instagram" onclick="toggleP('Instagram')">📸 Instagram</button>
       <button class="pbtn" data-p="YouTube" onclick="toggleP('YouTube')">▶️ YouTube</button>
+      <button class="pbtn" data-p="Amazon" onclick="toggleP('Amazon')">🛒 Amazon</button>
+      <button class="pbtn" data-p="Rakuten" onclick="toggleP('Rakuten')">🛍️ 楽天</button>
     </div>
   </div>
 
@@ -715,6 +731,7 @@ select option { background: #fff; color: var(--white); }
         <option value="draft">📝 下書き</option>
         <option value="scheduled">📅 投稿予定</option>
         <option value="promo">📣 集客投稿</option>
+        <option value="affiliate">💰 アフィリエイト投稿</option>
         <option value="posted">✅ 投稿済み</option>
       </select>
     </div>
@@ -734,6 +751,7 @@ select option { background: #fff; color: var(--white); }
     <button class="sfbtn" data-f="draft" onclick="setSF('draft',this)">📝 下書き</button>
     <button class="sfbtn" data-f="scheduled" onclick="setSF('scheduled',this)">📅 予定</button>
     <button class="sfbtn" data-f="promo" onclick="setSF('promo',this)">📣 集客投稿</button>
+    <button class="sfbtn" data-f="affiliate" onclick="setSF('affiliate',this)">💰 アフィリ</button>
     <button class="sfbtn" data-f="posted" onclick="setSF('posted',this)">✅ 済み</button>
     <input class="sf-srch" type="text" placeholder="🔍 検索..." id="stockSearch" oninput="renderStock()">
   </div>
@@ -1083,7 +1101,7 @@ function renderCalendar() {
       if (aN !== bN) return aN - bN;
       return (a.date || '').localeCompare(b.date || '');
     });
-    const PLT_ICON = { note:'📝', X:'𝕏', Threads:'T', Facebook:'F', BASE:'🛒', Instagram:'📸', YouTube:'▶️' };
+    const PLT_ICON = { note:'📝', X:'𝕏', Threads:'T', Facebook:'F', BASE:'🛒', Instagram:'📸', YouTube:'▶️', Amazon:'🛒', Rakuten:'🛍️' };
     let dotLines = [];
     for (const p of sortedDp) {
       for (const plt of p.platforms) {
@@ -1217,13 +1235,17 @@ function updateSourceBox() {
   const hasBase = selP.includes('BASE');
   const hasInsta = selP.includes('Instagram');
   const hasYT = selP.includes('YouTube');
-  if (hasNote || hasBase || hasInsta || hasYT) {
+  const hasAmz = selP.includes('Amazon');
+  const hasRaku = selP.includes('Rakuten');
+  if (hasNote || hasBase || hasInsta || hasYT || hasAmz || hasRaku) {
     box.classList.add('show');
     const labels = [];
     if (hasNote) labels.push('📝 note');
     if (hasBase) labels.push('🛒 BASE');
     if (hasInsta) labels.push('📸 Instagram');
     if (hasYT) labels.push('▶️ YouTube');
+    if (hasAmz) labels.push('🛒 Amazon');
+    if (hasRaku) labels.push('🛍️ 楽天');
     lbl.textContent = labels.join(' / ') + ' 掲載情報';
     box.style.borderColor = hasBase ? 'rgba(232,56,13,0.35)' : 'rgba(0,184,169,0.35)';
   } else {
@@ -1373,6 +1395,7 @@ function renderStock() {
     draft:     ['spill-draft',     '📝 下書き'],
     scheduled: ['spill-scheduled', '📅 予定'],
     promo:     ['spill-promo',     '📣 集客投稿'],
+    affiliate: ['spill-affiliate',  '💰 アフィリ'],
     posted:    ['spill-posted',    '✅ 済み']
   };
   c.innerHTML = fl.map(p => {
