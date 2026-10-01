@@ -475,6 +475,7 @@ select option { background: #fff; color: var(--white); }
   background: #fff; border: 1px solid var(--border); border-radius: 10px;
   padding: 12px 14px; cursor: pointer; transition: box-shadow 0.18s, border-color 0.18s;
   box-shadow: var(--shadow); animation: fadeIn 0.2s ease;
+  user-select: none; -webkit-user-select: none;
 }
 .task-card:hover { box-shadow: var(--shadow-hover); border-color: var(--cyan); }
 .task-card-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 5px; line-height: 1.5; }
@@ -1552,9 +1553,13 @@ let activeCat = 'all';
 let editTaskId = null;
 
 let dragTaskId = null;
+let isDragging = false;
 
 function dragStart(e, id) {
+  isDragging = true;
   dragTaskId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
   setTimeout(() => {
     const el = document.getElementById('tc-' + id);
     if (el) el.classList.add('dragging');
@@ -1564,6 +1569,7 @@ function dragEnd(id) {
   const el = document.getElementById('tc-' + id);
   if (el) el.classList.remove('dragging');
   dragTaskId = null;
+  setTimeout(() => { isDragging = false; }, 50);
 }
 function dragOver(e) {
   e.preventDefault();
@@ -1603,9 +1609,6 @@ function renderKanban() {
     const cards = filtered.filter(t => t.status === st);
     document.getElementById('cnt-' + st).textContent = cards.length;
     const colEl = document.getElementById('col-' + st);
-    colEl.ondragover = dragOver;
-    colEl.ondragleave = dragLeave;
-    colEl.ondrop = (e) => dropTask(e, st);
     colEl.innerHTML = cards.length === 0
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
       : cards.map(t => `
@@ -1613,11 +1616,15 @@ function renderKanban() {
           draggable="true"
           ondragstart="dragStart(event,'${t.id}')"
           ondragend="dragEnd('${t.id}')"
-          onclick="openTaskModal('${t.id}')">
+          onclick="if(!isDragging)openTaskModal('${t.id}')">
           ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
           <div class="task-card-title">${esc(t.title)}</div>
           ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
         </div>`).join('');
+    // innerHTML設定後にドロップイベントを設定（確実に反映させる）
+    colEl.ondragover  = dragOver;
+    colEl.ondragleave = dragLeave;
+    colEl.ondrop      = (e) => dropTask(e, st);
   });
 }
 
