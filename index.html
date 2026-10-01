@@ -447,7 +447,7 @@ select option { background: #fff; color: var(--white); }
 .task-add-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 
 /* カンバン */
-.kanban-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: start; }
+.kanban-wrap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: start; }
 .kanban-col { background: #f4f7fb; border-radius: 14px; padding: 14px; border: 1px solid var(--border); }
 .kanban-col-header {
   display: flex; align-items: center; gap: 8px;
@@ -462,6 +462,7 @@ select option { background: #fff; color: var(--white); }
 }
 
 .kanban-priority { border-top: 3px solid #f59e0b; }
+.kanban-urgent  { border-top: 3px solid #ef4444; }
 .kanban-todo { border-top: 3px solid #9aafc4; }
 .kanban-doing { border-top: 3px solid var(--cyan); }
 .kanban-review { border-top: 3px solid #a855f7; }
@@ -493,6 +494,11 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
+/* ドラッグ＆ドロップ */
+.task-card[draggable="true"] { cursor: grab; }
+.task-card.dragging { opacity: 0.4; cursor: grabbing; transform: rotate(1.5deg); box-shadow: 0 8px 24px rgba(0,80,160,0.18); }
+.kanban-cards.drag-over { background: rgba(0,184,169,0.08); outline: 2px dashed var(--cyan); outline-offset: 4px; border-radius: 9px; }
+
 /* モーダル */
 .task-modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
@@ -520,7 +526,8 @@ select option { background: #fff; color: var(--white); }
 .cat-item-del { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 11px; padding: 3px 8px; cursor: pointer; transition: all 0.18s; }
 .cat-item-del:hover { border-color: var(--danger); color: var(--danger); }
 
-@media (max-width: 768px) { .kanban-wrap { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) { .kanban-wrap { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .kanban-wrap { grid-template-columns: 1fr; } }
 
 /* ── スキルアップ ── */
 .skill-top-row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
@@ -803,9 +810,17 @@ select option { background: #fff; color: var(--white); }
       <div class="kanban-cards" id="col-priority"></div>
       <button class="kanban-add-btn" onclick="openTaskModal(null,'priority')">＋ 追加</button>
     </div>
+    <div class="kanban-col kanban-urgent">
+      <div class="kanban-col-header">
+        <span class="kanban-col-icon">⭐</span>優先
+        <span class="kanban-count" id="cnt-urgent">0</span>
+      </div>
+      <div class="kanban-cards" id="col-urgent"></div>
+      <button class="kanban-add-btn" onclick="openTaskModal(null,'urgent')">＋ 追加</button>
+    </div>
     <div class="kanban-col kanban-todo">
       <div class="kanban-col-header">
-        <span class="kanban-col-icon">📄</span>提案書・見積作成
+        <span class="kanban-col-icon">📄</span>提案書・見積書
         <span class="kanban-count" id="cnt-todo">0</span>
       </div>
       <div class="kanban-cards" id="col-todo"></div>
@@ -856,7 +871,8 @@ select option { background: #fff; color: var(--white); }
         <label class="task-modal-label">ステータス</label>
         <select id="tmStatus">
           <option value="priority">🤝 商談</option>
-          <option value="todo">📄 提案書・見積作成</option>
+          <option value="urgent">⭐ 優先</option>
+          <option value="todo">📄 提案書・見積書</option>
           <option value="doing">⚙️ 施策・進行中</option>
           <option value="review">🔍 最終確認中</option>
           <option value="done">✅ 完了</option>
@@ -1535,10 +1551,41 @@ let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作"
 let activeCat = 'all';
 let editTaskId = null;
 
-const saveTasks = () => {
-  localStorage.setItem('sns_tasks_v1', JSON.stringify(tasks));
-  localStorage.setItem('sns_task_cats', JSON.stringify(taskCats));
-};
+let dragTaskId = null;
+
+function dragStart(e, id) {
+  dragTaskId = id;
+  setTimeout(() => {
+    const el = document.getElementById('tc-' + id);
+    if (el) el.classList.add('dragging');
+  }, 0);
+}
+function dragEnd(id) {
+  const el = document.getElementById('tc-' + id);
+  if (el) el.classList.remove('dragging');
+  dragTaskId = null;
+}
+function dragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function dropTask(e, status) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!dragTaskId) return;
+  const task = tasks.find(t => t.id === dragTaskId);
+  if (task && task.status !== status) {
+    task.status = status;
+    task.updatedAt = Date.now();
+    saveTasks();
+    renderKanban();
+    showToast('✅ ステータスを更新しました');
+  }
+  dragTaskId = null;
+}
 
 function renderKanban() {
   // カテゴリフィルターボタン
@@ -1551,14 +1598,22 @@ function renderKanban() {
   // フィルター
   const filtered = activeCat === 'all' ? tasks : tasks.filter(t => t.category === activeCat);
 
-  const statuses = ['priority', 'todo', 'doing', 'review', 'done'];
+  const statuses = ['priority', 'urgent', 'todo', 'doing', 'review', 'done'];
   statuses.forEach(st => {
     const cards = filtered.filter(t => t.status === st);
     document.getElementById('cnt-' + st).textContent = cards.length;
-    document.getElementById('col-' + st).innerHTML = cards.length === 0
+    const colEl = document.getElementById('col-' + st);
+    colEl.ondragover = dragOver;
+    colEl.ondragleave = dragLeave;
+    colEl.ondrop = (e) => dropTask(e, st);
+    colEl.innerHTML = cards.length === 0
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
       : cards.map(t => `
-        <div class="task-card" onclick="openTaskModal('${t.id}')">
+        <div class="task-card" id="tc-${t.id}"
+          draggable="true"
+          ondragstart="dragStart(event,'${t.id}')"
+          ondragend="dragEnd('${t.id}')"
+          onclick="openTaskModal('${t.id}')">
           ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
           <div class="task-card-title">${esc(t.title)}</div>
           ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
