@@ -1644,9 +1644,9 @@ function renderKanban() {
     colEl.innerHTML = cards.length === 0
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
       : cards.map(t => `
-        <div class="task-card" id="tc-${t.id}" onclick="openTaskModal('${t.id}')">
+        <div class="task-card" id="tc-${t.id}">
           <span class="task-card-handle" onclick="openMoveMenu(event,'${t.id}')" title="クリックして列を移動">⠿</span>
-          <div class="task-card-body">
+          <div class="task-card-body" onclick="openTaskModal('${t.id}')">
             ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
             <div class="task-card-title">${esc(t.title)}</div>
             ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
