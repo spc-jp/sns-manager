@@ -496,6 +496,23 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
+/* 列集計バー */
+.kanban-summary {
+  background: rgba(0,184,169,0.06);
+  border: 1px solid rgba(0,184,169,0.2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.ks-item { color: var(--muted); }
+.ks-item b { color: var(--white); font-weight: 700; }
+.ks-profit b { color: var(--cyan); font-weight: 800; }
+.ks-profit b.minus { color: #ef4444; }
+
 /* タスクカード移動ボタン */
 .task-card { cursor: pointer; }
 .task-card-move { display: flex; gap: 4px; margin-top: 8px; }
@@ -1626,8 +1643,25 @@ function renderKanban() {
     const colEl = document.getElementById('col-' + st);
     colEl.innerHTML = '';
 
+    // 集計バー（売上・原価・利益がある場合のみ表示）
+    const totalSales  = cards.reduce((s, t) => s + (t.sales || 0), 0);
+    const totalCost   = cards.reduce((s, t) => s + (t.cost  || 0), 0);
+    const totalProfit = totalSales - totalCost;
+    if (totalSales > 0 || totalCost > 0) {
+      const summary = document.createElement('div');
+      summary.className = 'kanban-summary';
+      summary.innerHTML =
+        `<span class="ks-item">売上: <b>${totalSales.toLocaleString()}円</b></span>` +
+        `<span class="ks-item">原価: <b>${totalCost.toLocaleString()}円</b></span>` +
+        `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>`;
+      colEl.appendChild(summary);
+    }
+
     if (cards.length === 0) {
-      colEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>';
+      const empty = document.createElement('div');
+      empty.style.cssText = 'text-align:center;padding:20px;color:var(--muted);font-size:12px;';
+      empty.textContent = 'タスクがありません';
+      colEl.appendChild(empty);
       return;
     }
 
