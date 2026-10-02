@@ -496,11 +496,27 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
-/* カード移動ボタン */
-.task-move-row { display: flex; gap: 5px; margin-top: 8px; }
-.task-move-btn { padding: 3px 10px; border-radius: 6px; border: 1px solid var(--border); background: #f4f7fb; color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.18s; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; }
-.task-move-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.06); }
-.task-move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+/* ドラッグハンドル */
+.task-card { display: flex; align-items: flex-start; gap: 6px; }
+.task-card-handle {
+  cursor: grab; color: #c0d0e0; font-size: 16px; line-height: 1;
+  padding: 2px 2px 0 0; flex-shrink: 0; user-select: none;
+  transition: color 0.18s;
+}
+.task-card-handle:hover { color: var(--cyan); }
+.task-card-body { flex: 1; min-width: 0; }
+.task-card.dragging-src { opacity: 0.3; }
+.drag-ghost {
+  position: fixed; z-index: 9999; pointer-events: none;
+  background: #fff; border: 2px solid var(--cyan);
+  border-radius: 10px; padding: 12px 14px;
+  box-shadow: 0 8px 32px rgba(0,80,160,0.18);
+  transform: rotate(1.5deg); opacity: 0.92;
+}
+.kanban-cards.drag-over {
+  background: rgba(0,184,169,0.08);
+  outline: 2px dashed var(--cyan); outline-offset: 4px; border-radius: 9px;
+}
 
 /* モーダル */
 .task-modal-overlay {
@@ -1554,20 +1570,87 @@ let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作"
 let activeCat = 'all';
 let editTaskId = null;
 
-// ── タスク移動（◀戻す / 進める▶）──
-const TASK_STATUSES = ['priority','urgent','todo','doing','review','done'];
+// ── ハンドルドラッグ＆ドロップ ──
+let hdDragId   = null;
+let hdGhost    = null;
+let hdOffX     = 0;
+let hdOffY     = 0;
+let hdDragging = false;
 
-function moveTask(id, dir) {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
-  const idx = TASK_STATUSES.indexOf(task.status);
-  const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= TASK_STATUSES.length) return;
-  task.status    = TASK_STATUSES[newIdx];
-  task.updatedAt = Date.now();
-  saveTasks();
-  renderKanban();
-  showToast('✅ ステータスを更新しました');
+function hdStart(e, id) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  e.stopPropagation();
+  hdDragId   = id;
+  hdDragging = false;
+
+  const card = document.getElementById('tc-' + id);
+  const rect = card.getBoundingClientRect();
+  hdOffX = e.clientX - rect.left;
+  hdOffY = e.clientY - rect.top;
+
+  document.addEventListener('mousemove', hdMove);
+  document.addEventListener('mouseup',   hdEnd);
+}
+
+function hdMove(e) {
+  if (!hdDragId) return;
+
+  if (!hdDragging) {
+    // ゴースト作成
+    hdDragging = true;
+    const card = document.getElementById('tc-' + hdDragId);
+    card.classList.add('dragging-src');
+
+    hdGhost = document.createElement('div');
+    hdGhost.className = 'drag-ghost';
+    hdGhost.style.width  = card.offsetWidth + 'px';
+    hdGhost.innerHTML    = card.querySelector('.task-card-body').innerHTML;
+    document.body.appendChild(hdGhost);
+  }
+
+  // ゴーストをマウスに追従
+  hdGhost.style.left = (e.clientX - hdOffX) + 'px';
+  hdGhost.style.top  = (e.clientY - hdOffY) + 'px';
+
+  // ハイライト更新
+  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
+  const col = getColAt(e.clientX, e.clientY);
+  if (col) col.classList.add('drag-over');
+}
+
+function hdEnd(e) {
+  document.removeEventListener('mousemove', hdMove);
+  document.removeEventListener('mouseup',   hdEnd);
+
+  if (hdGhost) { hdGhost.remove(); hdGhost = null; }
+  const srcCard = document.getElementById('tc-' + hdDragId);
+  if (srcCard) srcCard.classList.remove('dragging-src');
+  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
+
+  if (hdDragging) {
+    const col = getColAt(e.clientX, e.clientY);
+    if (col && hdDragId) {
+      const newStatus = col.id.replace('col-', '');
+      const task = tasks.find(t => t.id === hdDragId);
+      if (task && task.status !== newStatus) {
+        task.status = newStatus;
+        task.updatedAt = Date.now();
+        saveTasks(); renderKanban();
+        showToast('✅ ステータスを更新しました');
+      }
+    }
+  }
+
+  hdDragId = null; hdDragging = false;
+}
+
+function getColAt(x, y) {
+  for (const col of document.querySelectorAll('.kanban-cards')) {
+    const r = col.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return col;
+  }
+  return null;
 }
 
 function renderKanban() {
@@ -1588,21 +1671,15 @@ function renderKanban() {
     const colEl = document.getElementById('col-' + st);
     colEl.innerHTML = cards.length === 0
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
-      : cards.map(t => {
-        const idx = statuses.indexOf(st);
-        const hasPrev = idx > 0;
-        const hasNext = idx < statuses.length - 1;
-        return `
+      : cards.map(t => `
         <div class="task-card" id="tc-${t.id}" onclick="openTaskModal('${t.id}')">
-          ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
-          <div class="task-card-title">${esc(t.title)}</div>
-          ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
-          <div class="task-move-row" onclick="event.stopPropagation()">
-            <button class="task-move-btn" onclick="moveTask('${t.id}',-1)" ${!hasPrev?'disabled':''}>◀ 戻す</button>
-            <button class="task-move-btn" onclick="moveTask('${t.id}',1)" ${!hasNext?'disabled':''}>進める ▶</button>
+          <span class="task-card-handle" onmousedown="hdStart(event,'${t.id}')" title="ドラッグして移動">⠿</span>
+          <div class="task-card-body">
+            ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
+            <div class="task-card-title">${esc(t.title)}</div>
+            ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
           </div>
-        </div>`;
-      }).join('');
+        </div>`).join('');
   });
 }
 
