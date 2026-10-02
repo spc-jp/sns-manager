@@ -496,34 +496,18 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
-/* ハンドルメニュー方式 */
-.task-card { display: flex; align-items: flex-start; gap: 6px; position: relative; }
-.task-card-handle {
-  cursor: pointer; color: #c0d0e0; font-size: 16px; line-height: 1;
-  padding: 2px 2px 0 0; flex-shrink: 0; user-select: none;
-  transition: color 0.18s;
+/* タスクカード移動ボタン */
+.task-card { cursor: pointer; }
+.task-card-move { display: flex; gap: 4px; margin-top: 8px; }
+.tc-mv-btn {
+  padding: 3px 10px; border-radius: 6px;
+  border: 1px solid var(--border); background: #f4f7fb;
+  color: var(--muted); font-size: 12px; font-weight: 700;
+  font-family: 'Noto Sans JP', sans-serif;
+  cursor: pointer; transition: all 0.15s;
 }
-.task-card-handle:hover { color: var(--cyan); }
-.task-card-body { flex: 1; min-width: 0; }
-/* 移動先メニュー */
-.task-move-menu {
-  position: absolute; left: 24px; top: 0; z-index: 500;
-  background: #fff; border: 1px solid var(--border);
-  border-radius: 10px; padding: 6px;
-  box-shadow: 0 4px 20px rgba(0,80,160,0.15);
-  min-width: 160px;
-  animation: fadeIn 0.15s ease;
-}
-.task-move-menu-item {
-  display: block; width: 100%; padding: 7px 12px;
-  border: none; background: transparent; text-align: left;
-  font-family: 'Noto Sans JP', sans-serif; font-size: 13px;
-  color: var(--white); cursor: pointer; border-radius: 7px;
-  transition: background 0.15s;
-}
-.task-move-menu-item:hover { background: rgba(0,184,169,0.1); color: var(--cyan); }
-.task-move-menu-item.current { color: var(--muted); cursor: default; font-weight: 700; }
-.task-move-menu-item.current:hover { background: transparent; color: var(--muted); }
+.tc-mv-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.06); }
+.tc-mv-btn:disabled { opacity: 0.3; cursor: default; }
 
 /* モーダル */
 .task-modal-overlay {
@@ -1577,53 +1561,21 @@ let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作"
 let activeCat = 'all';
 let editTaskId = null;
 
-// ── ⠿ クリックで移動先メニュー表示 ──
-const STATUS_LABELS = {
-  priority: '🤝 商談',
-  urgent:   '⭐ 優先',
-  todo:     '📄 提案書・見積書',
-  doing:    '⚙️ 施策・進行中',
-  review:   '🔍 最終確認中',
-  done:     '✅ 完了'
-};
+// ── タスク列移動 ──
+const TC_STATUSES = ['priority','urgent','todo','doing','review','done'];
 
-function openMoveMenu(e, id) {
-  e.stopPropagation();
-  closeAllMenus();
-
+function tcMove(id, dir) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
-
-  const menu = document.createElement('div');
-  menu.className = 'task-move-menu';
-  menu.id = 'menu-' + id;
-
-  Object.entries(STATUS_LABELS).forEach(([st, label]) => {
-    const btn = document.createElement('button');
-    btn.className = 'task-move-menu-item' + (task.status === st ? ' current' : '');
-    btn.textContent = task.status === st ? '✓ ' + label : label;
-    if (task.status !== st) {
-      btn.onclick = (ev) => {
-        ev.stopPropagation();
-        task.status = st;
-        task.updatedAt = Date.now();
-        saveTasks(); closeAllMenus(); renderKanban();
-        showToast('✅ ' + label + ' に移動しました');
-      };
-    }
-    menu.appendChild(btn);
-  });
-
-  const card = document.getElementById('tc-' + id);
-  card.appendChild(menu);
+  const idx = TC_STATUSES.indexOf(task.status);
+  const next = idx + dir;
+  if (next < 0 || next >= TC_STATUSES.length) return;
+  task.status = TC_STATUSES[next];
+  task.updatedAt = Date.now();
+  saveTasks();
+  renderKanban();
+  showToast('✅ 移動しました');
 }
-
-function closeAllMenus() {
-  document.querySelectorAll('.task-move-menu').forEach(m => m.remove());
-}
-
-// メニュー外クリックで閉じる
-document.addEventListener('click', closeAllMenus);
 
 function renderKanban() {
   // カテゴリフィルターボタン
@@ -1638,20 +1590,68 @@ function renderKanban() {
 
   const statuses = ['priority', 'urgent', 'todo', 'doing', 'review', 'done'];
   statuses.forEach(st => {
+    const si    = statuses.indexOf(st);
     const cards = filtered.filter(t => t.status === st);
     document.getElementById('cnt-' + st).textContent = cards.length;
     const colEl = document.getElementById('col-' + st);
-    colEl.innerHTML = cards.length === 0
-      ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
-      : cards.map(t => `
-        <div class="task-card" id="tc-${t.id}">
-          <span class="task-card-handle" onclick="openMoveMenu(event,'${t.id}')" title="クリックして列を移動">⠿</span>
-          <div class="task-card-body" onclick="openTaskModal('${t.id}')">
-            ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
-            <div class="task-card-title">${esc(t.title)}</div>
-            ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
-          </div>
-        </div>`).join('');
+    colEl.innerHTML = '';
+
+    if (cards.length === 0) {
+      colEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>';
+      return;
+    }
+
+    cards.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'task-card';
+      card.id = 'tc-' + t.id;
+
+      if (t.category) {
+        const cat = document.createElement('div');
+        cat.className = 'task-card-cat';
+        cat.textContent = t.category;
+        card.appendChild(cat);
+      }
+
+      const title = document.createElement('div');
+      title.className = 'task-card-title';
+      title.textContent = t.title;
+      card.appendChild(title);
+
+      if (t.memo) {
+        const memo = document.createElement('div');
+        memo.className = 'task-card-memo';
+        memo.textContent = t.memo;
+        card.appendChild(memo);
+      }
+
+      // 移動ボタン行
+      const moveRow = document.createElement('div');
+      moveRow.className = 'task-card-move';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'tc-mv-btn';
+      prevBtn.textContent = '◀ 戻す';
+      prevBtn.disabled = si <= 0;
+      prevBtn.addEventListener('click', e => { e.stopPropagation(); tcMove(t.id, -1); });
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'tc-mv-btn';
+      nextBtn.textContent = '進める ▶';
+      nextBtn.disabled = si >= statuses.length - 1;
+      nextBtn.addEventListener('click', e => { e.stopPropagation(); tcMove(t.id, 1); });
+
+      moveRow.appendChild(prevBtn);
+      moveRow.appendChild(nextBtn);
+      card.appendChild(moveRow);
+
+      // カード本体クリック → 編集モーダル
+      card.addEventListener('click', e => {
+        if (!e.target.closest('.tc-mv-btn')) openTaskModal(t.id);
+      });
+
+      colEl.appendChild(card);
+    });
   });
 }
 
