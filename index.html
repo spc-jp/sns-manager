@@ -496,27 +496,34 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
-/* ドラッグハンドル */
-.task-card { display: flex; align-items: flex-start; gap: 6px; }
+/* ハンドルメニュー方式 */
+.task-card { display: flex; align-items: flex-start; gap: 6px; position: relative; }
 .task-card-handle {
-  cursor: grab; color: #c0d0e0; font-size: 16px; line-height: 1;
+  cursor: pointer; color: #c0d0e0; font-size: 16px; line-height: 1;
   padding: 2px 2px 0 0; flex-shrink: 0; user-select: none;
   transition: color 0.18s;
 }
 .task-card-handle:hover { color: var(--cyan); }
 .task-card-body { flex: 1; min-width: 0; }
-.task-card.dragging-src { opacity: 0.3; }
-.drag-ghost {
-  position: fixed; z-index: 9999; pointer-events: none;
-  background: #fff; border: 2px solid var(--cyan);
-  border-radius: 10px; padding: 12px 14px;
-  box-shadow: 0 8px 32px rgba(0,80,160,0.18);
-  transform: rotate(1.5deg); opacity: 0.92;
+/* 移動先メニュー */
+.task-move-menu {
+  position: absolute; left: 24px; top: 0; z-index: 500;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 10px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(0,80,160,0.15);
+  min-width: 160px;
+  animation: fadeIn 0.15s ease;
 }
-.kanban-cards.drag-over {
-  background: rgba(0,184,169,0.08);
-  outline: 2px dashed var(--cyan); outline-offset: 4px; border-radius: 9px;
+.task-move-menu-item {
+  display: block; width: 100%; padding: 7px 12px;
+  border: none; background: transparent; text-align: left;
+  font-family: 'Noto Sans JP', sans-serif; font-size: 13px;
+  color: var(--white); cursor: pointer; border-radius: 7px;
+  transition: background 0.15s;
 }
+.task-move-menu-item:hover { background: rgba(0,184,169,0.1); color: var(--cyan); }
+.task-move-menu-item.current { color: var(--muted); cursor: default; font-weight: 700; }
+.task-move-menu-item.current:hover { background: transparent; color: var(--muted); }
 
 /* モーダル */
 .task-modal-overlay {
@@ -1570,87 +1577,53 @@ let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作"
 let activeCat = 'all';
 let editTaskId = null;
 
-// ── ハンドルドラッグ＆ドロップ ──
-let hdDragId   = null;
-let hdGhost    = null;
-let hdOffX     = 0;
-let hdOffY     = 0;
-let hdDragging = false;
+// ── ⠿ クリックで移動先メニュー表示 ──
+const STATUS_LABELS = {
+  priority: '🤝 商談',
+  urgent:   '⭐ 優先',
+  todo:     '📄 提案書・見積書',
+  doing:    '⚙️ 施策・進行中',
+  review:   '🔍 最終確認中',
+  done:     '✅ 完了'
+};
 
-function hdStart(e, id) {
-  if (e.button !== 0) return;
-  e.preventDefault();
+function openMoveMenu(e, id) {
   e.stopPropagation();
+  closeAllMenus();
 
-  hdDragId   = id;
-  hdDragging = false;
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+
+  const menu = document.createElement('div');
+  menu.className = 'task-move-menu';
+  menu.id = 'menu-' + id;
+
+  Object.entries(STATUS_LABELS).forEach(([st, label]) => {
+    const btn = document.createElement('button');
+    btn.className = 'task-move-menu-item' + (task.status === st ? ' current' : '');
+    btn.textContent = task.status === st ? '✓ ' + label : label;
+    if (task.status !== st) {
+      btn.onclick = (ev) => {
+        ev.stopPropagation();
+        task.status = st;
+        task.updatedAt = Date.now();
+        saveTasks(); closeAllMenus(); renderKanban();
+        showToast('✅ ' + label + ' に移動しました');
+      };
+    }
+    menu.appendChild(btn);
+  });
 
   const card = document.getElementById('tc-' + id);
-  const rect = card.getBoundingClientRect();
-  hdOffX = e.clientX - rect.left;
-  hdOffY = e.clientY - rect.top;
-
-  // mousedown時点でゴーストを即作成
-  card.classList.add('dragging-src');
-  hdGhost = document.createElement('div');
-  hdGhost.className = 'drag-ghost';
-  hdGhost.style.width = rect.width + 'px';
-  hdGhost.style.left  = (e.clientX - hdOffX) + 'px';
-  hdGhost.style.top   = (e.clientY - hdOffY) + 'px';
-  hdGhost.innerHTML   = card.querySelector('.task-card-body').innerHTML;
-  document.body.appendChild(hdGhost);
-
-  document.addEventListener('mousemove', hdMove);
-  document.addEventListener('mouseup',   hdEnd);
+  card.appendChild(menu);
 }
 
-function hdMove(e) {
-  if (!hdGhost) return;
-  hdDragging = true;
-
-  // ゴーストをマウスに追従
-  hdGhost.style.left = (e.clientX - hdOffX) + 'px';
-  hdGhost.style.top  = (e.clientY - hdOffY) + 'px';
-
-  // ハイライト更新
-  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
-  const col = getColAt(e.clientX, e.clientY);
-  if (col) col.classList.add('drag-over');
+function closeAllMenus() {
+  document.querySelectorAll('.task-move-menu').forEach(m => m.remove());
 }
 
-function hdEnd(e) {
-  document.removeEventListener('mousemove', hdMove);
-  document.removeEventListener('mouseup',   hdEnd);
-
-  if (hdGhost) { hdGhost.remove(); hdGhost = null; }
-  const srcCard = document.getElementById('tc-' + hdDragId);
-  if (srcCard) srcCard.classList.remove('dragging-src');
-  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
-
-  if (hdDragging) {
-    const col = getColAt(e.clientX, e.clientY);
-    if (col && hdDragId) {
-      const newStatus = col.id.replace('col-', '');
-      const task = tasks.find(t => t.id === hdDragId);
-      if (task && task.status !== newStatus) {
-        task.status = newStatus;
-        task.updatedAt = Date.now();
-        saveTasks(); renderKanban();
-        showToast('✅ ステータスを更新しました');
-      }
-    }
-  }
-
-  hdDragId = null; hdDragging = false;
-}
-
-function getColAt(x, y) {
-  for (const col of document.querySelectorAll('.kanban-cards')) {
-    const r = col.getBoundingClientRect();
-    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return col;
-  }
-  return null;
-}
+// メニュー外クリックで閉じる
+document.addEventListener('click', closeAllMenus);
 
 function renderKanban() {
   // カテゴリフィルターボタン
@@ -1672,7 +1645,7 @@ function renderKanban() {
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
       : cards.map(t => `
         <div class="task-card" id="tc-${t.id}" onclick="openTaskModal('${t.id}')">
-          <span class="task-card-handle" onmousedown="hdStart(event,'${t.id}')" title="ドラッグして移動">⠿</span>
+          <span class="task-card-handle" onclick="openMoveMenu(event,'${t.id}')" title="クリックして列を移動">⠿</span>
           <div class="task-card-body">
             ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
             <div class="task-card-title">${esc(t.title)}</div>
