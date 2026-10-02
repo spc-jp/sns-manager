@@ -1557,6 +1557,10 @@ async function scCopy(id, btn) {
 
 // ── タスク管理 ──
 let tasks = JSON.parse(localStorage.getItem('sns_tasks_v1') || '[]');
+const saveTasks = () => {
+  localStorage.setItem('sns_tasks_v1', JSON.stringify(tasks));
+  localStorage.setItem('sns_task_cats', JSON.stringify(taskCats));
+};
 let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作","アプリ開発","note記事テーマ","その他"]');
 let activeCat = 'all';
 let editTaskId = null;
