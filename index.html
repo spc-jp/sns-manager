@@ -473,9 +473,10 @@ select option { background: #fff; color: var(--white); }
 /* タスクカード */
 .task-card {
   background: #fff; border: 1px solid var(--border); border-radius: 10px;
-  padding: 12px 14px; cursor: pointer; transition: box-shadow 0.18s, border-color 0.18s;
+  padding: 12px 14px; cursor: grab; transition: box-shadow 0.18s, border-color 0.18s;
   box-shadow: var(--shadow); animation: fadeIn 0.2s ease;
   user-select: none; -webkit-user-select: none;
+  touch-action: none;
 }
 .task-card:hover { box-shadow: var(--shadow-hover); border-color: var(--cyan); }
 .task-card-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 5px; line-height: 1.5; }
@@ -1561,13 +1562,17 @@ let pointerStartX = 0;
 let pointerStartY = 0;
 
 function onPointerDown(e, id) {
-  if (e.button !== undefined && e.button !== 0) return;
+  if (e.button !== 0) return;
+  e.preventDefault();
   dragSrcId = id;
   isDragging = false;
   pointerStartX = e.clientX;
   pointerStartY = e.clientY;
+  // ポインターキャプチャ：マウスが速く動いても確実に追跡
+  try { e.target.setPointerCapture(e.pointerId); } catch(err) {}
   document.addEventListener('pointermove', onPointerMove);
   document.addEventListener('pointerup', onPointerUp);
+  document.addEventListener('pointercancel', onPointerUp);
 }
 
 function onPointerMove(e) {
@@ -1608,6 +1613,7 @@ function onPointerMove(e) {
 function onPointerUp(e) {
   document.removeEventListener('pointermove', onPointerMove);
   document.removeEventListener('pointerup', onPointerUp);
+  document.removeEventListener('pointercancel', onPointerUp);
 
   // クローン削除・ハイライトリセット
   if (dragClone) { dragClone.remove(); dragClone = null; }
