@@ -1581,6 +1581,7 @@ function hdStart(e, id) {
   if (e.button !== 0) return;
   e.preventDefault();
   e.stopPropagation();
+
   hdDragId   = id;
   hdDragging = false;
 
@@ -1589,25 +1590,23 @@ function hdStart(e, id) {
   hdOffX = e.clientX - rect.left;
   hdOffY = e.clientY - rect.top;
 
+  // mousedown時点でゴーストを即作成
+  card.classList.add('dragging-src');
+  hdGhost = document.createElement('div');
+  hdGhost.className = 'drag-ghost';
+  hdGhost.style.width = rect.width + 'px';
+  hdGhost.style.left  = (e.clientX - hdOffX) + 'px';
+  hdGhost.style.top   = (e.clientY - hdOffY) + 'px';
+  hdGhost.innerHTML   = card.querySelector('.task-card-body').innerHTML;
+  document.body.appendChild(hdGhost);
+
   document.addEventListener('mousemove', hdMove);
   document.addEventListener('mouseup',   hdEnd);
 }
 
 function hdMove(e) {
-  if (!hdDragId) return;
-
-  if (!hdDragging) {
-    // ゴースト作成
-    hdDragging = true;
-    const card = document.getElementById('tc-' + hdDragId);
-    card.classList.add('dragging-src');
-
-    hdGhost = document.createElement('div');
-    hdGhost.className = 'drag-ghost';
-    hdGhost.style.width  = card.offsetWidth + 'px';
-    hdGhost.innerHTML    = card.querySelector('.task-card-body').innerHTML;
-    document.body.appendChild(hdGhost);
-  }
+  if (!hdGhost) return;
+  hdDragging = true;
 
   // ゴーストをマウスに追従
   hdGhost.style.left = (e.clientX - hdOffX) + 'px';
