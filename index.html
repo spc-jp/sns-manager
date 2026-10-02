@@ -496,11 +496,11 @@ select option { background: #fff; color: var(--white); }
 }
 .kanban-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.04); }
 
-/* Pointer Events ドラッグ */
-.task-card { cursor: grab; }
-.task-card.is-dragging { opacity: 0.3; }
-.kanban-cards.drag-over { background: rgba(0,184,169,0.1); outline: 2px dashed var(--cyan); outline-offset: 4px; border-radius: 9px; }
-.drag-clone { pointer-events: none; transform: rotate(2deg); box-shadow: 0 8px 32px rgba(0,80,160,0.2); opacity: 0.9; position: fixed; z-index: 9999; }
+/* カード移動ボタン */
+.task-move-row { display: flex; gap: 5px; margin-top: 8px; }
+.task-move-btn { padding: 3px 10px; border-radius: 6px; border: 1px solid var(--border); background: #f4f7fb; color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.18s; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; }
+.task-move-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,184,169,0.06); }
+.task-move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 /* モーダル */
 .task-modal-overlay {
@@ -1554,106 +1554,20 @@ let taskCats = JSON.parse(localStorage.getItem('sns_task_cats') || '["Web制作"
 let activeCat = 'all';
 let editTaskId = null;
 
-// ── Pointer Events ドラッグ＆ドロップ ──
-let dragClone  = null;
-let dragSrcId  = null;
-let isDragging = false;
-let dragStartX = 0;
-let dragStartY = 0;
-let dragOffX   = 0;
-let dragOffY   = 0;
+// ── タスク移動（◀戻す / 進める▶）──
+const TASK_STATUSES = ['priority','urgent','todo','doing','review','done'];
 
-// マウス座標からどの列かを getBoundingClientRect で判定
-function getColAtPoint(x, y) {
-  const cols = document.querySelectorAll('.kanban-cards');
-  for (const col of cols) {
-    const r = col.getBoundingClientRect();
-    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return col;
-  }
-  return null;
-}
-
-function onPointerDown(e, id) {
-  if (e.button !== 0) return;
-  e.preventDefault();
-  dragSrcId  = id;
-  isDragging = false;
-  dragStartX = e.clientX;
-  dragStartY = e.clientY;
-  document.addEventListener('mousemove', onPointerMove);
-  document.addEventListener('mouseup',   onPointerUp);
-}
-
-function onPointerMove(e) {
-  e.preventDefault();
-  const dx = e.clientX - dragStartX;
-  const dy = e.clientY - dragStartY;
-
-  // 6px以上動いたらドラッグ開始
-  if (!isDragging) {
-    if (Math.hypot(dx, dy) < 6) return;
-    isDragging = true;
-
-    const card = document.getElementById('tc-' + dragSrcId);
-    if (!card) return;
-    card.classList.add('is-dragging');
-
-    // クローン作成（カードと同じ見た目・同じ幅）
-    const rect = card.getBoundingClientRect();
-    dragOffX = dragStartX - rect.left;
-    dragOffY = dragStartY - rect.top;
-    dragClone = card.cloneNode(true);
-    dragClone.removeAttribute('id');
-    dragClone.className = 'task-card drag-clone';
-    dragClone.style.width  = rect.width + 'px';
-    dragClone.style.left   = (dragStartX - dragOffX) + 'px';
-    dragClone.style.top    = (dragStartY - dragOffY) + 'px';
-    document.body.appendChild(dragClone);
-  }
-
-  // クローンをマウスに追従
-  dragClone.style.left = (e.clientX - dragOffX) + 'px';
-  dragClone.style.top  = (e.clientY - dragOffY) + 'px';
-
-  // ハイライト更新
-  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
-  const col = getColAtPoint(e.clientX, e.clientY);
-  if (col) col.classList.add('drag-over');
-}
-
-function onPointerUp(e) {
-  document.removeEventListener('mousemove', onPointerMove);
-  document.removeEventListener('mouseup',   onPointerUp);
-
-  // クローン削除・ハイライトリセット
-  if (dragClone) { dragClone.remove(); dragClone = null; }
-  const srcCard = document.getElementById('tc-' + dragSrcId);
-  if (srcCard) srcCard.classList.remove('is-dragging');
-  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
-
-  if (!isDragging) {
-    // ほとんど動かなかった → 編集モーダルを開く
-    if (dragSrcId) openTaskModal(dragSrcId);
-    isDragging = false; dragSrcId = null;
-    return;
-  }
-
-  // ドロップ先の列を判定
-  const col = getColAtPoint(e.clientX, e.clientY);
-  if (col && dragSrcId) {
-    const newStatus = col.id.replace('col-', '');
-    const task = tasks.find(t => t.id === dragSrcId);
-    if (task && task.status !== newStatus) {
-      task.status    = newStatus;
-      task.updatedAt = Date.now();
-      saveTasks();
-      renderKanban();
-      showToast('✅ ステータスを更新しました');
-    }
-  }
-
-  isDragging = false;
-  dragSrcId  = null;
+function moveTask(id, dir) {
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  const idx = TASK_STATUSES.indexOf(task.status);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= TASK_STATUSES.length) return;
+  task.status    = TASK_STATUSES[newIdx];
+  task.updatedAt = Date.now();
+  saveTasks();
+  renderKanban();
+  showToast('✅ ステータスを更新しました');
 }
 
 function renderKanban() {
@@ -1674,14 +1588,21 @@ function renderKanban() {
     const colEl = document.getElementById('col-' + st);
     colEl.innerHTML = cards.length === 0
       ? `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">タスクがありません</div>`
-      : cards.map(t => `
-        <div class="task-card" id="tc-${t.id}"
-          onmousedown="onPointerDown(event,'${t.id}')">
+      : cards.map(t => {
+        const idx = statuses.indexOf(st);
+        const hasPrev = idx > 0;
+        const hasNext = idx < statuses.length - 1;
+        return `
+        <div class="task-card" id="tc-${t.id}" onclick="openTaskModal('${t.id}')">
           ${t.category ? `<div class="task-card-cat">${esc(t.category)}</div>` : ''}
           <div class="task-card-title">${esc(t.title)}</div>
           ${t.memo ? `<div class="task-card-memo">${esc(t.memo)}</div>` : ''}
-        </div>`).join('');
-    // Pointer Eventsはdocumentレベルで管理するためcolElへの設定不要
+          <div class="task-move-row" onclick="event.stopPropagation()">
+            <button class="task-move-btn" onclick="moveTask('${t.id}',-1)" ${!hasPrev?'disabled':''}>◀ 戻す</button>
+            <button class="task-move-btn" onclick="moveTask('${t.id}',1)" ${!hasNext?'disabled':''}>進める ▶</button>
+          </div>
+        </div>`;
+      }).join('');
   });
 }
 
