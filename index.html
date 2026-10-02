@@ -890,6 +890,23 @@ select option { background: #fff; color: var(--white); }
       </div>
 
       <div class="task-modal-sec">
+        <label class="task-modal-label">売上・原価・利益</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（円）</div>
+            <input type="number" id="tmSales" placeholder="0" min="0" oninput="calcProfit()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（円）</div>
+            <input type="number" id="tmCost" placeholder="0" min="0" oninput="calcProfit()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（自動）</div>
+            <div id="tmProfit" style="padding:10px 13px;background:#f4f7fb;border:1px solid var(--border);border-radius:9px;font-size:13px;font-weight:700;color:var(--cyan);text-align:right;">0 円</div>
+          </div>
+        </div>
+      </div>
+      <div class="task-modal-sec">
         <label class="task-modal-label">メモ</label>
         <textarea id="tmMemo" placeholder="詳細・備考など" style="min-height:80px;"></textarea>
       </div>
@@ -1557,6 +1574,15 @@ async function scCopy(id, btn) {
 
 // ── タスク管理 ──
 let tasks = JSON.parse(localStorage.getItem('sns_tasks_v1') || '[]');
+function calcProfit() {
+  const s = parseInt(document.getElementById('tmSales').value) || 0;
+  const c = parseInt(document.getElementById('tmCost').value)  || 0;
+  const p = s - c;
+  const el = document.getElementById('tmProfit');
+  el.textContent = p.toLocaleString() + ' 円';
+  el.style.color = p >= 0 ? 'var(--cyan)' : '#ef4444';
+}
+
 const saveTasks = () => {
   localStorage.setItem('sns_tasks_v1', JSON.stringify(tasks));
   localStorage.setItem('sns_task_cats', JSON.stringify(taskCats));
@@ -1622,6 +1648,18 @@ function renderKanban() {
       title.textContent = t.title;
       card.appendChild(title);
 
+      // 金額表示
+      if (t.sales || t.cost) {
+        const profit = (t.sales || 0) - (t.cost || 0);
+        const fin = document.createElement('div');
+        fin.style.cssText = 'font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7;';
+        fin.innerHTML =
+          (t.sales ? `売上: <b>${(t.sales||0).toLocaleString()}円</b>　` : '') +
+          (t.cost  ? `原価: <b>${(t.cost||0).toLocaleString()}円</b>　` : '') +
+          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b>`;
+        card.appendChild(fin);
+      }
+
       if (t.memo) {
         const memo = document.createElement('div');
         memo.className = 'task-card-memo';
@@ -1678,8 +1716,11 @@ function openTaskModal(id, defaultStatus) {
   document.getElementById('taskModalTitle').textContent = t ? 'タスク編集' : 'タスク追加';
   document.getElementById('tmTitle').value = t ? t.title : '';
   document.getElementById('tmStatus').value = t ? t.status : (defaultStatus || 'todo');
+  document.getElementById('tmSales').value = t ? (t.sales || '') : '';
+  document.getElementById('tmCost').value  = t ? (t.cost  || '') : '';
   document.getElementById('tmMemo').value = t ? (t.memo || '') : '';
   document.getElementById('tmDeleteBtn').style.display = t ? 'block' : 'none';
+  calcProfit();
 
   modal.style.display = 'flex';
   document.getElementById('tmTitle').focus();
@@ -1703,6 +1744,8 @@ function saveTask() {
     title,
     category: document.getElementById('tmCat').value,
     status: document.getElementById('tmStatus').value,
+    sales: parseInt(document.getElementById('tmSales').value) || 0,
+    cost:  parseInt(document.getElementById('tmCost').value)  || 0,
     memo: document.getElementById('tmMemo').value.trim(),
     createdAt: editTaskId ? (tasks.find(t=>t.id===editTaskId)?.createdAt || Date.now()) : Date.now(),
     updatedAt: Date.now()
