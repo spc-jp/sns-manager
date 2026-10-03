@@ -140,6 +140,20 @@ header {
 
 
 /* PC カレンダー：全幅縦並び */
+/* 週次スケジュール */
+.weekly-schedule { background:#fff; border:1px solid var(--border); border-radius:12px; margin-bottom:16px; box-shadow:var(--shadow); overflow:hidden; }
+.ws-header { display:flex; align-items:center; justify-content:space-between; padding:12px 18px; font-size:13px; font-weight:700; color:var(--white); cursor:pointer; background:linear-gradient(135deg,rgba(0,184,169,0.08),rgba(0,144,224,0.05)); border-bottom:1px solid var(--border); transition:background 0.2s; user-select:none; }
+.ws-header:hover { background:linear-gradient(135deg,rgba(0,184,169,0.14),rgba(0,144,224,0.09)); }
+.ws-toggle { font-size:11px; color:var(--muted); font-weight:400; }
+.ws-body { padding:14px 18px; }
+.ws-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.ws-item { background:#f4f7fb; border:1px solid var(--border); border-radius:9px; padding:10px 12px; }
+.ws-item.ws-highlight { background:rgba(0,184,169,0.08); border-color:rgba(0,184,169,0.3); }
+.ws-day { font-size:12px; font-weight:800; color:var(--muted); margin-bottom:5px; }
+.ws-item.ws-highlight .ws-day { color:var(--cyan); }
+.ws-task { font-size:12px; color:var(--white); line-height:1.65; }
+@media(max-width:900px){ .ws-grid { grid-template-columns:1fr 1fr; } }
+
 /* CAL NAV 改善 */
 .cal-nav {
   display: flex;
@@ -691,6 +705,38 @@ select option { background: #fff; color: var(--white); }
 
 <!-- カレンダー -->
 <div id="view-calendar" class="view active">
+  <!-- 週次スケジュール -->
+  <div class="weekly-schedule" id="weeklySchedule">
+    <div class="ws-header" onclick="toggleWeekly()">
+      <span>📋 noteルーティン（週次スケジュール）</span>
+      <span class="ws-toggle" id="wsToggle">▼ 展開する</span>
+    </div>
+    <div class="ws-body" id="wsBody" style="display:none;">
+      <div class="ws-grid">
+        <div class="ws-item">
+          <div class="ws-day">日〜月</div>
+          <div class="ws-task">📝 次の記事の経験・ネタをGPTと整理</div>
+        </div>
+        <div class="ws-item ws-highlight">
+          <div class="ws-day">火曜 20:30</div>
+          <div class="ws-task">🟢 無料note公開</div>
+        </div>
+        <div class="ws-item">
+          <div class="ws-day">水〜木</div>
+          <div class="ws-task">💬 コメント・反応を見る／次の記事制作</div>
+        </div>
+        <div class="ws-item ws-highlight">
+          <div class="ws-day">金曜 20:30</div>
+          <div class="ws-task">🟢 2本目公開</div>
+        </div>
+        <div class="ws-item">
+          <div class="ws-day">土曜</div>
+          <div class="ws-task">📊 数字を軽く確認。売れた・売れないで一喜一憂せず、次の記事の材料を集める</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="cal-nav">
     <button class="nav-btn" onclick="chMonth(-1)">←</button>
     <h2 id="calTitle"></h2>
@@ -1296,6 +1342,15 @@ function renderCalendar() {
   }
   document.getElementById('calGrid').innerHTML = html;
   if (selDate) renderDayDetail(selDate);
+}
+
+// 週次スケジュール折りたたみ
+function toggleWeekly() {
+  const body   = document.getElementById('wsBody');
+  const toggle = document.getElementById('wsToggle');
+  const isOpen = body.style.display !== 'none';
+  body.style.display   = isOpen ? 'none' : 'block';
+  toggle.textContent   = isOpen ? '▼ 展開する' : '▲ 折りたたむ';
 }
 
 function chMonth(d) {
