@@ -154,6 +154,37 @@ header {
 .ws-task { font-size:12px; color:var(--white); line-height:1.65; }
 @media(max-width:900px){ .ws-grid { grid-template-columns:1fr 1fr; } }
 
+/* 集客スケジュール（黄色系） */
+.ws-divider {
+  border: none; border-top: 1px dashed var(--border);
+  margin: 14px 0 12px;
+}
+.ws-section-title {
+  font-size: 12px; font-weight: 800; color: #b45309;
+  margin-bottom: 10px; letter-spacing: 0.05em;
+}
+.ws-collect-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.ws-collect-item {
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 9px; padding: 10px 14px;
+}
+.ws-collect-platform {
+  font-size: 13px; font-weight: 800; color: #92400e;
+  margin-bottom: 5px;
+}
+.ws-collect-times {
+  font-size: 12px; color: #78350f; line-height: 1.8;
+}
+.ws-collect-times span {
+  display: inline-block;
+  background: rgba(245,158,11,0.2);
+  border-radius: 4px; padding: 1px 7px; margin: 1px 3px 1px 0;
+  font-weight: 700;
+}
+
 /* CAL NAV 改善 */
 .cal-nav {
   display: flex;
@@ -734,6 +765,25 @@ select option { background: #fff; color: var(--white); }
           <div class="ws-task">📊 数字を軽く確認。売れた・売れないで一喜一憂せず、次の記事の材料を集める</div>
         </div>
       </div>
+
+      <!-- 集客スケジュール -->
+      <hr class="ws-divider">
+      <div class="ws-section-title">📣 集客投稿スケジュール</div>
+      <div class="ws-collect-grid">
+        <div class="ws-collect-item">
+          <div class="ws-collect-platform">T Threads</div>
+          <div class="ws-collect-times">
+            <span>水曜 9:00</span><span>月曜 12:00</span>
+          </div>
+        </div>
+        <div class="ws-collect-item">
+          <div class="ws-collect-platform">𝕏 X</div>
+          <div class="ws-collect-times">
+            <span>水曜 12:30</span><span>月曜 14:30</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
