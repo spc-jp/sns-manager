@@ -625,6 +625,12 @@ select option { background: #fff; color: var(--white); }
 .sub-table tr.sub-total-row td.sub-td-name { color:var(--muted); font-size:11px; letter-spacing:0.05em; }
 .sub-table .sub-annual-total { color:#8b5cf6; font-weight:800; border-left:2px solid var(--border); }
 .sub-cat-badge { display:inline-block; font-size:10px; padding:1px 6px; border-radius:6px; background:rgba(0,184,169,0.1); color:var(--cyan); margin-left:5px; font-weight:400; }
+.sub-cat-summary { display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); }
+.sub-cat-title { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; width:100%; margin-bottom:2px; }
+.sub-cat-item { display:flex; align-items:center; gap:6px; background:#f4f7fb; border:1px solid var(--border); border-radius:8px; padding:6px 12px; }
+.sub-cat-name { font-size:12px; font-weight:700; color:var(--white); }
+.sub-cat-amount { font-size:13px; font-weight:800; color:var(--cyan); font-family:'DM Mono',monospace; }
+.sub-cat-pct { font-size:10px; color:var(--muted); }
 
 /* ── スキルアップ ── */
 .skill-top-row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
@@ -1096,6 +1102,8 @@ select option { background: #fff; color: var(--white); }
 
   <!-- サマリー -->
   <div class="sub-summary-row" id="subSummary"></div>
+  <!-- カテゴリ別集計 -->
+  <div id="subCatSummary" style="margin-bottom:14px;display:none;"></div>
 
   <!-- ツールバー -->
   <div class="sub-toolbar">
@@ -1134,9 +1142,20 @@ select option { background: #fff; color: var(--white); }
         </div>
       </div>
       <div class="task-modal-sec" id="smSubMonthWrap" style="display:none;">
-        <label class="task-modal-label">課金月</label>
+        <label class="task-modal-label">課金月（年額の場合）</label>
         <select id="smSubMonth">
-          ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}月</option>`).join('')}
+          <option value="1">1月</option>
+          <option value="2">2月</option>
+          <option value="3">3月</option>
+          <option value="4">4月</option>
+          <option value="5">5月</option>
+          <option value="6">6月</option>
+          <option value="7">7月</option>
+          <option value="8">8月</option>
+          <option value="9">9月</option>
+          <option value="10">10月</option>
+          <option value="11">11月</option>
+          <option value="12">12月</option>
         </select>
       </div>
       <div class="task-modal-sec">
@@ -2104,6 +2123,32 @@ function renderSubs() {
     <div class="sub-summary-label">${c.label}</div>
     <div class="sub-summary-value">${c.value}<span class="sub-summary-unit"> ${c.unit}</span></div>
   </div>`).join('');
+
+  // カテゴリ別集計
+  const catEl = document.getElementById('subCatSummary');
+  const catMap = {};
+  subs.forEach(s => {
+    const cat = s.category || 'その他';
+    const amount = s.type === 'monthly' ? (s.amount || 0) * 12 : (s.amount || 0);
+    catMap[cat] = (catMap[cat] || 0) + amount;
+  });
+  const catEntries = Object.entries(catMap).sort((a,b) => b[1]-a[1]);
+  if (catEntries.length > 0) {
+    catEl.style.display = 'block';
+    catEl.innerHTML = `<div class="sub-cat-summary">
+      <div class="sub-cat-title">📊 カテゴリ別年間合計</div>
+      ${catEntries.map(([cat, amt]) => {
+        const pct = yearTotal > 0 ? Math.round(amt / yearTotal * 100) : 0;
+        return `<div class="sub-cat-item">
+          <span class="sub-cat-name">${esc(cat)}</span>
+          <span class="sub-cat-amount">${amt.toLocaleString()}円</span>
+          <span class="sub-cat-pct">${pct}%</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else {
+    catEl.style.display = 'none';
+  }
 
   // テーブル生成
   const table = document.getElementById('subTable');
