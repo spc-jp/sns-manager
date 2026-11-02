@@ -547,23 +547,27 @@ select option { background: #fff; color: var(--white); }
 
 /* 列集計バー */
 .kanban-summary {
-  background: rgba(0,184,169,0.06);
-  border: 1px solid rgba(0,184,169,0.2);
+  background: #1a2f4e;
+  border: 1px solid #0f2038;
   border-radius: 8px;
-  padding: 7px 10px;
+  padding: 8px 10px;
   margin-bottom: 10px;
   font-size: 11px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
+  box-shadow: 0 2px 8px rgba(26,47,78,0.25);
 }
-.ks-item { color: var(--muted); }
-.ks-item b { color: var(--white); font-weight: 700; }
-.ks-profit b { color: var(--cyan); font-weight: 800; }
-.ks-profit b.minus { color: #ef4444; }
-.ks-break { flex-basis: 100%; height: 0; }
+.ks-row { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+.ks-row + .ks-row { margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.28); }
+.ks-row.ks-row-tax { font-size: 12px; font-weight: 800; }
+.ks-item { color: rgba(255,255,255,0.78); }
+.ks-item b { color: #fff; font-weight: 700; }
+.ks-row-tax .ks-item b { font-weight: 800; }
+.ks-profit { color: rgba(255,255,255,0.78); }
+.ks-profit b { color: #5eead4; font-weight: 800; }
+.ks-profit b.minus { color: #fca5a5; }
 .ks-tag { font-size: 10px; font-weight: 800; color: #fff; background: #9aafc4; border-radius: 5px; padding: 1px 6px; }
 .ks-tag.ks-tag-tax { background: var(--cyan); }
+.kanban-summary .ks-tag { background: rgba(255,255,255,0.22); }
+.kanban-summary .ks-tag.ks-tag-tax { background: var(--cyan); }
 .tm-tax-box { padding: 10px 13px; background: #f4f7fb; border: 1px solid var(--border); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--white); text-align: right; }
 
 /* タスクカード移動ボタン */
@@ -1062,6 +1066,20 @@ select option { background: #fff; color: var(--white); }
 
       <div class="task-modal-sec">
         <label class="task-modal-label">売上・原価・利益</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;margin-bottom:10px;">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（税込・自動）</div>
+            <div id="tmSalesTax" class="tm-tax-box">0 円</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（税込・自動）</div>
+            <div id="tmCostTax" class="tm-tax-box">0 円</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（税込・自動）</div>
+            <div id="tmProfitTax" class="tm-tax-box" style="color:var(--cyan);">0 円</div>
+          </div>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;">
           <div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（税抜・円）</div>
@@ -1074,20 +1092,6 @@ select option { background: #fff; color: var(--white); }
           <div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（税抜・自動）</div>
             <div id="tmProfit" style="padding:10px 13px;background:#f4f7fb;border:1px solid var(--border);border-radius:9px;font-size:13px;font-weight:700;color:var(--cyan);text-align:right;">0 円</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;margin-top:10px;">
-          <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（税込・自動）</div>
-            <div id="tmSalesTax" class="tm-tax-box">0 円</div>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（税込・自動）</div>
-            <div id="tmCostTax" class="tm-tax-box">0 円</div>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（税込・自動）</div>
-            <div id="tmProfitTax" class="tm-tax-box" style="color:var(--cyan);">0 円</div>
           </div>
         </div>
       </div>
@@ -1921,15 +1925,18 @@ function renderKanban() {
       const taxCost   = cards.reduce((s, t) => s + withTax(t.cost),  0);
       const taxProfit = taxSales - taxCost;
       summary.innerHTML =
-        `<span class="ks-tag">税抜</span>` +
-        `<span class="ks-item">売上: <b>${totalSales.toLocaleString()}円</b></span>` +
-        `<span class="ks-item">原価: <b>${totalCost.toLocaleString()}円</b></span>` +
-        `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>` +
-        `<span class="ks-break"></span>` +
-        `<span class="ks-tag ks-tag-tax">税込</span>` +
-        `<span class="ks-item">売上: <b>${taxSales.toLocaleString()}円</b></span>` +
-        `<span class="ks-item">原価: <b>${taxCost.toLocaleString()}円</b></span>` +
-        `<span class="ks-profit">利益: <b class="${taxProfit < 0 ? 'minus' : ''}">${taxProfit.toLocaleString()}円</b></span>`;
+        `<div class="ks-row ks-row-tax">` +
+          `<span class="ks-tag ks-tag-tax">税込</span>` +
+          `<span class="ks-item">売上: <b>${taxSales.toLocaleString()}円</b></span>` +
+          `<span class="ks-item">原価: <b>${taxCost.toLocaleString()}円</b></span>` +
+          `<span class="ks-profit">利益: <b class="${taxProfit < 0 ? 'minus' : ''}">${taxProfit.toLocaleString()}円</b></span>` +
+        `</div>` +
+        `<div class="ks-row">` +
+          `<span class="ks-tag">税抜</span>` +
+          `<span class="ks-item">売上: <b>${totalSales.toLocaleString()}円</b></span>` +
+          `<span class="ks-item">原価: <b>${totalCost.toLocaleString()}円</b></span>` +
+          `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>` +
+        `</div>`;
       colEl.appendChild(summary);
     }
 
@@ -1965,14 +1972,14 @@ function renderKanban() {
         fin.style.cssText = 'font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7;';
         const sT = withTax(t.sales), cT = withTax(t.cost), pT = sT - cT;
         fin.innerHTML =
+          `<div style="font-weight:700;"><span class="ks-tag ks-tag-tax">税込</span> ` +
+          (t.sales ? `売上: <b>${sT.toLocaleString()}円</b>　` : '') +
+          (t.cost  ? `原価: <b>${cT.toLocaleString()}円</b>　` : '') +
+          `利益: <b style="color:${pT>=0?'var(--cyan)':'#ef4444'}">${pT.toLocaleString()}円</b></div>` +
           `<div><span class="ks-tag">税抜</span> ` +
           (t.sales ? `売上: <b>${(t.sales||0).toLocaleString()}円</b>　` : '') +
           (t.cost  ? `原価: <b>${(t.cost||0).toLocaleString()}円</b>　` : '') +
-          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b></div>` +
-          `<div><span class="ks-tag ks-tag-tax">税込</span> ` +
-          (t.sales ? `売上: <b>${sT.toLocaleString()}円</b>　` : '') +
-          (t.cost  ? `原価: <b>${cT.toLocaleString()}円</b>　` : '') +
-          `利益: <b style="color:${pT>=0?'var(--cyan)':'#ef4444'}">${pT.toLocaleString()}円</b></div>`;
+          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b></div>`;
         card.appendChild(fin);
       }
 
