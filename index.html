@@ -561,6 +561,10 @@ select option { background: #fff; color: var(--white); }
 .ks-item b { color: var(--white); font-weight: 700; }
 .ks-profit b { color: var(--cyan); font-weight: 800; }
 .ks-profit b.minus { color: #ef4444; }
+.ks-break { flex-basis: 100%; height: 0; }
+.ks-tag { font-size: 10px; font-weight: 800; color: #fff; background: #9aafc4; border-radius: 5px; padding: 1px 6px; }
+.ks-tag.ks-tag-tax { background: var(--cyan); }
+.tm-tax-box { padding: 10px 13px; background: #f4f7fb; border: 1px solid var(--border); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--white); text-align: right; }
 
 /* タスクカード移動ボタン */
 .task-card { cursor: pointer; }
@@ -1060,16 +1064,30 @@ select option { background: #fff; color: var(--white); }
         <label class="task-modal-label">売上・原価・利益</label>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;">
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（円）</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（税抜・円）</div>
             <input type="number" id="tmSales" placeholder="0" min="0" oninput="calcProfit()">
           </div>
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（円）</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（税抜・円）</div>
             <input type="number" id="tmCost" placeholder="0" min="0" oninput="calcProfit()">
           </div>
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（自動）</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（税抜・自動）</div>
             <div id="tmProfit" style="padding:10px 13px;background:#f4f7fb;border:1px solid var(--border);border-radius:9px;font-size:13px;font-weight:700;color:var(--cyan);text-align:right;">0 円</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;margin-top:10px;">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">売上（税込・自動）</div>
+            <div id="tmSalesTax" class="tm-tax-box">0 円</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">原価（税込・自動）</div>
+            <div id="tmCostTax" class="tm-tax-box">0 円</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">利益（税込・自動）</div>
+            <div id="tmProfitTax" class="tm-tax-box" style="color:var(--cyan);">0 円</div>
           </div>
         </div>
       </div>
@@ -1829,6 +1847,9 @@ async function scCopy(id, btn) {
 
 // ── タスク管理 ──
 let tasks = JSON.parse(localStorage.getItem('sns_tasks_v1') || '[]');
+// 税込金額（税率10%固定・端数切り捨て）
+const withTax = n => Math.floor((n || 0) * 11 / 10);
+
 function calcProfit() {
   const s = parseInt(document.getElementById('tmSales').value) || 0;
   const c = parseInt(document.getElementById('tmCost').value)  || 0;
@@ -1836,6 +1857,14 @@ function calcProfit() {
   const el = document.getElementById('tmProfit');
   el.textContent = p.toLocaleString() + ' 円';
   el.style.color = p >= 0 ? 'var(--cyan)' : '#ef4444';
+
+  // 税込（自動）
+  const sT = withTax(s), cT = withTax(c), pT = sT - cT;
+  document.getElementById('tmSalesTax').textContent = sT.toLocaleString() + ' 円';
+  document.getElementById('tmCostTax').textContent  = cT.toLocaleString() + ' 円';
+  const pe = document.getElementById('tmProfitTax');
+  pe.textContent = pT.toLocaleString() + ' 円';
+  pe.style.color = pT >= 0 ? 'var(--cyan)' : '#ef4444';
 }
 
 const saveTasks = () => {
@@ -1888,10 +1917,19 @@ function renderKanban() {
     if (totalSales > 0 || totalCost > 0) {
       const summary = document.createElement('div');
       summary.className = 'kanban-summary';
+      const taxSales  = cards.reduce((s, t) => s + withTax(t.sales), 0);
+      const taxCost   = cards.reduce((s, t) => s + withTax(t.cost),  0);
+      const taxProfit = taxSales - taxCost;
       summary.innerHTML =
+        `<span class="ks-tag">税抜</span>` +
         `<span class="ks-item">売上: <b>${totalSales.toLocaleString()}円</b></span>` +
         `<span class="ks-item">原価: <b>${totalCost.toLocaleString()}円</b></span>` +
-        `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>`;
+        `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>` +
+        `<span class="ks-break"></span>` +
+        `<span class="ks-tag ks-tag-tax">税込</span>` +
+        `<span class="ks-item">売上: <b>${taxSales.toLocaleString()}円</b></span>` +
+        `<span class="ks-item">原価: <b>${taxCost.toLocaleString()}円</b></span>` +
+        `<span class="ks-profit">利益: <b class="${taxProfit < 0 ? 'minus' : ''}">${taxProfit.toLocaleString()}円</b></span>`;
       colEl.appendChild(summary);
     }
 
@@ -1925,10 +1963,16 @@ function renderKanban() {
         const profit = (t.sales || 0) - (t.cost || 0);
         const fin = document.createElement('div');
         fin.style.cssText = 'font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7;';
+        const sT = withTax(t.sales), cT = withTax(t.cost), pT = sT - cT;
         fin.innerHTML =
+          `<div><span class="ks-tag">税抜</span> ` +
           (t.sales ? `売上: <b>${(t.sales||0).toLocaleString()}円</b>　` : '') +
           (t.cost  ? `原価: <b>${(t.cost||0).toLocaleString()}円</b>　` : '') +
-          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b>`;
+          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b></div>` +
+          `<div><span class="ks-tag ks-tag-tax">税込</span> ` +
+          (t.sales ? `売上: <b>${sT.toLocaleString()}円</b>　` : '') +
+          (t.cost  ? `原価: <b>${cT.toLocaleString()}円</b>　` : '') +
+          `利益: <b style="color:${pT>=0?'var(--cyan)':'#ef4444'}">${pT.toLocaleString()}円</b></div>`;
         card.appendChild(fin);
       }
 
