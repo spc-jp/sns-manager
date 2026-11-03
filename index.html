@@ -2244,8 +2244,8 @@ function renderKanban() {
         card.appendChild(paidRow);
       }
 
-      // 当月請求へ複製ボタン（当月請求の列以外）
-      if (st !== 'billing') {
+      // 当月請求へ複製ボタン（請求書作成・請求書送付完了・継続取引の列だけ。商談〜施策・進行中には出さない）
+      if (['review', 'done', 'repeat', 'annual'].includes(st)) {
         const dupRow = document.createElement('div');
         dupRow.className = 'task-card-dup';
         const dupBtn = document.createElement('button');
@@ -2431,14 +2431,15 @@ function paidSetDate(id, v) {
 function paidRestore(id) {
   const t = tasks.find(x => x.id === id);
   if (!t) return;
-  if (!confirm('「' + t.title + '」を入金履歴からボードの「請求書送付完了」に戻しますか？')) return;
-  t.status = 'done';
+  if (!confirm('「' + t.title + '」を入金履歴から、ボードの「当月請求」に戻しますか？')) return;
+  t.status = 'billing';
+  if (!t.billingMonth) t.billingMonth = billKey();   // 請求月が無い案件は当月分として戻す
   delete t.paidDate;
   t.updatedAt = Date.now();
   saveTasks();
   renderPaid();
   renderKanban();
-  showToast('↩ 「' + t.title + '」をボードに戻しました');
+  showToast('↩ 「' + t.title + '」を当月請求に戻しました');
 }
 
 function paidDelete(id) {
@@ -2530,7 +2531,7 @@ function renderPaid() {
       '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
       '<td>' + s.toLocaleString() + '</td><td>' + c.toLocaleString() + '</td>' +
       '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>' +
-      '<td class="bt-act"><button class="smbtn" onclick="paidRestore(\'' + t.id + '\')">↩ ボードへ戻す</button> ' +
+      '<td class="bt-act"><button class="smbtn" onclick="paidRestore(\'' + t.id + '\')">↩ 当月請求へ戻す</button> ' +
       '<button class="smbtn danger" onclick="paidDelete(\'' + t.id + '\')">🗑️</button></td></tr>';
   });
   drows += '<tr class="bt-total"><td class="bt-name" colspan="3">合計（' + st.n + '件）</td>' + numCells(st) + '<td></td></tr>';
