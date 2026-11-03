@@ -616,6 +616,27 @@ select option { background: #fff; color: var(--white); }
 .bill-table tr.bt-total td { background: #1a2f4e; color: #fff; font-weight: 800; border-bottom: none; }
 .bill-table tr.bt-total td.minus { color: #fca5a5; }
 
+/* ── 粗利率（目安：30%以上=緑／15%未満=赤） ── */
+.mg-good { color: #16a34a; }
+.mg-mid  { color: var(--white); }
+.mg-low  { color: #dc2626; }
+.mg-none { color: var(--muted); font-weight: 400; }
+.kanban-summary .ks-row-rate b.mg-good { color: #86efac; }
+.kanban-summary .ks-row-rate b.mg-mid  { color: #fff; }
+.kanban-summary .ks-row-rate b.mg-low  { color: #fca5a5; }
+.kanban-summary .ks-row-rate b.mg-none { color: rgba(255,255,255,0.5); }
+.kanban-summary .ks-row.ks-row-rate { border-top: none; margin-top: 3px; padding-top: 0; font-size: 12px; }
+.bill-summary b.mg-good { color: #16a34a; }
+.bill-summary b.mg-low  { color: #dc2626; }
+.bill-table tr.bt-total b.mg-good { color: #86efac; }
+.bill-table tr.bt-total b.mg-mid  { color: #fff; }
+.bill-table tr.bt-total b.mg-low  { color: #fca5a5; }
+.bill-table tr.bt-total b.mg-none { color: rgba(255,255,255,0.5); }
+.sub-summary-value.mg-good { color: #16a34a; }
+.sub-summary-value.mg-mid  { color: var(--white); }
+.sub-summary-value.mg-low  { color: #dc2626; }
+.sub-summary-value.mg-none { color: var(--muted); }
+
 /* ── 入金履歴 ── */
 .tc-paid-btn { width: 100%; margin-top: 5px; padding: 4px 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; border-radius: 6px; font-size: 11px; font-weight: 700; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.15s; }
 .tc-paid-btn:hover { background: #16a34a; color: #fff; }
@@ -1957,6 +1978,28 @@ let tasks = JSON.parse(localStorage.getItem('sns_tasks_v1') || '[]');
 // 税込金額（税率10%固定・端数切り捨て）
 const withTax = n => Math.floor((n || 0) * 11 / 10);
 
+// ── 粗利率 = 利益 ÷ 売上（税込でも税抜でも同じ率なので、税抜の金額から計算） ──
+const MARGIN_GOOD = 30;   // この率以上 → 緑
+const MARGIN_LOW  = 15;   // この率未満（マイナス含む）→ 赤
+function marginOf(sales, cost) {
+  return sales > 0 ? (sales - cost) * 100 / sales : null;   // 売上0円は計算しない
+}
+function marginText(sales, cost) {
+  const m = marginOf(sales, cost);
+  return m === null ? '-' : m.toFixed(1) + '%';
+}
+function marginClass(sales, cost) {
+  const m = marginOf(sales, cost);
+  if (m === null) return 'mg-none';
+  const r = Math.round(m * 10) / 10;          // 画面に出る小数点1桁の値で判定
+  if (r >= MARGIN_GOOD) return 'mg-good';
+  if (r < MARGIN_LOW)   return 'mg-low';
+  return 'mg-mid';
+}
+function marginHtml(sales, cost) {
+  return '<b class="' + marginClass(sales, cost) + '">' + marginText(sales, cost) + '</b>';
+}
+
 function calcProfit() {
   const s = parseInt(document.getElementById('tmSales').value) || 0;
   const c = parseInt(document.getElementById('tmCost').value)  || 0;
@@ -2063,6 +2106,7 @@ function renderBillModal() {
       '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
       '<td>' + s.toLocaleString() + '</td><td>' + c.toLocaleString() + '</td>' +
       '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>' +
+      '<td>' + marginHtml(s, c) + '</td>' +
       '</tr>';
   });
   const tpT = sum.sT - sum.cT, tp = sum.s - sum.c;
@@ -2070,14 +2114,16 @@ function renderBillModal() {
     '<td>' + sum.sT.toLocaleString() + '</td><td>' + sum.cT.toLocaleString() + '</td>' +
     '<td class="' + (tpT < 0 ? 'minus' : '') + '">' + tpT.toLocaleString() + '</td>' +
     '<td>' + sum.s.toLocaleString() + '</td><td>' + sum.c.toLocaleString() + '</td>' +
-    '<td class="' + (tp < 0 ? 'minus' : '') + '">' + tp.toLocaleString() + '</td></tr>';
+    '<td class="' + (tp < 0 ? 'minus' : '') + '">' + tp.toLocaleString() + '</td>' +
+    '<td>' + marginHtml(sum.s, sum.c) + '</td></tr>';
 
   summary.innerHTML = '請求 <b>' + items.length + '件</b>　請求合計（税込） <b>' + sum.sT.toLocaleString() + '円</b>　' +
-    '利益合計（税込） <b>' + tpT.toLocaleString() + '円</b>';
+    '利益合計（税込） <b>' + tpT.toLocaleString() + '円</b>　' +
+    '粗利率 ' + marginHtml(sum.s, sum.c);
   table.innerHTML =
     '<thead><tr><th class="bt-l">案件名</th><th class="bt-l">状態</th>' +
     '<th class="bt-tax">売上（税込）</th><th class="bt-tax">原価（税込）</th><th class="bt-tax">利益（税込）</th>' +
-    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th></tr></thead><tbody>' + rows + '</tbody>';
+    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th><th>粗利率</th></tr></thead><tbody>' + rows + '</tbody>';
 }
 
 function tcMove(id, dir) {
@@ -2142,7 +2188,8 @@ function renderKanban() {
           `<span class="ks-item">売上: <b>${totalSales.toLocaleString()}円</b></span>` +
           `<span class="ks-item">原価: <b>${totalCost.toLocaleString()}円</b></span>` +
           `<span class="ks-profit">利益: <b class="${totalProfit < 0 ? 'minus' : ''}">${totalProfit.toLocaleString()}円</b></span>` +
-        `</div>`;
+        `</div>` +
+        (totalSales > 0 ? `<div class="ks-row ks-row-rate"><span class="ks-tag">粗利率</span><span class="ks-item">${marginHtml(totalSales, totalCost)}</span></div>` : '');
       colEl.appendChild(summary);
     }
 
@@ -2202,7 +2249,8 @@ function renderKanban() {
           `<div><span class="ks-tag">税抜</span> ` +
           (t.sales ? `売上: <b>${(t.sales||0).toLocaleString()}円</b>　` : '') +
           (t.cost  ? `原価: <b>${(t.cost||0).toLocaleString()}円</b>　` : '') +
-          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b></div>`;
+          `利益: <b style="color:${profit>=0?'var(--cyan)':'#ef4444'}">${profit.toLocaleString()}円</b></div>` +
+          (t.sales > 0 ? `<div><span class="ks-tag">粗利率</span> ${marginHtml(t.sales, t.cost)}</div>` : '');
         card.appendChild(fin);
       }
 
@@ -2476,9 +2524,10 @@ function renderPaid() {
   document.getElementById('paidSummary').innerHTML = [
     { label: paidYear + '年 入金合計（税込）', value: tot.sT.toLocaleString(), unit: '円' },
     { label: paidYear + '年 利益合計（税込）', value: (tot.sT - tot.cT).toLocaleString(), unit: '円' },
-    { label: '入金件数', value: tot.n, unit: '件' }
+    { label: '入金件数', value: tot.n, unit: '件' },
+    { label: paidYear + '年 粗利率', value: marginText(tot.s, tot.c), unit: '', cls: marginClass(tot.s, tot.c) }
   ].map(c => '<div class="sub-summary-card"><div class="sub-summary-label">' + c.label + '</div>' +
-    '<div class="sub-summary-value">' + c.value + '<span class="sub-summary-unit"> ' + c.unit + '</span></div></div>').join('');
+    '<div class="sub-summary-value' + (c.cls ? ' ' + c.cls : '') + '">' + c.value + '<span class="sub-summary-unit"> ' + c.unit + '</span></div></div>').join('');
 
   // 月別
   const byMonth = Array.from({ length: 12 }, () => []);
@@ -2488,7 +2537,8 @@ function renderPaid() {
     return '<td>' + m.sT.toLocaleString() + '</td><td>' + m.cT.toLocaleString() + '</td>' +
       '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
       '<td>' + m.s.toLocaleString() + '</td><td>' + m.c.toLocaleString() + '</td>' +
-      '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>';
+      '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>' +
+      '<td>' + marginHtml(m.s, m.c) + '</td>';
   };
   let mrows = '';
   byMonth.forEach((items, i) => {
@@ -2496,13 +2546,13 @@ function renderPaid() {
     mrows += '<tr class="paid-month-row' + (paidMonthSel === i + 1 ? ' sel' : '') + (has ? '' : ' empty') + '" onclick="paidPickMonth(' + (i + 1) + ')">' +
       '<td class="bt-name">' + (i + 1) + '月</td>' +
       (has ? '<td>' + items.length + '件</td>' + numCells(paidMoney(items))
-           : '<td class="zero">-</td>' + '<td class="zero">-</td>'.repeat(6)) + '</tr>';
+           : '<td class="zero">-</td>' + '<td class="zero">-</td>'.repeat(7)) + '</tr>';
   });
   mrows += '<tr class="bt-total"><td class="bt-name">' + paidYear + '年 合計</td><td>' + tot.n + '件</td>' + numCells(tot) + '</tr>';
   document.getElementById('paidMonthTable').innerHTML =
     '<thead><tr><th class="bt-l">入金月</th><th>件数</th>' +
     '<th class="bt-tax">売上（税込）</th><th class="bt-tax">原価（税込）</th><th class="bt-tax">利益（税込）</th>' +
-    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th></tr></thead><tbody>' + mrows + '</tbody>';
+    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th><th>粗利率</th></tr></thead><tbody>' + mrows + '</tbody>';
 
   // 明細
   const shown = (paidMonthSel ? byMonth[paidMonthSel - 1] : yearItems).slice()
@@ -2531,6 +2581,7 @@ function renderPaid() {
       '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
       '<td>' + s.toLocaleString() + '</td><td>' + c.toLocaleString() + '</td>' +
       '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>' +
+      '<td>' + marginHtml(s, c) + '</td>' +
       '<td class="bt-act"><button class="smbtn" onclick="paidRestore(\'' + t.id + '\')">↩ 当月請求へ戻す</button> ' +
       '<button class="smbtn danger" onclick="paidDelete(\'' + t.id + '\')">🗑️</button></td></tr>';
   });
@@ -2538,7 +2589,7 @@ function renderPaid() {
   dtable.innerHTML =
     '<thead><tr><th class="bt-l">入金日</th><th class="bt-l">案件名</th><th class="bt-l">請求月</th>' +
     '<th class="bt-tax">売上（税込）</th><th class="bt-tax">原価（税込）</th><th class="bt-tax">利益（税込）</th>' +
-    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th><th></th></tr></thead><tbody>' + drows + '</tbody>';
+    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th><th>粗利率</th><th></th></tr></thead><tbody>' + drows + '</tbody>';
 }
 
 // ── サブスク管理 ──
