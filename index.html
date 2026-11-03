@@ -616,6 +616,20 @@ select option { background: #fff; color: var(--white); }
 .bill-table tr.bt-total td { background: #1a2f4e; color: #fff; font-weight: 800; border-bottom: none; }
 .bill-table tr.bt-total td.minus { color: #fca5a5; }
 
+/* ── 入金履歴 ── */
+.tc-paid-btn { width: 100%; margin-top: 5px; padding: 4px 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; border-radius: 6px; font-size: 11px; font-weight: 700; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; transition: all 0.15s; }
+.tc-paid-btn:hover { background: #16a34a; color: #fff; }
+.paid-block-title { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: var(--white); margin: 18px 0 8px; }
+.paid-block-title small { font-size: 11px; font-weight: 400; color: var(--muted); }
+.bill-table td.bt-l { text-align: left; }
+.bill-table td.zero { color: #d0dae8; }
+.bill-table td.bt-act { white-space: nowrap; }
+.bill-table tr.paid-month-row { cursor: pointer; transition: background 0.15s; }
+.bill-table tr.paid-month-row:hover td { background: rgba(0,184,169,0.07); }
+.bill-table tr.paid-month-row.sel td { background: rgba(0,184,169,0.16); font-weight: 800; }
+.bill-table tr.paid-month-row.empty td { color: #b8c6d6; }
+.paid-date-input { font-family: 'DM Mono', monospace; font-size: 12px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; background: #fff; color: var(--white); width: auto; box-shadow: none; }
+
 /* モーダル */
 .task-modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
@@ -795,6 +809,7 @@ select option { background: #fff; color: var(--white); }
   <div class="tab" onclick="gotoTab('create',this)">✏️ ネタ作成</div>
   <div class="tab" onclick="gotoTab('stock',this)">📦 ネタ一覧</div>
   <div class="tab" onclick="gotoTab('task',this)">✅ タスク管理</div>
+  <div class="tab" onclick="gotoTab('paid',this)">📁 入金履歴</div>
   <div class="tab" onclick="gotoTab('sub',this)">💳 サブスク管理</div>
   <div class="tab" onclick="gotoTab('skill',this)">📚 スキルアップ</div>
 </div>
@@ -1125,6 +1140,7 @@ select option { background: #fff; color: var(--white); }
           <option value="billing">🧾 当月請求</option>
           <option value="repeat">🔄 継続取引（月額）</option>
           <option value="annual">📆 継続取引（年額）</option>
+          <option value="paid">💰 入金済み（保管）</option>
         </select>
       </div>
 
@@ -1184,6 +1200,28 @@ select option { background: #fff; color: var(--white); }
       <button class="task-modal-cancel" style="margin-top:10px;width:100%;" onclick="closeCatModal()">閉じる</button>
     </div>
   </div>
+
+</div>
+
+<!-- 入金履歴 -->
+<div id="view-paid" class="view">
+
+  <div class="sub-summary-row" id="paidSummary"></div>
+
+  <div class="sub-toolbar">
+    <div class="sub-year-nav">
+      <button class="nav-btn" onclick="paidChangeYear(-1)">←</button>
+      <span id="paidYearLabel" style="font-size:16px;font-weight:700;min-width:60px;text-align:center;"></span>
+      <button class="nav-btn" onclick="paidChangeYear(1)">→</button>
+    </div>
+    <input class="skill-search" type="text" id="paidSearch" placeholder="🔍 案件名・カテゴリ・メモで検索..." oninput="renderPaid()" style="width:280px;">
+  </div>
+
+  <div class="paid-block-title">📊 月別の入金 <small>（入金日の月で集計／税込が左・税抜が右／行をクリックすると、その月の明細だけ表示）</small></div>
+  <div class="bill-table-wrap" style="max-height:none;"><table class="bill-table" id="paidMonthTable"></table></div>
+
+  <div class="paid-block-title" id="paidDetailTitle"></div>
+  <div class="bill-table-wrap"><table class="bill-table" id="paidDetailTable"></table></div>
 
 </div>
 
@@ -1393,6 +1431,7 @@ function gotoTab(name, el) {
   if (name === 'calendar') renderCalendar();
   if (name === 'stock') renderStock();
   if (name === 'task') renderKanban();
+  if (name === 'paid') renderPaid();
   if (name === 'skill') renderSkills();
   if (name === 'sub')   renderSubs();
 }
@@ -1948,7 +1987,7 @@ const TC_STATUSES = ['priority','urgent','todo','doing','review','done','billing
 const TC_NAMES = {
   priority: '商談', urgent: '優先', todo: '提案書・見積書', doing: '施策・進行中',
   review: '請求書作成', done: '請求書送付完了', billing: '当月請求',
-  repeat: '継続取引（月額）', annual: '継続取引（年額）'
+  repeat: '継続取引（月額）', annual: '継続取引（年額）', paid: '入金済み'
 };
 
 // ── 当月請求：請求月の扱い ──
@@ -2019,7 +2058,7 @@ function renderBillModal() {
     const pT = sT - cT, p = s - c;
     rows += '<tr>' +
       '<td class="bt-name">' + esc(t.title) + (t.category ? '<span class="bt-cat">' + esc(t.category) + '</span>' : '') + '</td>' +
-      '<td class="bt-state"><span class="bt-pill' + (t.status === 'done' ? ' done' : '') + '">' + esc(TC_NAMES[t.status] || '') + '</span></td>' +
+      '<td class="bt-state"><span class="bt-pill' + (t.status === 'done' || t.status === 'paid' ? ' done' : '') + '">' + esc(TC_NAMES[t.status] || '') + '</span></td>' +
       '<td>' + sT.toLocaleString() + '</td><td>' + cT.toLocaleString() + '</td>' +
       '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
       '<td>' + s.toLocaleString() + '</td><td>' + c.toLocaleString() + '</td>' +
@@ -2194,6 +2233,17 @@ function renderKanban() {
       moveRow.appendChild(nextBtn);
       card.appendChild(moveRow);
 
+      // 入金済みボタン（請求書送付完了・当月請求の列）→ ボードから入金履歴へ保管
+      if (st === 'done' || st === 'billing') {
+        const paidRow = document.createElement('div');
+        const paidBtn = document.createElement('button');
+        paidBtn.className = 'tc-paid-btn';
+        paidBtn.textContent = '💰 入金済み（保管）';
+        paidBtn.addEventListener('click', e => { e.stopPropagation(); markPaid(t.id); });
+        paidRow.appendChild(paidBtn);
+        card.appendChild(paidRow);
+      }
+
       // 当月請求へ複製ボタン（当月請求の列以外）
       if (st !== 'billing') {
         const dupRow = document.createElement('div');
@@ -2208,7 +2258,7 @@ function renderKanban() {
 
       // カード本体クリック → 編集モーダル
       card.addEventListener('click', e => {
-        if (!e.target.closest('.tc-mv-btn, .tc-dup-btn')) openTaskModal(t.id);
+        if (!e.target.closest('.tc-mv-btn, .tc-dup-btn, .tc-paid-btn')) openTaskModal(t.id);
       });
 
       colEl.appendChild(card);
@@ -2272,6 +2322,7 @@ function saveTask() {
     updatedAt: Date.now()
   };
   if (task.status === 'billing' && !task.billingMonth) task.billingMonth = billKey();
+  if (task.status === 'paid' && !task.paidDate) task.paidDate = todayStr();
 
   if (editTaskId) {
     const i = tasks.findIndex(t => t.id === editTaskId);
@@ -2339,6 +2390,154 @@ function deleteCat(idx) {
   taskCats.splice(idx, 1);
   saveTasks();
   renderCatList();
+}
+
+// ── 入金履歴（「入金済み」にして保管したもの） ──
+let paidYear = new Date().getFullYear();
+let paidMonthSel = 0;   // 0 = 年間すべて / 1〜12 = その月だけ
+
+function paidDateOf(t) {
+  if (t.paidDate) return t.paidDate;
+  const d = new Date(t.updatedAt || Date.now());
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+// ボードのカード → 入金履歴へ保管
+function markPaid(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.status = 'paid';
+  t.paidDate = todayStr();
+  t.updatedAt = Date.now();
+  saveTasks();
+  renderKanban();
+  renderPaid();
+  showToast('💰 「' + t.title + '」を入金済みにして保管しました（📁 入金履歴で確認できます）');
+}
+
+function paidChangeYear(d) { paidYear += d; paidMonthSel = 0; renderPaid(); }
+function paidPickMonth(m) { paidMonthSel = (paidMonthSel === m) ? 0 : m; renderPaid(); }
+
+function paidSetDate(id, v) {
+  if (!v) return;
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.paidDate = v;
+  t.updatedAt = Date.now();
+  saveTasks();
+  renderPaid();
+}
+
+function paidRestore(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm('「' + t.title + '」を入金履歴からボードの「請求書送付完了」に戻しますか？')) return;
+  t.status = 'done';
+  delete t.paidDate;
+  t.updatedAt = Date.now();
+  saveTasks();
+  renderPaid();
+  renderKanban();
+  showToast('↩ 「' + t.title + '」をボードに戻しました');
+}
+
+function paidDelete(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm('「' + t.title + '」の入金履歴を完全に削除します。元に戻せません。よろしいですか？')) return;
+  tasks = tasks.filter(x => x.id !== id);
+  saveTasks();
+  renderPaid();
+  showToast('🗑️ 削除しました');
+}
+
+function paidMoney(items) {
+  const r = { n: items.length, s: 0, c: 0, sT: 0, cT: 0 };
+  items.forEach(t => {
+    const s = t.sales || 0, c = t.cost || 0;
+    r.s += s; r.c += c; r.sT += withTax(s); r.cT += withTax(c);
+  });
+  return r;
+}
+
+function renderPaid() {
+  const yl = document.getElementById('paidYearLabel');
+  if (!yl) return;
+  yl.textContent = paidYear + '年';
+  const q = (document.getElementById('paidSearch')?.value || '').trim().toLowerCase();
+  const all = tasks.filter(t => t.status === 'paid');
+  const yearItems = all
+    .filter(t => paidDateOf(t).startsWith(paidYear + '-'))
+    .filter(t => !q || (t.title || '').toLowerCase().includes(q) || (t.category || '').toLowerCase().includes(q) || (t.memo || '').toLowerCase().includes(q));
+
+  // サマリー
+  const tot = paidMoney(yearItems);
+  document.getElementById('paidSummary').innerHTML = [
+    { label: paidYear + '年 入金合計（税込）', value: tot.sT.toLocaleString(), unit: '円' },
+    { label: paidYear + '年 利益合計（税込）', value: (tot.sT - tot.cT).toLocaleString(), unit: '円' },
+    { label: '入金件数', value: tot.n, unit: '件' }
+  ].map(c => '<div class="sub-summary-card"><div class="sub-summary-label">' + c.label + '</div>' +
+    '<div class="sub-summary-value">' + c.value + '<span class="sub-summary-unit"> ' + c.unit + '</span></div></div>').join('');
+
+  // 月別
+  const byMonth = Array.from({ length: 12 }, () => []);
+  yearItems.forEach(t => { byMonth[parseInt(paidDateOf(t).slice(5, 7), 10) - 1].push(t); });
+  const numCells = m => {
+    const pT = m.sT - m.cT, p = m.s - m.c;
+    return '<td>' + m.sT.toLocaleString() + '</td><td>' + m.cT.toLocaleString() + '</td>' +
+      '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
+      '<td>' + m.s.toLocaleString() + '</td><td>' + m.c.toLocaleString() + '</td>' +
+      '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>';
+  };
+  let mrows = '';
+  byMonth.forEach((items, i) => {
+    const has = items.length > 0;
+    mrows += '<tr class="paid-month-row' + (paidMonthSel === i + 1 ? ' sel' : '') + (has ? '' : ' empty') + '" onclick="paidPickMonth(' + (i + 1) + ')">' +
+      '<td class="bt-name">' + (i + 1) + '月</td>' +
+      (has ? '<td>' + items.length + '件</td>' + numCells(paidMoney(items))
+           : '<td class="zero">-</td>' + '<td class="zero">-</td>'.repeat(6)) + '</tr>';
+  });
+  mrows += '<tr class="bt-total"><td class="bt-name">' + paidYear + '年 合計</td><td>' + tot.n + '件</td>' + numCells(tot) + '</tr>';
+  document.getElementById('paidMonthTable').innerHTML =
+    '<thead><tr><th class="bt-l">入金月</th><th>件数</th>' +
+    '<th class="bt-tax">売上（税込）</th><th class="bt-tax">原価（税込）</th><th class="bt-tax">利益（税込）</th>' +
+    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th></tr></thead><tbody>' + mrows + '</tbody>';
+
+  // 明細
+  const shown = (paidMonthSel ? byMonth[paidMonthSel - 1] : yearItems).slice()
+    .sort((a, b) => paidDateOf(b).localeCompare(paidDateOf(a)) || (b.createdAt || 0) - (a.createdAt || 0));
+  document.getElementById('paidDetailTitle').innerHTML =
+    '📋 ' + paidYear + '年' + (paidMonthSel ? paidMonthSel + '月' : '') + 'の入金明細（' + shown.length + '件）' +
+    (paidMonthSel ? '<button class="smbtn" onclick="paidPickMonth(0)">全月を表示</button>' : '');
+
+  const dtable = document.getElementById('paidDetailTable');
+  if (shown.length === 0) {
+    dtable.innerHTML = '<tbody><tr><td style="text-align:center;padding:36px;color:var(--muted);line-height:1.9;">' +
+      (all.length === 0
+        ? 'まだ入金済みの案件はありません。<br>「請求書送付完了」または「当月請求」のカードの「💰 入金済み（保管）」を押すと、ここに保管されます。'
+        : '該当する入金はありません。') + '</td></tr></tbody>';
+    return;
+  }
+  const st = paidMoney(shown);
+  let drows = '';
+  shown.forEach(t => {
+    const s = t.sales || 0, c = t.cost || 0, sT = withTax(s), cT = withTax(c), pT = sT - cT, p = s - c;
+    drows += '<tr>' +
+      '<td class="bt-l"><input type="date" class="paid-date-input" value="' + esc(paidDateOf(t)) + '" onchange="paidSetDate(\'' + t.id + '\', this.value)"></td>' +
+      '<td class="bt-name">' + esc(t.title) + (t.category ? '<span class="bt-cat">' + esc(t.category) + '</span>' : '') + '</td>' +
+      '<td class="bt-l">' + (t.billingMonth ? esc(billLabel(t.billingMonth)) + '分' : '-') + '</td>' +
+      '<td>' + sT.toLocaleString() + '</td><td>' + cT.toLocaleString() + '</td>' +
+      '<td class="' + (pT < 0 ? 'minus' : '') + '">' + pT.toLocaleString() + '</td>' +
+      '<td>' + s.toLocaleString() + '</td><td>' + c.toLocaleString() + '</td>' +
+      '<td class="' + (p < 0 ? 'minus' : '') + '">' + p.toLocaleString() + '</td>' +
+      '<td class="bt-act"><button class="smbtn" onclick="paidRestore(\'' + t.id + '\')">↩ ボードへ戻す</button> ' +
+      '<button class="smbtn danger" onclick="paidDelete(\'' + t.id + '\')">🗑️</button></td></tr>';
+  });
+  drows += '<tr class="bt-total"><td class="bt-name" colspan="3">合計（' + st.n + '件）</td>' + numCells(st) + '<td></td></tr>';
+  dtable.innerHTML =
+    '<thead><tr><th class="bt-l">入金日</th><th class="bt-l">案件名</th><th class="bt-l">請求月</th>' +
+    '<th class="bt-tax">売上（税込）</th><th class="bt-tax">原価（税込）</th><th class="bt-tax">利益（税込）</th>' +
+    '<th>売上（税抜）</th><th>原価（税抜）</th><th>利益（税抜）</th><th></th></tr></thead><tbody>' + drows + '</tbody>';
 }
 
 // ── サブスク管理 ──
@@ -2798,66 +2997,96 @@ document.addEventListener('click', e => {
 
 // ── バックアップ・データ復元 ──
 function backupData() {
-  const data = { version: 2, exportedAt: new Date().toISOString(), posts };
+  // 投稿ネタ・タスク（入金履歴を含む）・サブスク・スキルアップをまとめて保存
+  const data = {
+    app: 'sns-manager', version: 3, exportedAt: new Date().toISOString(),
+    posts, tasks, taskCats, subs, skills, skillCats
+  };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const d = new Date();
-  a.download = `sns_posts_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.json`;
+  a.download = `sns_manager_backup_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.json`;
   a.click();
-  showToast('⬇️ バックアップを保存しました');
+  showToast('⬇️ バックアップを保存しました（投稿ネタ・タスク・入金履歴・サブスク・スキルアップ）');
 }
 
 function restoreData(e) {
   const file = e.target.files[0];
   if (!file) return;
+  const reset = () => { e.target.value = ''; };
 
-  // .json 以外は弾く
   if (!file.name.endsWith('.json')) {
     showToast('❌ JSONファイルを選んでください');
-    e.target.value = '';
+    reset();
     return;
   }
 
   const reader = new FileReader();
   reader.onload = ev => {
-    let imported = null;
+    let raw;
     try {
-      const raw = JSON.parse(ev.target.result);
-      // { posts: [...] } 形式と [ ... ] 形式の両方に対応
-      imported = Array.isArray(raw) ? raw : (Array.isArray(raw.posts) ? raw.posts : null);
+      raw = JSON.parse(ev.target.result);
     } catch {
       showToast('❌ JSONの読み込みに失敗しました。ファイルが壊れている可能性があります');
-      e.target.value = '';
+      reset();
       return;
     }
 
-    if (!imported) {
+    // 旧形式（投稿ネタだけ：[...] や { posts: [...] }）にも対応
+    const src = Array.isArray(raw) ? { posts: raw } : raw;
+    if (!src || typeof src !== 'object') {
       showToast('❌ データ形式が正しくありません');
-      e.target.value = '';
+      reset();
+      return;
+    }
+    // 配列でない項目は「ファイルに含まれていない」扱い（現在のデータは触らない）
+    const pick = k => (Array.isArray(src[k]) ? src[k] : null);
+    const objs = a => a && a.filter(x => x && typeof x === 'object');
+    const strs = a => a && a.filter(x => typeof x === 'string');
+    const next = {
+      posts: objs(pick('posts')), tasks: objs(pick('tasks')), taskCats: strs(pick('taskCats')),
+      subs: objs(pick('subs')), skills: objs(pick('skills')), skillCats: strs(pick('skillCats'))
+    };
+    if (!Object.values(next).some(v => v)) {
+      showToast('❌ データ形式が正しくありません');
+      reset();
       return;
     }
 
-    if (!confirm(`${imported.length}件のデータを復元します。\n現在のデータは上書きされます。よろしいですか？`)) {
-      e.target.value = '';
+    const lines = [];
+    if (next.posts)  lines.push('投稿ネタ ' + next.posts.length + '件');
+    if (next.tasks) {
+      const paidN = next.tasks.filter(t => t.status === 'paid').length;
+      lines.push('タスク ' + (next.tasks.length - paidN) + '件 ／ 入金履歴 ' + paidN + '件');
+    }
+    if (next.subs)   lines.push('サブスク ' + next.subs.length + '件');
+    if (next.skills) lines.push('スキルアップ ' + next.skills.length + '件');
+    if (!confirm('次のデータを復元します。\n・' + lines.join('\n・') + '\n\nファイルに含まれている項目は、現在のデータが上書きされます。よろしいですか？')) {
+      reset();
       return;
     }
 
-    posts = imported;
-    save();
+    if (next.posts) { posts = next.posts; save(); }
+    if (next.tasks) tasks = next.tasks;
+    if (next.taskCats) taskCats = next.taskCats;
+    if (next.tasks || next.taskCats) saveTasks();
+    if (next.subs) { subs = next.subs; saveSubs(); }
+    if (next.skills) skills = next.skills;
+    if (next.skillCats) skillCats = next.skillCats;
+    if (next.skills || next.skillCats) saveSkills();
 
-    // 全ビューを再描画
-    renderCalendar();
-    renderToday();
-    renderStock();
+    // 全画面を再描画
+    renderCalendar(); renderToday(); renderStock();
+    renderKanban(); renderPaid(); renderSubs(); renderSkills();
 
-    showToast(`✅ ${imported.length}件のデータを復元しました`);
-    e.target.value = '';
+    showToast('✅ 復元しました（' + lines.length + '種類）');
+    reset();
   };
 
   reader.onerror = () => {
     showToast('❌ ファイルの読み取りに失敗しました');
-    e.target.value = '';
+    reset();
   };
 
   reader.readAsText(file, 'utf-8');
